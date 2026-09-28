@@ -1,0 +1,17 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "EllipticBernoulli.challenge_isLocalSmallestSuper_exists_le_of_closedBall_subset",
+    "EllipticBernoulli.challenge_exists_le_of_exteriorBall_sameRadius",
+    "EllipticBernoulli.challenge_nondegenerate_sup_iff_average",
+    "EllipticBernoulli.challenge_isDownwardMinimizer_exists_le_of_closedBall_subset",
+    "EllipticBernoulli.challenge_exists_pos_le_of_isLocalLargestSub"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

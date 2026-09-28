@@ -1,0 +1,14 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "EllipticBernoulli.challenge_lipschitzOnWith_of_isViscSuper",
+    "EllipticBernoulli.challenge_locallyLipschitzOn_of_isViscSuper"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

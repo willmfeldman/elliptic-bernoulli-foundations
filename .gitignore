@@ -1,0 +1,6 @@
+.lake/
+*.olean
+.DS_Store
+/build/
+/refs/
+/comparator-report/

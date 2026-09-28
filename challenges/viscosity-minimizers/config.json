@@ -1,0 +1,17 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "EllipticBernoulli.challenge_isUpwardMinimizer_isViscSuper",
+    "EllipticBernoulli.challenge_isDownwardMinimizer_isViscSub",
+    "EllipticBernoulli.challenge_isLocalEnergyMinimizer_isViscSolution",
+    "EllipticBernoulli.challenge_isObstacleMinimizer_isViscSuper_of_upper",
+    "EllipticBernoulli.challenge_isObstacleMinimizer_isViscSub_of_lower"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

@@ -1,0 +1,15 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "EllipticBernoulli.challenge_isClassicalSolution_isViscSolution",
+    "EllipticBernoulli.challenge_isClassicalSolution_integral_innerVarIntegrand_eq_zero",
+    "EllipticBernoulli.challenge_classical_lipschitz_bound"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}
