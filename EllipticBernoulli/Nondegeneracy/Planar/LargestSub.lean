@@ -92,7 +92,7 @@ theorem le_zero_of_subharmonic_ball {w : E d → ℝ} {x₀ : E d} {t : ℝ} (hd
       _ = w y₁ / 2 := by rw [hε]; field_simp
   have hŷ1 : w y₁ ≤ wε ŷ := by
     have := hmax hy₁
-    simp only [mem_setOf_eq, hwε_def, Pi.add_apply] at this ⊢
+    simp only [mem_ofPred_eq, hwε_def, Pi.add_apply] at this ⊢
     linarith [hqnn y₁]
   have hŷball : ŷ ∈ ball x₀ t := by
     rcases (mem_closedBall.1 hŷ).lt_or_eq with h | h

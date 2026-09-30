@@ -114,7 +114,7 @@ theorem measurable_gradient (u : E d → ℝ) : Measurable (∇ u) :=
 /-- A function continuous on a compact set `K` is in `L²(K)`. -/
 theorem memLp_two_restrict_of_continuousOn {K : Set (E d)} (hK : IsCompact K) {u : E d → ℝ}
     (hu : ContinuousOn u K) : MemLp u 2 (volume.restrict K) := by
-  haveI : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
+  have : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
   obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hu
   exact MemLp.of_bound (hu.aestronglyMeasurable_of_isCompact hK hK.measurableSet) C
     ((ae_restrict_mem hK.measurableSet).mono hC)
@@ -123,7 +123,7 @@ theorem memLp_two_restrict_of_continuousOn {K : Set (E d)} (hK : IsCompact K) {u
 theorem memLp_two_restrict_gradient {U : Set (E d)} (hU : IsOpen U) {u : E d → ℝ}
     (hu : LocallyLipschitzOn U u) {K : Set (E d)} (hK : IsCompact K) (hKU : K ⊆ U) :
     MemLp (∇ u) 2 (volume.restrict K) := by
-  haveI : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
+  have : IsFiniteMeasure (volume.restrict K) := isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
   obtain ⟨C, hC⟩ := exists_bound_fderiv_of_locallyLipschitzOn hU hu hK hKU
   refine MemLp.of_bound (measurable_gradient u).aestronglyMeasurable C
     ((ae_restrict_mem hK.measurableSet).mono fun x hx ↦ ?_)
@@ -142,7 +142,7 @@ theorem memH1Loc_gradient_of_locallyLipschitzOn {U : Set (E d)} {u : E d → ℝ
       (∀ K ⊆ U, IsCompact K → MemLp g 2 (volume.restrict K)) → LocallyIntegrableOn g U := by
     intro F _ g hg
     refine (locallyIntegrableOn_iff hU.isLocallyClosed).2 fun K hKU hK ↦ ?_
-    haveI : IsFiniteMeasure (volume.restrict K) :=
+    have : IsFiniteMeasure (volume.restrict K) :=
       isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
     exact (hg K hKU hK).integrable one_le_two
   refine ⟨⟨hint fun K hKU hK ↦ (hL2 K hKU hK).1, hint fun K hKU hK ↦ (hL2 K hKU hK).2,

@@ -75,7 +75,7 @@ theorem lintegral_weighted_sq_le_liminf {ι : Type*} {l : Filter ι} (μ : Measu
   have hηb : ∀ x, ‖η x‖ ≤ C := fun x ↦ by rw [Real.norm_of_nonneg (hη0 x)]; exact hηC x
   -- the test function `η f₀ ∈ L²(Ω)`
   have hh : MemLp (fun x ↦ η x • f₀ x) 2 (μ.restrict Ω) :=
-    hf₀.of_le_mul (c := C) (hη.aestronglyMeasurable.smul hf₀.1)
+    hf₀.of_le_mul (c := C) (hη.aestronglyMeasurable.smul hf₀.aestronglyMeasurable)
       (Eventually.of_forall fun x ↦ by rw [norm_smul]; gcongr; exact hηb x)
   set A : ℝ := ∫ x in Ω, η x * ‖f₀ x‖ ^ 2 ∂μ
   have hA : ∫ x in Ω, inner ℝ (f₀ x) (η x • f₀ x) ∂μ = A := by

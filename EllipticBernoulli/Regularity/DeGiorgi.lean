@@ -120,7 +120,7 @@ theorem measure_levelSet_le {f : E d → ℝ} {z : E d} {r k' k'' : ℝ} (hk : k
   refine ENNReal.toReal_mono (volume_inter_ball_ne_top _ z r) (measure_mono ?_)
   refine inter_subset_inter_left _ fun x hx ↦ ?_
   have hx' : k'' < f x := hx
-  simp only [mem_setOf_eq]
+  simp only [mem_ofPred_eq]
   rw [max_eq_left (by linarith)]
   exact pow_le_pow_left₀ (by linarith) (by linarith) 2
 
@@ -180,7 +180,7 @@ theorem degiorgi_step {U : Set (E d)} (hU : IsOpen U) {f : E d → ℝ} {G : E d
     ENNReal.toReal_mono (volume_inter_ball_ne_top _ z r) (measure_mono hsub)
   -- the left-hand side
   have hg2 : Integrable (fun x ↦ g x ^ 2) := by
-    have := (memLp_two_iff_integrable_sq_norm hgL.1).1 hgL
+    have := (memLp_two_iff_integrable_sq_norm hgL.aestronglyMeasurable).1 hgL
     simpa [Real.norm_eq_abs, sq_abs] using this
   have hL : ∫ x in ball z r', F x ^ 2 ≤ ∫ x, g x ^ 2 := by
     have e : ∫ x in ball z r', F x ^ 2 = ∫ x in ball z r', g x ^ 2 :=
@@ -349,6 +349,7 @@ theorem degiorgi_linfty (hd : 1 ≤ d) {U : Set (E d)} (hU : IsOpen U) {f : E d 
     have := degiorgi_numeric (S := (CS : ℝ)) (c := cutoffConst) j (hY0 j) hI0 hIY
       ENNReal.toReal_nonneg hmY hC₀ hC₁ hρ hH hH1 hα0
     convert this using 1
+    rfl
   -- the initial condition
   have hinit : Y 0 ≤ N ^ (-1 / α) * b ^ (-1 / α ^ 2) := by
     have hid : N ^ (-1 / α) = A ^ (-1 / α) * H ^ 2 * ρ ^ d := degiorgi_init_identity hd hA0 hH hρ

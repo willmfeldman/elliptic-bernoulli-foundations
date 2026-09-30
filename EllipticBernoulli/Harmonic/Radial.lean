@@ -175,10 +175,11 @@ theorem hasGradientAt_radialPowSmooth {z y : E d} {γ ε : ℝ} (hε : 0 < ε) (
   have h := hρ.comp_hasFDerivAt y hf
   rw [hasGradientAt_iff_hasFDerivAt]
   convert h using 1
+  · rfl
   ext w
   rw [deriv_radialProfile hε ht, sq_rpow hs.le]
-  simp only [toDual_apply_apply, real_inner_smul_left, ContinuousLinearMap.smul_apply,
-    ContinuousLinearMap.coe_comp', Function.comp_apply, ContinuousLinearMap.coe_id', id_eq,
+  simp only [toDual_apply_apply, real_inner_smul_left, smul_apply,
+    ContinuousLinearMap.coe_comp, Function.comp_apply, ContinuousLinearMap.coe_id', id_eq,
     innerSL_apply_apply, smul_eq_mul, nsmul_eq_mul, Nat.cast_ofNat]
   have e1 : ‖y - z‖ ^ (2 * (-γ / 2 - 1)) = ‖y - z‖ ^ (-γ - 2) := by ring_nf
   rw [e1]

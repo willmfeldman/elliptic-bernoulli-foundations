@@ -245,7 +245,7 @@ omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [Nontrivial E] in
 /-- The closure of the annulus `ball z ρ₂ \ closedBall z ρ₁` lies in the closed annulus. -/
 theorem closure_annulus_subset (z : E) (ρ₁ ρ₂ : ℝ) :
     closure (ball z ρ₂ \ closedBall z ρ₁) ⊆ closedBall z ρ₂ \ ball z ρ₁ :=
-  closure_minimal (diff_subset_diff ball_subset_closedBall ball_subset_closedBall)
+  closure_minimal (sdiff_subset_sdiff ball_subset_closedBall ball_subset_closedBall)
     (isClosed_closedBall.sdiff isOpen_ball)
 
 omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [Nontrivial E] in
@@ -258,7 +258,7 @@ theorem frontier_annulus_subset (z : E) (ρ₁ ρ₂ : ℝ) :
   have h1 := closure_annulus_subset z ρ₁ ρ₂ hx.1
   have h2 : x ∉ ball z ρ₂ \ closedBall z ρ₁ := by
     have := hx.2; rwa [hopen.interior_eq] at this
-  simp only [mem_diff, mem_closedBall, mem_ball, not_lt, not_and, not_le] at h1 h2
+  simp only [Set.mem_sdiff, mem_closedBall, mem_ball, not_lt, not_and, not_le] at h1 h2
   simp only [mem_union, mem_sphere]
   by_cases hlt : dist x z < ρ₂
   · exact Or.inl (le_antisymm (h2 hlt) h1.2)
@@ -278,12 +278,12 @@ theorem le_of_sphere_le_of_contDiffOn_two_annulus {z : E} {ρ₁ ρ₂ : ℝ} {u
   intro x hx
   have hopen : IsOpen (ball z ρ₂ \ closedBall z ρ₁) := isOpen_ball.sdiff isClosed_closedBall
   by_cases hA : x ∈ ball z ρ₂ \ closedBall z ρ₁
-  · refine le_of_frontier_le_of_contDiffOn_two hopen (isBounded_ball.subset diff_subset) hu hv
+  · refine le_of_frontier_le_of_contDiffOn_two hopen (isBounded_ball.subset sdiff_subset) hu hv
       hΔ (huc.mono (closure_annulus_subset z ρ₁ ρ₂)) (hvc.mono (closure_annulus_subset z ρ₁ ρ₂))
       (fun y hy ↦ ?_) x (subset_closure hA)
     rcases frontier_annulus_subset z ρ₁ ρ₂ hy with hy | hy
     exacts [h₁ y hy, h₂ y hy]
-  · simp only [mem_diff, mem_closedBall, mem_ball, not_lt, not_and, not_le] at hx hA
+  · simp only [Set.mem_sdiff, mem_closedBall, mem_ball, not_lt, not_and, not_le] at hx hA
     by_cases hlt : dist x z < ρ₂
     · exact h₁ x (le_antisymm (hA hlt) hx.2)
     · exact h₂ x (le_antisymm hx.1 (not_lt.1 hlt))

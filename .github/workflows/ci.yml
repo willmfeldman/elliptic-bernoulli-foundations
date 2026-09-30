@@ -18,22 +18,22 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-      # Mathlib and its dependencies come from `lake exe cache get`, so cache only this project's
-      # own build and the two dependencies that Mathlib's cache does not cover. Caching all of
-      # `.lake` exhausts runner disk.
+      # Mathlib and its dependencies come from `lake exe cache get`, and Lake downloads
+      # viscosity_solns and AleksandrovDifferentiability from their releases' prebuilt build
+      # archives, so cache only this project's own build. A restored dependency build folder
+      # would stop Lake from downloading the archive. Caching all of `.lake` exhausts runner disk.
       - name: Restore Lake artifacts
         uses: actions/cache/restore@v6
         with:
-          path: |
-            .lake/build
-            .lake/packages/viscosity_solns
-            .lake/packages/AleksandrovDifferentiability
+          path: .lake/build
           key: lake-build-${{ runner.os }}-${{ hashFiles('lake-manifest.json', 'lean-toolchain') }}-${{ hashFiles('EllipticBernoulli.lean', 'EllipticBernoulli/**/*.lean') }}
           restore-keys: |
             lake-build-${{ runner.os }}-${{ hashFiles('lake-manifest.json', 'lean-toolchain') }}-
+            lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-
       - name: Fetch mathlib cache
         run: lake exe cache get
-      # Warnings are errors: the release gate requires a warning-free build.
+      # Warnings are errors: the release gate requires a warning-free build. This includes a failed
+      # download of a dependency's prebuilt build archive (Lake reports that as a warning).
       - name: Build complete library
         run: lake build --wfail
       - name: Build API smoke-test target
@@ -157,8 +157,5 @@ jobs:
         uses: actions/cache/save@v6
         if: always()
         with:
-          path: |
-            .lake/build
-            .lake/packages/viscosity_solns
-            .lake/packages/AleksandrovDifferentiability
+          path: .lake/build
           key: lake-build-${{ runner.os }}-${{ hashFiles('lake-manifest.json', 'lean-toolchain') }}-${{ hashFiles('EllipticBernoulli.lean', 'EllipticBernoulli/**/*.lean') }}

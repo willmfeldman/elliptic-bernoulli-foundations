@@ -3,7 +3,10 @@
 #
 # Metadata checks (no Lean):
 # * project.lean_toolchain, comparator toolchain and every workspace's lean-toolchain equal the
-#   root lean-toolchain; every dependency revision equals the one locked in lake-manifest.json;
+#   root lean-toolchain; every dependency revision equals the one locked in lake-manifest.json,
+#   and every workspace's lake-manifest.json locks exactly the root manifest's package revisions;
+#   project.mathlib and external_challenges.mathlib equal the lakefile's Mathlib rev, which is
+#   the lockfile's Mathlib inputRev;
 # * every target's module file exists and declares the target's declaration, and every related
 #   declaration is declared somewhere in the library; each target's expected_axioms equal
 #   axioms.expected;
@@ -45,11 +48,18 @@ failures << 'project.lean_toolchain differs from lean-toolchain' \
   unless manifest.fetch('project').fetch('lean_toolchain') == root_toolchain
 
 # Dependencies agree with lake-manifest.json.
-locked = JSON.parse(File.read('lake-manifest.json')).fetch('packages').to_h { |p| [p['name'], p['rev']] }
+root_lock = JSON.parse(File.read('lake-manifest.json'))
+locked = root_lock.fetch('packages').to_h { |p| [p['name'], p['rev']] }
 manifest.fetch('dependencies').each do |dep|
   failures << "dependency #{dep['name']}: rev #{dep['rev']} differs from lake-manifest.json (#{locked[dep['name']].inspect})" \
     unless locked[dep['name']] == dep['rev']
 end
+
+# The Mathlib version recorded in formalization.yaml is the lakefile's, and the lockfile resolved it.
+lakefile_mathlib = File.read('lakefile.toml')[/^\[\[require\]\]\s*\nname = "mathlib"\s*\n(?:[^\[\n]*\n)*?rev = "([^"]+)"/, 1]
+mathlib_lock = root_lock.fetch('packages').find { |p| p['name'] == 'mathlib' }
+failures << 'lake-manifest.json Mathlib inputRev differs from lakefile.toml' \
+  unless lakefile_mathlib && mathlib_lock && mathlib_lock['inputRev'] == lakefile_mathlib
 
 library_sources = (Dir.glob('EllipticBernoulli/**/*.lean') + ['EllipticBernoulli.lean']).to_h { |f| [f, File.read(f)] }
 declared = lambda do |source, name|
@@ -91,6 +101,10 @@ external = manifest.fetch('comparator').fetch('external_challenges')
 allowed = external.fetch('permitted_axioms')
 failures << 'comparator permitted_axioms differ from axioms.expected' unless allowed.sort == expected_axioms.sort
 failures << 'external_challenges.toolchain differs from lean-toolchain' unless external['toolchain'] == root_toolchain
+[['project.mathlib', manifest.fetch('project')['mathlib']], ['external_challenges.mathlib', external['mathlib']]].each do |key, rev|
+  failures << "#{key} #{rev.inspect} differs from the lakefile's Mathlib rev #{lakefile_mathlib.inspect}" \
+    unless rev == lakefile_mathlib
+end
 directory = external.fetch('directory')
 
 listed = targets.map { |t| t['challenge'] }
@@ -117,6 +131,13 @@ targets.each do |t|
   toolchain = File.join(path, 'lean-toolchain')
   failures << "#{path}: lean-toolchain differs from the root" \
     if File.file?(toolchain) && File.read(toolchain).strip != root_toolchain
+  workspace_lock = File.join(path, 'lake-manifest.json')
+  if File.file?(workspace_lock)
+    ws_revs = JSON.parse(File.read(workspace_lock)).fetch('packages')
+                  .reject { |p| p['type'] == 'path' }.to_h { |p| [p['name'], p['rev']] }
+    failures << "#{path}: lake-manifest.json package revisions differ from the root manifest" \
+      unless ws_revs == locked
+  end
   [File.join(path, 'Challenge.lean'), *vocabulary].each do |f|
     bad = imports.call(f).reject { |m| m == 'Mathlib' || m.start_with?('Mathlib.') || vocabulary_modules.include?(m) }
     failures << "#{f}: imports outside Mathlib and the workspace vocabulary: #{bad.inspect}" unless bad.empty?

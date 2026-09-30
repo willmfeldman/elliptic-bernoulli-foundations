@@ -75,7 +75,6 @@ theorem hasDerivAt_integral_mul_comp_sub_smul {w : E d → ℝ} (hw : LocallyInt
     exact (((hφ.continuous_fderiv one_ne_zero).comp (continuous_id.sub continuous_const)).clm_apply
       continuous_const).neg
   · refine Eventually.of_forall fun y t ht ↦ ?_
-    simp only
     by_cases hy : y - t • h ∈ tsupport φ
     · rw [indicator_of_mem (hmemS y t ht hy), norm_mul, norm_neg]
       gcongr
@@ -83,7 +82,7 @@ theorem hasDerivAt_integral_mul_comp_sub_smul {w : E d → ℝ} (hw : LocallyInt
     · have h0 : fderiv ℝ φ (y - t • h) = 0 :=
         image_eq_zero_of_notMem_tsupport fun hh ↦ hy (tsupport_fderiv_subset ℝ hh)
       rw [h0]
-      simp only [ContinuousLinearMap.zero_apply, neg_zero, mul_zero, norm_zero]
+      simp only [zero_apply, neg_zero, mul_zero, norm_zero]
       exact indicator_nonneg (fun _ _ ↦ by positivity) _
   · rw [integrable_indicator_iff hS.measurableSet]
     exact (hwS.norm.mul_const _)
@@ -142,7 +141,7 @@ theorem abs_integral_comp_add_sub_mul_le {w : E d → ℝ} {Γ : E d → E d} (h
       hΓ.inner_const h
     have hΓhle : eLpNorm (fun y ↦ inner ℝ (Γ y) h) 2 volume ≤
         ENNReal.ofReal ‖h‖ * eLpNorm Γ 2 volume :=
-      eLpNorm_le_mul_eLpNorm_of_ae_le_mul (Eventually.of_forall fun y ↦ by
+      eLpNorm_le_mul_eLpNorm_of_ae_le_mul hΓh.aestronglyMeasurable (Eventually.of_forall fun y ↦ by
         rw [mul_comm]; exact norm_inner_le_norm _ _) 2
     have hφeq : eLpNorm (fun y ↦ φ (y - t • h)) 2 volume = eLpNorm φ 2 volume :=
       eLpNorm_comp_measurePreserving hφ2.aestronglyMeasurable hmp
@@ -190,7 +189,7 @@ theorem eLpNorm_comp_add_sub_le_of_weakGradient {w : E d → ℝ} {Γ : E d → 
       have : eLpNorm φ 2 volume ≤ eLpNorm g 2 volume + eLpNorm (g - φ) 2 volume := by
         have e : φ = g - (g - φ) := by abel
         conv_lhs => rw [e]
-        exact eLpNorm_sub_le hg2.aestronglyMeasurable hgφ2.aestronglyMeasurable (by norm_num)
+        exact eLpNorm_sub_le (by norm_num)
       have := ENNReal.toReal_mono (ENNReal.add_ne_top.2 ⟨hg2.eLpNorm_ne_top,
         hgφ2.eLpNorm_ne_top⟩) this
       rw [ENNReal.toReal_add hg2.eLpNorm_ne_top hgφ2.eLpNorm_ne_top] at this

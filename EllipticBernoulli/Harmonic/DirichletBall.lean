@@ -49,7 +49,7 @@ theorem exists_lipschitzWith_abs_sub_le_of_continuousOn {X : Type*} [PseudoMetri
     ∃ K : ℝ≥0, ∃ G : X → ℝ, LipschitzWith K G ∧ ∀ y ∈ S, |G y - g y| ≤ δ := by
   rcases S.eq_empty_or_nonempty with rfl | hSne
   · exact ⟨0, fun _ ↦ 0, LipschitzWith.const _, by simp⟩
-  haveI : Nonempty S := hSne.coe_sort
+  have : Nonempty S := hSne.coe_sort
   obtain ⟨B, hB⟩ := hS.exists_bound_of_continuousOn hg
   have hB0 : 0 ≤ B := (norm_nonneg _).trans (hB _ hSne.some_mem)
   obtain ⟨η, hη, hηg⟩ := Metric.uniformContinuousOn_iff.1
@@ -118,7 +118,7 @@ theorem exists_harmonic_ball_boundary_of_lipschitzWith (x : E d) {r : ℝ} (hr :
 /-- **Dirichlet problem on a ball with continuous data** (`DirichletBallStatement`). -/
 theorem exists_harmonic_ball_boundary : DirichletBallStatement := by
   intro d hd x r g hr hg
-  haveI := nontrivial_E_of_one_le hd
+  have := nontrivial_E_of_one_le hd
   -- Lipschitz approximations `G n` and their harmonic extensions `h n`
   have happrox : ∀ n : ℕ, ∃ K : ℝ≥0, ∃ G : E d → ℝ, LipschitzWith K G ∧
       ∀ y ∈ sphere x r, |G y - g y| ≤ 1 / ((n : ℝ) + 1) := fun n ↦
@@ -206,7 +206,8 @@ theorem exists_harmonic_ball_boundary : DirichletBallStatement := by
         _ = 2 / ((n : ℝ) + 1) := by ring
     have ht : Tendsto (fun n : ℕ ↦ 2 / ((n : ℝ) + 1)) atTop (𝓝 0) := by
       have := (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)).const_mul 2
-      simpa [mul_one_div] using this
+      rw [mul_zero] at this
+      exact this.congr fun n ↦ mul_one_div _ _
     have h0 : |h y - g y| ≤ 0 := ge_of_tendsto ht (Eventually.of_forall hle)
     have := abs_nonpos_iff.1 h0
     linarith

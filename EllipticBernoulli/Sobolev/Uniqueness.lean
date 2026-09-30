@@ -42,6 +42,7 @@ theorem locallyIntegrableOn_inner_const {U : Set (E d)} {G : E d → E d}
   obtain ⟨t, ht, hi⟩ := hG x hx
   refine ⟨t, ht, ?_⟩
   have := (innerSL ℝ v).integrable_comp hi
+  rw [IntegrableOn]
   simpa [innerSL_apply_apply, real_inner_comm] using this
 
 /-- A function locally integrable on an open `U`, multiplied by a continuous function with compact
@@ -51,7 +52,7 @@ theorem integrableOn_mul_of_tsupport_subset {U : Set (E d)} (hU : IsOpen U) {F �
     (hφU : tsupport φ ⊆ U) : IntegrableOn (fun x ↦ F x * φ x) U := by
   have hK : IsCompact (tsupport φ) := hφc
   have h1 : IntegrableOn F (tsupport φ) := hF.integrableOn_compact_subset hφU hK
-  exact (h1.mul_continuousOn hφ.continuousOn hK).of_forall_diff_eq_zero hU.measurableSet
+  exact (h1.mul_continuousOn hφ.continuousOn hK).of_forall_sdiff_eq_zero hU.measurableSet
     fun x hx ↦ by simp [image_eq_zero_of_notMem_tsupport hx.2]
 
 theorem eq_zero_of_forall_inner_single {z : E d}

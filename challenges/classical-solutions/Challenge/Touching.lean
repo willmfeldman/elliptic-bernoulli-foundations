@@ -5,7 +5,7 @@ Authors: William M. Feldman
 -/
 
 import Mathlib.Topology.ContinuousOn
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 
 /-!
 # Touching from above and below

@@ -792,7 +792,7 @@ theorem isC1GammaHypersurfaceNear (H : FlatGraphData U v e ν ε η M α ρ) :
   refine ⟨r, H.α_pos, (show r ≤ 1 by rw [← NNReal.coe_le_coe]; exact H.α_le), e, H.norm_e,
     fun z ↦ χ z * fbHeight v e ε z, C, hcd, hC, ?_⟩
   ext y
-  simp only [mem_inter_iff, mem_setOf_eq, sub_zero]
+  simp only [mem_inter_iff, mem_ofPred_eq, sub_zero]
   constructor
   · rintro ⟨hfb, hy⟩
     refine ⟨hy, ?_⟩

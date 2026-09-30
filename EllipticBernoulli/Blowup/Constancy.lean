@@ -91,7 +91,7 @@ theorem hasFDerivAt_convolution_eq_zero_of_hasWeakGradient_zero {Ω : Set (E d)}
   refine ContinuousLinearMap.ext fun e => ?_
   rw [convolution_precompR_apply (lsmul ℝ ℝ) hg (hφc.fderiv ℝ)
     (hφ1.continuous_fderiv one_ne_zero) z e, convolution_def]
-  simp only [lsmul_apply, smul_eq_mul, ContinuousLinearMap.zero_apply]
+  simp only [lsmul_apply, smul_eq_mul, zero_apply]
   -- The test function `ψ(t) = φ(z − t)`.
   set ψ : E d → ℝ := fun t => φ (z - t)
   have hψs : tsupport ψ ⊆ closedBall z r := by
@@ -195,7 +195,7 @@ theorem exists_ae_eq_const_ball_of_hasWeakGradient_zero {Ω : Set (E d)} (hΩ : 
     filter_upwards [hconst] with k hk
     rw [hFeq k]
     exact hk x hx
-  haveI : (ae (volume.restrict (ball x₀ R))).NeBot := ae_neBot.2 hball
+  have : (ae (volume.restrict (ball x₀ R))).NeBot := ae_neBot.2 hball
   obtain ⟨x₁, hx₁⟩ := hgood.exists
   refine ⟨R, hR0, f x₁, ?_⟩
   filter_upwards [hgood] with x hx
@@ -239,7 +239,7 @@ theorem exists_ae_eq_const_of_hasWeakGradient_zero {Ω : Set (E d)} (hΩ : IsOpe
     have hm : volume.restrict (ball x (min R R')) ≠ 0 := by
       rw [Ne, Measure.restrict_eq_zero]
       exact (measure_ball_pos volume x (lt_min hR hR')).ne'
-    haveI : (ae (volume.restrict (ball x (min R R')))).NeBot := ae_neBot.2 hm
+    have : (ae (volume.restrict (ball x (min R R')))).NeBot := ae_neBot.2 hm
     obtain ⟨y, hy, hy'⟩ :=
       ((ae_restrict_of_ae_restrict_of_subset (ball_subset_ball (min_le_left _ _)) h).and
         (ae_restrict_of_ae_restrict_of_subset (ball_subset_ball (min_le_right _ _)) h')).exists

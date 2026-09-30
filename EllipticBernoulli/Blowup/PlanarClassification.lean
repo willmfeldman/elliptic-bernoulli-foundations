@@ -99,12 +99,12 @@ theorem IsInnerVarSolution.hasWeakGradient_zero_of_eqOn_zero {q : ℝ} (hq : q �
         simp [hv0 z hz]
       rw [indicator_of_mem hx]
       simp only [innerVarIntegrand, hg, norm_zero, inner_zero_left, divergence_smul_const (hφd x),
-        fderiv_const_apply, ContinuousLinearMap.zero_apply, hξ]
+        fderiv_const_apply, zero_apply, hξ]
       ring
     · have h0 : fderiv ℝ φ x = 0 := fderiv_of_notMem_tsupport ℝ fun h ↦ hx (hφΩ h)
       rw [indicator_of_notMem hx]
       simp only [innerVarIntegrand, hξ, divergence_smul_const (hφd x),
-        fderiv_smul_const_apply' (hφd x), h0, ContinuousLinearMap.zero_apply, zero_smul,
+        fderiv_smul_const_apply' (hφd x), h0, zero_apply, zero_smul,
         inner_zero_right, fderiv_const_apply]
       ring
   simp_rw [hpt] at hstat
@@ -122,7 +122,7 @@ private theorem IsInnerVarSolution.exists_ae_eq_zero_one {q : ℝ} (hq : q ≠ 0
   have hpos : volume.restrict Ω ≠ 0 := by
     rw [Ne, Measure.restrict_eq_zero]
     exact (hΩ.measure_pos volume hΩne).ne'
-  haveI : (ae (volume.restrict Ω)).NeBot := ae_neBot.2 hpos
+  have : (ae (volume.restrict Ω)).NeBot := ae_neBot.2 hpos
   obtain ⟨x, hx⟩ := hc.exists
   refine ⟨c, ?_, (ae_restrict_iff' hΩ.measurableSet).1 hc⟩
   rw [← hx]
@@ -182,7 +182,7 @@ theorem classification_homogeneous_planar : PlanarHomogeneousClassificationState
       filter_upwards [hχp, hc, hline] with y h1 h2 h3
       rcases lt_or_gt_of_ne h3 with h | h
       · rw [h2 h, indicator_of_notMem (show y ∉ {z : E 2 | 0 < ⟪z, e⟫} from
-          fun hh ↦ by simp only [mem_setOf_eq] at hh; linarith)]
+          fun hh ↦ by simp only [mem_ofPred_eq] at hh; linarith)]
       · rw [h1 h, indicator_of_mem (show y ∈ {z : E 2 | 0 < ⟪z, e⟫} from h), Pi.one_apply]
     · exfalso
       nlinarith

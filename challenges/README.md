@@ -106,12 +106,12 @@ The statements are spelled out in full in each `Challenge.lean`; they do not ref
 
 ## Toolchain
 
-- Lean: `leanprover/lean4:v4.30.0`
-- Mathlib: `v4.30.0` (`c5ea003`)
-- viscosity_solns `v0.2.0` and AleksandrovDifferentiability: pinned through the parent
+- Lean: `leanprover/lean4:v4.34.1`
+- Mathlib: `v4.34.1` (`d13f23b`)
+- viscosity_solns `v0.3.0` and AleksandrovDifferentiability `v0.3.0`: pinned through the parent
   `lake-manifest.json`
-- Comparator: `leanprover/comparator` at `d03acab`, with lean4export `a3e35a5` and landrun
-  `5ed4a3d`, pinned in `scripts/release-comparator.sh` and recorded in `formalization.yaml`
+- Comparator: `leanprover/comparator` at `5756749`, with lean4export `076e8e5` and landrun
+  `811cfff`, pinned in `scripts/release-comparator.sh` and recorded in `formalization.yaml`
 
 Every workspace sets `packagesDir = "../../.lake/packages"` in its `lakefile.toml` (and records
 the same folder in its `lake-manifest.json`), so all eight share the root workspace's dependency

@@ -77,10 +77,11 @@ theorem norm_sq_eq_sum_inner_single (g : E d) :
   rw [EuclideanSpace.inner_single_right]
   simp [Real.norm_eq_abs, sq_abs]
 
-/-- `∫⁻ (f²)⁺ = ‖f‖₂²`. -/
-theorem lintegral_ofReal_sq_eq {X : Type*} [MeasurableSpace X] (μ : Measure X) (f : X → ℝ) :
+/-- `∫⁻ (f²)⁺ = ‖f‖₂²` for a.e.-strongly measurable `f`. -/
+theorem lintegral_ofReal_sq_eq {X : Type*} [MeasurableSpace X] (μ : Measure X) (f : X → ℝ)
+    (hf : AEStronglyMeasurable f μ) :
     ∫⁻ y, ENNReal.ofReal (f y ^ 2) ∂μ = eLpNorm f 2 μ ^ 2 := by
-  have h := eLpNorm_nnreal_pow_eq_lintegral (f := f) (μ := μ) (p := 2) two_ne_zero
+  have h := eLpNorm_nnreal_pow_eq_lintegral (f := f) (μ := μ) (p := 2) two_ne_zero hf
   simp only [NNReal.coe_ofNat, ENNReal.coe_ofNat] at h
   rw [← ENNReal.rpow_natCast, Nat.cast_ofNat, h]
   refine lintegral_congr fun y ↦ ?_
@@ -89,16 +90,16 @@ theorem lintegral_ofReal_sq_eq {X : Type*} [MeasurableSpace X] (μ : Measure X) 
 
 /-- `L²` convergence implies convergence of the `L²` norms. -/
 theorem tendsto_eLpNorm_two_of_tendsto_sub {X : Type*} [MeasurableSpace X] {μ : Measure X}
-    {f : X → ℝ} {fn : ℕ → X → ℝ} (hf : AEStronglyMeasurable f μ)
-    (hfn : ∀ n, AEStronglyMeasurable (fn n) μ) (hfin : eLpNorm f 2 μ ≠ ⊤)
+    {f : X → ℝ} {fn : ℕ → X → ℝ} (_hf : AEStronglyMeasurable f μ)
+    (_hfn : ∀ n, AEStronglyMeasurable (fn n) μ) (hfin : eLpNorm f 2 μ ≠ ⊤)
     (h : Tendsto (fun n ↦ eLpNorm (fn n - f) 2 μ) atTop (𝓝 0)) :
     Tendsto (fun n ↦ eLpNorm (fn n) 2 μ) atTop (𝓝 (eLpNorm f 2 μ)) := by
   have hup : ∀ n, eLpNorm (fn n) 2 μ ≤ eLpNorm (fn n - f) 2 μ + eLpNorm f 2 μ := fun n ↦ by
-    have := eLpNorm_add_le ((hfn n).sub hf) hf one_le_two (μ := μ)
+    have := eLpNorm_add_le (f := fn n - f) (g := f) one_le_two (μ := μ)
     rwa [sub_add_cancel] at this
   have hlo : ∀ n, eLpNorm f 2 μ - eLpNorm (fn n - f) 2 μ ≤ eLpNorm (fn n) 2 μ := fun n ↦ by
     rw [tsub_le_iff_left]
-    have := eLpNorm_add_le (hf.sub (hfn n)) (hfn n) one_le_two (μ := μ)
+    have := eLpNorm_add_le (f := f - fn n) (g := fn n) one_le_two (μ := μ)
     rwa [sub_add_cancel, eLpNorm_sub_comm] at this
   have h1 : Tendsto (fun n ↦ eLpNorm (fn n - f) 2 μ + eLpNorm f 2 μ) atTop
       (𝓝 (eLpNorm f 2 μ)) := by
@@ -114,12 +115,14 @@ theorem tendsto_setLIntegral_sq {f : E d → ℝ} {fn : ℕ → E d → ℝ} (hf
     (h : Tendsto (fun n ↦ eLpNorm (fn n - f) 2 volume) atTop (𝓝 0)) (S : Set (E d)) :
     Tendsto (fun n ↦ ∫⁻ y in S, ENNReal.ofReal (fn n y ^ 2)) atTop
       (𝓝 (∫⁻ y in S, ENNReal.ofReal (f y ^ 2))) := by
-  simp_rw [lintegral_ofReal_sq_eq]
+  have e : ∀ n, ∫⁻ y in S, ENNReal.ofReal (fn n y ^ 2) = eLpNorm (fn n) 2 (volume.restrict S) ^ 2 :=
+    fun n ↦ lintegral_ofReal_sq_eq _ _ (hfn n).restrict
+  simp_rw [e, lintegral_ofReal_sq_eq _ _ hf.aestronglyMeasurable.restrict]
   have hS : Tendsto (fun n ↦ eLpNorm (fn n - f) 2 (volume.restrict S)) atTop (𝓝 0) :=
     tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds h (fun _ ↦ bot_le)
       fun n ↦ eLpNorm_mono_measure _ Measure.restrict_le_self
-  have := tendsto_eLpNorm_two_of_tendsto_sub hf.1.restrict (fun n ↦ (hfn n).restrict)
-    (hf.restrict S).2.ne hS
+  have := tendsto_eLpNorm_two_of_tendsto_sub hf.aestronglyMeasurable.restrict
+    (fun n ↦ (hfn n).restrict) (hf.restrict S).ne hS
   exact ((ENNReal.continuous_pow 2).tendsto _).comp this
 
 /-- A convolution of a function vanishing off `B_R(x)` with a bump of radius `ε` vanishes on
@@ -164,7 +167,7 @@ theorem lintegral_sq_annulus_le {U : Set (E d)} {w : E d → ℝ} {G : E d → E
   set e : Fin d → E d := fun i ↦ EuclideanSpace.single i 1 with hedef
   -- step 1: the weak gradient vanishes off `B̄_R`
   have hG0 : ∀ i, ∀ᵐ y, y ∈ U \ closedBall x R → inner ℝ (G y) (e i) = 0 := fun i ↦
-    ae_inner_eq_zero_of_ae_eq_zero hw.1 (hU.sdiff isClosed_closedBall) diff_subset
+    ae_inner_eq_zero_of_ae_eq_zero hw.1 (hU.sdiff isClosed_closedBall) sdiff_subset
       (h0'.mono fun y hy hyO ↦ hy ⟨hyO.1, fun h ↦ hyO.2 (ball_subset_closedBall h)⟩) (e i)
   have hsph : ∀ᵐ y, y ∉ sphere x R :=
     measure_eq_zero_iff_ae_notMem.1 (Measure.addHaar_sphere_of_ne_zero volume x hR.ne')
@@ -199,7 +202,7 @@ theorem lintegral_sq_annulus_le {U : Set (E d)} {w : E d → ℝ} {G : E d → E
     (hw.2 (closedBall x R₁) hδU (isCompact_closedBall _ _)).1
   have hGL2 : MemLp G 2 (volume.restrict (closedBall x R₁)) :=
     (hw.2 (closedBall x R₁) hδU (isCompact_closedBall _ _)).2
-  haveI : IsFiniteMeasure (volume.restrict (closedBall x R₁)) :=
+  have : IsFiniteMeasure (volume.restrict (closedBall x R₁)) :=
     isFiniteMeasure_restrict.2 (measure_closedBall_lt_top (x := x) (r := R₁)).ne
   have hRcl : ball x R ⊆ closedBall x R₁ := hRB.trans ball_subset_closedBall
   have hu2 : MemLp u 2 volume :=
@@ -222,7 +225,7 @@ theorem lintegral_sq_annulus_le {U : Set (E d)} {w : E d → ℝ} {G : E d → E
   have hε : Tendsto ε atTop (𝓝 0) := by
     have h3 : Tendsto (fun n : ℕ ↦ (n : ℝ) + 3) atTop atTop :=
       tendsto_atTop_add_const_right _ 3 tendsto_natCast_atTop_atTop
-    simpa [hεdef] using h3.inv_tendsto_atTop.const_mul δ
+    simpa [hεdef, div_eq_mul_inv] using h3.inv_tendsto_atTop.const_mul δ
   let ρ : ℕ → ContDiffBump (0 : E d) := fun n ↦
     ⟨ε n / 2, ε n, half_pos (hεpos n), half_lt_self (hεpos n)⟩
   have hρ : ∀ n, (ρ n).rOut = ε n := fun _ ↦ rfl
@@ -260,7 +263,7 @@ theorem lintegral_sq_annulus_le {U : Set (E d)} {w : E d → ℝ} {G : E d → E
           isOpen_lt continuous_const (continuous_id.sub continuous_const).norm
         filter_upwards [hopen.mem_nhds hfar] with z hz
         exact hv0 n z hz.le
-      rw [hloc.fderiv_eq, fderiv_const_apply, ContinuousLinearMap.zero_apply,
+      rw [hloc.fderiv_eq, fderiv_const_apply, zero_apply,
         convolution_eq_zero_of_support (hH0 i) (ρ n) (by rw [hρ]; exact hfar.le)]
   have hcontH : ∀ n i, Continuous (H i ⋆[lsmul ℝ ℝ, volume] (ρ n).normed volume) := fun n i ↦
     (ρ n).hasCompactSupport_normed.continuous_convolution_right (lsmul ℝ ℝ)
@@ -274,7 +277,7 @@ theorem lintegral_sq_annulus_le {U : Set (E d)} {w : E d → ℝ} {G : E d → E
     have h := lintegral_sq_compl_ball_le (hvc n) hr (by linarith [hεpos n]) (hv0 n)
     refine h.trans (le_of_eq ?_)
     congr 1
-    rw [← lintegral_finsetSum _ fun i _ ↦ ((hcontH n i).pow 2).measurable.ennreal_ofReal]
+    rw [← lintegral_finsetSum _ fun i _ ↦ ((hcontH n i).measurable.pow_const 2).ennreal_ofReal]
     refine lintegral_congr fun y ↦ ?_
     rw [norm_sq_eq_sum_apply_single, ENNReal.ofReal_sum_of_nonneg fun i _ ↦ sq_nonneg _]
     exact Finset.sum_congr rfl fun i _ ↦ by rw [← hder n y i]
@@ -308,7 +311,7 @@ theorem lintegral_sq_annulus_le {U : Set (E d)} {w : E d → ℝ} {G : E d → E
       (Or.inr ENNReal.ofReal_ne_top)) hineq
   -- identify the limits
   have hA : ball x R \ ball x r = ball x R ∩ C := by
-    rw [hCdef, diff_eq]
+    rw [hCdef, sdiff_eq]
   have hl : ∫⁻ y in C, ENNReal.ofReal (u y ^ 2) =
       ∫⁻ y in ball x R \ ball x r, ENNReal.ofReal (w y ^ 2) := by
     rw [hA, ← Measure.restrict_restrict measurableSet_ball,
@@ -320,8 +323,9 @@ theorem lintegral_sq_annulus_le {U : Set (E d)} {w : E d → ℝ} {G : E d → E
       simp
   have hrt : ∑ i, ∫⁻ y in C, ENNReal.ofReal (H i y ^ 2) =
       ∫⁻ y in ball x R \ ball x r, ENNReal.ofReal (‖G y‖ ^ 2) := by
-    rw [← lintegral_finsetSum' _ fun i _ ↦ (((hH2 i).1.restrict.aemeasurable.pow_const 2)
-      ).ennreal_ofReal, hA, ← Measure.restrict_restrict measurableSet_ball,
+    rw [← lintegral_finsetSum' _ fun i _ ↦
+      ((hH2 i).aestronglyMeasurable.restrict.aemeasurable.pow_const 2).ennreal_ofReal, hA,
+      ← Measure.restrict_restrict measurableSet_ball,
       ← lintegral_indicator measurableSet_ball]
     refine lintegral_congr fun y ↦ ?_
     by_cases hy : y ∈ ball x R

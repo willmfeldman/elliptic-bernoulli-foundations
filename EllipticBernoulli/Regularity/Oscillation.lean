@@ -45,7 +45,7 @@ theorem integrableOn_indicator_const₀ {s A : Set (E d)} (hs : volume s ≠ ⊤
 theorem aemeasurable_of_memH1Loc {U : Set (E d)} {f : E d → ℝ} {G : E d → E d}
     (hf : MemH1Loc U f G) {z : E d} {ρ : ℝ} (hzU : closedBall z ρ ⊆ U) {s : ℝ} (hs : s ≤ ρ) :
     AEMeasurable f (volume.restrict (ball z s)) :=
-  ((hf.2 _ hzU (isCompact_closedBall z ρ)).1.1.mono_measure
+  ((hf.2 _ hzU (isCompact_closedBall z ρ)).1.aestronglyMeasurable.mono_measure
     (Measure.restrict_mono (ball_subset_closedBall.trans (closedBall_subset_closedBall hs))
       le_rfl)).aemeasurable
 
@@ -102,7 +102,7 @@ theorem measure_shrink_step {U : Set (E d)} (hU : IsOpen U) {f : E d → ℝ} {G
     by_cases hxD : x ∈ D
     · have hFx : F x = f x - a := max_eq_left (by linarith [hxD.1])
       have hnc : x ∉ {y | c < F y} := by
-        simp only [mem_setOf_eq, not_lt, hFx, hcdef]; linarith [hxD.2]
+        simp only [mem_ofPred_eq, not_lt, hFx, hcdef]; linarith [hxD.2]
       rw [indicator_of_mem hxD]
       simp only [hGgdef, indicator_of_notMem hnc, sub_zero]
       exact le_amgm hlam
@@ -116,7 +116,7 @@ theorem measure_shrink_step {U : Set (E d)} (hU : IsOpen U) {f : E d → ℝ} {G
         · have hfb : b < f x := by
             by_contra hfb; exact hxD ⟨not_le.1 hfa, not_lt.1 hfb⟩
           have hFx : F x = f x - a := max_eq_left (by linarith)
-          have h2 : x ∈ {y | c < F y} := by simp only [mem_setOf_eq, hFx, hcdef]; linarith
+          have h2 : x ∈ {y | c < F y} := by simp only [mem_ofPred_eq, hFx, hcdef]; linarith
           simp [hGgdef, indicator_of_mem h2]
       rw [this, norm_zero]; positivity
   -- the Poincaré inequality
@@ -221,7 +221,7 @@ theorem unitBallVol_pos : 0 < unitBallVol d :=
 
 theorem volume_ball_toReal (hd : 1 ≤ d) (z : E d) {ρ : ℝ} (hρ : 0 ≤ ρ) :
     (volume (ball z ρ)).toReal = ρ ^ d * unitBallVol d := by
-  haveI : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
+  have : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
   rw [Measure.addHaar_ball volume z hρ, ENNReal.toReal_mul, finrank_E,
     ENNReal.toReal_ofReal (by positivity), unitBallVol]
 

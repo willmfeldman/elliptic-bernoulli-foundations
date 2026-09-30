@@ -47,8 +47,7 @@ variable {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
 theorem hasFDerivAt_normSq_sub_const (x₀ y : F) :
     HasFDerivAt (fun y ↦ ‖y - x₀‖ ^ 2) ((2 : ℝ) • innerSL ℝ (y - x₀)) y := by
   convert ((hasFDerivAt_id y).sub_const x₀).norm_sq using 1
-  ext v
-  simp [two_smul]
+  all_goals (ext v; simp)
 
 theorem contDiff_normSq_sub_const (x₀ : F) {n : WithTop ℕ∞} :
     ContDiff ℝ n (fun y ↦ ‖y - x₀‖ ^ 2) :=
@@ -73,7 +72,7 @@ theorem laplacian_normSq_sub_const [FiniteDimensional ℝ F] (x₀ x : F) :
   rw [hd.fderiv]
   have h1 : ∀ i, ((2 : ℝ) • innerSL ℝ (E := F)) (stdOrthonormalBasis ℝ F i)
       (stdOrthonormalBasis ℝ F i) = 2 := fun i ↦ by
-    rw [ContinuousLinearMap.smul_apply, ContinuousLinearMap.smul_apply, innerSL_apply_apply,
+    rw [smul_apply, smul_apply, innerSL_apply_apply,
       real_inner_self_eq_norm_sq, (stdOrthonormalBasis ℝ F).orthonormal.1 i]
     norm_num
   refine (Finset.sum_congr rfl fun i _ ↦ h1 i).trans ?_
@@ -109,10 +108,11 @@ theorem contDiff_radialSubBarrier {n : WithTop ℕ∞} :
 theorem hasDerivAt_radialSubProfile (t : ℝ) :
     HasDerivAt (radialSubProfile ρ lam A) (-(A * lam * Real.exp (-(lam * t)))) t := by
   have h1 : HasDerivAt (fun t : ℝ ↦ -(lam * t)) (-lam) t := by
-    simpa using ((hasDerivAt_id t).const_mul lam).neg
+    convert ((hasDerivAt_id t).const_mul lam).neg using 1 <;> first | rfl | simp
   have h2 := (h1.exp.sub_const (Real.exp (-(lam * ρ ^ 2)))).const_mul A
   convert h2 using 1
-  ring
+  · funext y; simp only [radialSubProfile]
+  · ring
 
 theorem deriv_radialSubProfile :
     deriv (radialSubProfile ρ lam A) = fun t ↦ -(A * lam * Real.exp (-(lam * t))) :=
@@ -122,7 +122,7 @@ theorem deriv_deriv_radialSubProfile (t : ℝ) :
     deriv (deriv (radialSubProfile ρ lam A)) t = A * lam ^ 2 * Real.exp (-(lam * t)) := by
   rw [deriv_radialSubProfile]
   have h1 : HasDerivAt (fun t : ℝ ↦ -(lam * t)) (-lam) t := by
-    simpa using ((hasDerivAt_id t).const_mul lam).neg
+    convert ((hasDerivAt_id t).const_mul lam).neg using 1 <;> first | rfl | simp
   have h2 : HasDerivAt (fun t ↦ -(A * lam * Real.exp (-(lam * t))))
       (-(A * lam * (Real.exp (-(lam * t)) * -lam))) t := (h1.exp.const_mul (A * lam)).neg
   rw [h2.deriv]

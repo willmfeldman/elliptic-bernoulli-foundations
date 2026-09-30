@@ -162,10 +162,10 @@ public theorem exists_nhds_isPreconnected_sides {F : E d → ℝ} {x : E d} (hF 
       constructor
       · rintro ⟨⟨p, hp, rfl⟩, hy⟩
         refine ⟨p, ⟨hp, ?_⟩, rfl⟩
-        simpa only [mem_setOf_eq, hFsymm p (hWt hp)] using hy
+        simpa only [mem_ofPred_eq, hFsymm p (hWt hp)] using hy
       · rintro ⟨p, ⟨hp, hps⟩, rfl⟩
         refine ⟨⟨p, hp, rfl⟩, ?_⟩
-        simpa only [mem_setOf_eq, hFsymm p (hWt hp)] using hps
+        simpa only [mem_ofPred_eq, hFsymm p (hWt hp)] using hps
     rw [heq]
     have hlin : IsLinearMap ℝ fun p : ℝ × (fderiv ℝ F x).ker ↦ s * p.1 :=
       ⟨fun a b ↦ by simp [mul_add], fun c a ↦ by simp; ring⟩
@@ -247,7 +247,7 @@ theorem IsClassicalSolution.ray_dichotomy (hu : IsClassicalSolution U Q u) {x : 
       (disjoint_compl_right_iff_subset.2 subset_closure) ?_
     rintro y ⟨hyN, hy⟩
     refine hsplit y (hNV hyN) fun h ↦ ?_
-    rw [mem_setOf_eq, h, mul_zero] at hy
+    rw [mem_ofPred_eq, h, mul_zero] at hy
     exact lt_irrefl _ hy
   -- the normal rays enter the sides
   have hray : ∀ s : ℝ, (s = 1 ∨ s = -1) → ∀ᶠ t in 𝓝[>] (0 : ℝ),
@@ -308,7 +308,7 @@ theorem IsClassicalSolution.exists_sides (hu : IsClassicalSolution U Q u) {x : E
     (disjoint_compl_right_iff_subset.2 subset_closure) ?_
   rintro y ⟨hyN, hy⟩
   refine hsplit y (hNV hyN) fun h ↦ ?_
-  rw [mem_setOf_eq, h, mul_zero] at hy
+  rw [mem_ofPred_eq, h, mul_zero] at hy
   exact lt_irrefl _ hy
 
 /-! ### Classical ⇒ viscosity -/
@@ -367,7 +367,8 @@ theorem IsClassicalSolution.isViscSuper (hu : IsClassicalSolution U Q u) : IsVis
     (hF.contDiffAt.hasStrictFDerivAt (by simp)) (hφ.contDiffAt.hasStrictFDerivAt (by simp))
   have hlagv : ∀ v, a * ⟪∇ F x, v⟫ + b * ⟪∇ φ x, v⟫ = 0 := fun v ↦ by
     have := congrArg (fun L : StrongDual ℝ (E d) ↦ L v) hlag
-    simpa [fderiv_apply_eq_inner_gradient] using this
+    simp only [add_apply, smul_apply, zero_apply, smul_eq_mul] at this
+    rwa [fderiv_apply_eq_inner_gradient, fderiv_apply_eq_inner_gradient] at this
   have hnorm : 0 < ‖∇ F x‖ := norm_pos_iff.2 hn
   have hb : b ≠ 0 := by
     rintro rfl

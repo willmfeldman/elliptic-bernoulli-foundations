@@ -61,7 +61,7 @@ theorem HarmonicOnNhd.integral_toSphere_eq [Nontrivial E] {u : E → ℝ} {x₀ 
     (hu : HarmonicOnNhd u (closedBall x₀ R)) (hR : 0 ≤ R) :
     ∫ θ : sphere (0 : E) 1, u (x₀ + R • (θ : E)) ∂μ.toSphere = μ.toSphere.real univ * u x₀ := by
   set U := {x : E | HarmonicAt u x}
-  have hU : IsOpen U := isOpen_setOf_harmonicAt u
+  have hU : IsOpen U := isOpen_setOfPred_harmonicAt u
   have huU : HarmonicOnNhd u U := fun x hx ↦ hx
   simpa [smul_eq_mul] using integral_toSphere_eq_of_weaklyHarmonic hU
     huU.contDiffOn.continuousOn (HarmonicOnNhd.weaklyHarmonicOn (μ := μ) hU huU)
@@ -123,7 +123,7 @@ theorem HarmonicOnNhd.setIntegral_ball_eq {u : E → ℝ} {x₀ : E} {R : ℝ}
       fun x _ ↦ congrArg u (Subsingleton.elim x x₀), setIntegral_const, smul_eq_mul]
   -- the harmonic points form an open set containing the closed ball
   set U := {x : E | HarmonicAt u x}
-  have hU : IsOpen U := isOpen_setOf_harmonicAt u
+  have hU : IsOpen U := isOpen_setOfPred_harmonicAt u
   have hΩ : closedBall x₀ R ⊆ U := fun x hx ↦ hu x hx
   have huU : HarmonicOnNhd u U := fun x hx ↦ hx
   have h := setIntegral_ball_zero_add_eq hU huU.contDiffOn.continuousOn

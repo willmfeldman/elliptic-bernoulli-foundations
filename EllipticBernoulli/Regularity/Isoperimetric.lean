@@ -96,7 +96,8 @@ theorem lintegral_lintegral_comp_convex_le {g : E d → ℝ≥0∞} (hg : Measur
     ∫⁻ x in S, ∫⁻ y in S, g ((1 - t) • x + t • y) ≤ 2 ^ d * volume S * ∫⁻ y, g y := by
   have hF : Measurable (Function.uncurry fun x y : E d ↦ g ((1 - t) • x + t • y)) := by
     change Measurable fun p : E d × E d ↦ g ((1 - t) • p.1 + t • p.2)
-    exact hg.comp ((continuous_fst.const_smul _).add (continuous_snd.const_smul _)).measurable
+    exact hg.comp
+      (by fun_prop : Continuous fun p : E d × E d ↦ (1 - t) • p.1 + t • p.2).measurable
   rcases le_or_gt (1 / 2) t with h | h
   · calc ∫⁻ x in S, ∫⁻ y in S, g ((1 - t) • x + t • y)
         ≤ ∫⁻ x in S, 2 ^ d * ∫⁻ y, g y := by
@@ -310,7 +311,9 @@ theorem lintegral_lintegral_enorm_sub_le {U : Set (E d)} (hU : IsOpen U) {g : E 
     have hem : AEMeasurable (fun x ↦ ‖e x‖ₑ) volume :=
       (hhi.aestronglyMeasurable.sub (hsmooth n).continuous.aestronglyMeasurable).enorm
     have heB : ∫⁻ x in B, ‖e x‖ₑ ≤ ε₁ n := by
-      rw [hε₁]; dsimp only; rw [eLpNorm_one_eq_lintegral_enorm]
+      rw [hε₁]; dsimp only
+      rw [eLpNorm_one_eq_lintegral_enorm
+        ((hsmooth n).continuous.aestronglyMeasurable.sub hhi.aestronglyMeasurable)]
       refine (setLIntegral_le_lintegral _ _).trans (le_of_eq (lintegral_congr fun x ↦ ?_))
       simp only [hedef, Pi.sub_apply]; rw [enorm_sub_rev]
     -- the double integral
@@ -336,7 +339,9 @@ theorem lintegral_lintegral_enorm_sub_le {U : Set (E d)} (hU : IsOpen U) {g : E 
               setLIntegral_const]
         _ = (∫⁻ x in B, ∫⁻ y in B, ‖hn n x - hn n y‖ₑ) +
               ((∫⁻ x in B, ‖e x‖ₑ) * volume B + volume B * ∫⁻ y in B, ‖e y‖ₑ) := by
-            rw [lintegral_add_right' _ ((hem.mul_const _).add aemeasurable_const).restrict,
+            have hm3 : AEMeasurable (fun x ↦ ‖e x‖ₑ * volume B + ∫⁻ y in B, ‖e y‖ₑ) volume :=
+              (hem.mul_const _).add aemeasurable_const
+            rw [lintegral_add_right' _ hm3.restrict,
               lintegral_add_right' _ aemeasurable_const.restrict, lintegral_mul_const' _ _
                 measure_ball_lt_top.ne, setLIntegral_const]
             ring
@@ -363,7 +368,11 @@ theorem lintegral_lintegral_enorm_sub_le {U : Set (E d)} (hU : IsOpen U) {g : E 
         _ ≤ X + ∫⁻ x, ‖(k ⋆[lsmul ℝ ℝ, volume] (ψ n).normed volume - k) x‖ₑ := by
             rw [lintegral_add_left' hGm]
             exact add_le_add le_rfl (setLIntegral_le_lintegral _ _)
-        _ = X + ε₂ n := by rw [hε₂]; dsimp only; rw [eLpNorm_one_eq_lintegral_enorm]
+        _ = X + ε₂ n := by
+            rw [hε₂]; dsimp only
+            rw [eLpNorm_one_eq_lintegral_enorm ((hHi.norm.aestronglyMeasurable.convolution
+              (L := lsmul ℝ ℝ) (ψ n).continuous_normed.aestronglyMeasurable).sub
+              hHi.norm.aestronglyMeasurable)]
     calc ∫⁻ x in B, ∫⁻ y in B, ‖g x - g y‖ₑ
         ≤ (∫⁻ x in B, ∫⁻ y in B, ‖hn n x - hn n y‖ₑ) + 2 * volume B * ε₁ n := hA
       _ ≤ c * (∫⁻ x in B, ‖fderiv ℝ (hn n) x‖ₑ) + 2 * volume B * ε₁ n :=

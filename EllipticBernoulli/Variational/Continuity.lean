@@ -51,7 +51,7 @@ variable {d : ℕ}
 theorem integrableOn_ball_of_memH1Loc {U : Set (E d)} {w : E d → ℝ} {G : E d → E d}
     (hw : MemH1Loc U w G) {x₀ : E d} {r : ℝ} (hB : closedBall x₀ r ⊆ U) :
     IntegrableOn w (ball x₀ r) := by
-  haveI : IsFiniteMeasure (volume.restrict (closedBall x₀ r)) :=
+  have : IsFiniteMeasure (volume.restrict (closedBall x₀ r)) :=
     isFiniteMeasure_restrict.2 measure_closedBall_lt_top.ne
   have h : IntegrableOn w (closedBall x₀ r) :=
     (hw.2 _ hB (isCompact_closedBall x₀ r)).1.integrable (by norm_num)
@@ -78,22 +78,22 @@ theorem IsObstacleMinimizer.exists_rep_continuousOn_ball {U : Set (E d)}
   have hae : ∀ᵐ x ∂volume.restrict U, w' x = w x := by
     filter_upwards [ae_restrict_of_ae hae_ball] with x hx
     by_cases hxB : x ∈ ball x₀ r
-    · simp only [hw', if_pos hxB]; exact hx hxB
-    · simp only [hw', if_neg hxB]
+    · simp only [hw', ite_eq_left hxB]; exact hx hxB
+    · simp only [hw', ite_eq_right hxB]
   have hGw' : MemH1Loc U w' Gw := by
     refine ⟨hGw.1.congr_fun_ae (hae.mono fun x hx ↦ hx.symm), fun L hL hLc ↦
       ⟨(hGw.2 L hL hLc).1.ae_eq ?_, (hGw.2 L hL hLc).2⟩⟩
     exact (ae_restrict_of_ae_restrict_of_subset hL hae).mono fun x hx ↦ hx.symm
   refine ⟨w', hae, ⟨hGw', fun y hy ↦ ?_, fun y hy ↦ ?_, fun v Gv hv hvout hvK ↦ ?_⟩, ?_⟩
-  · simp only [hw', if_neg hy.2]; exact hwout y hy
+  · simp only [hw', ite_eq_right hy.2]; exact hwout y hy
   · by_cases hyB : y ∈ ball x₀ r
-    · simp only [hw', if_pos hyB]; exact hK y hyB
-    · simp only [hw', if_neg hyB]; exact hwK y hy
+    · simp only [hw', ite_eq_left hyB]; exact hK y hyB
+    · simp only [hw', ite_eq_right hyB]; exact hwK y hy
   · rw [energyJ_congr_ae measurableSet_ball (ae_restrict_of_ae_restrict_of_subset hBU hae)
       (ae_of_all _ fun _ ↦ rfl)]
     exact hwmin v Gv hv hvout hvK
   · exact (continuousOn_ballLimit isOpen_ball hint hosc).congr fun x hx ↦ by
-      simp only [hw', if_pos hx]
+      simp only [hw', ite_eq_left hx]
 
 /-- The ball limits of a two-sided obstacle minimizer satisfy `0 ≤ w' ≤ u` in `B`. -/
 theorem ballLimit_mem_Icc_of_twoSided {U : Set (E d)} (hU : IsOpen U) {u w : E d → ℝ}

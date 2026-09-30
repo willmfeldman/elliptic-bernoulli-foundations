@@ -180,7 +180,7 @@ private theorem false_of_small {d : ℕ} (hd : 1 ≤ d) {U : Set (E d)} (hU : Is
     False := by
   classical
   have hdR : (1 : ℝ) ≤ d := by exact_mod_cast hd
-  haveI : Nontrivial (E d) :=
+  have : Nontrivial (E d) :=
     Module.nontrivial_of_finrank_pos (by rw [finrank_euclideanSpace_fin]; omega)
   set eD := Real.exp ((d : ℝ) / 2) with heD
   have heD1 : 1 ≤ eD := Real.one_le_exp (by positivity)

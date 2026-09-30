@@ -72,7 +72,7 @@ private theorem mem_or_mem_of_mem_closure_posSet_max {W : Set (E d)} {f g : E d 
     x ∈ closure (posSet f W) ∩ W ∨ x ∈ closure (posSet g W) ∩ W := by
   have hunion : posSet (fun y ↦ max (f y) (g y)) W = posSet f W ∪ posSet g W := by
     ext y
-    simp only [posSet, mem_setOf_eq, mem_union, lt_max_iff]
+    simp only [posSet, mem_ofPred_eq, mem_union, lt_max_iff]
     tauto
   rw [hunion, closure_union] at hx
   rcases hx.1 with h | h

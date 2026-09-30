@@ -88,7 +88,7 @@ private theorem divergence_stressField {u Q : E d → ℝ} {ξ : E d → E d} {x
     fderiv_inner_apply ℝ hg hξ _
   have e3 : ⟪∇ u x, fderiv ℝ (∇ u) x (ξ x)⟫ = ⟪fderiv ℝ (∇ u) x (∇ u x), ξ x⟫ := by
     rw [real_inner_comm, inner_fderiv_gradient hDu, inner_fderiv_gradient hDu, hsymm]
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul]
+  simp only [add_apply, smul_apply, smul_eq_mul]
   rw [e1, e2, e3]
   ring
 
@@ -155,7 +155,7 @@ is integrable on `Ω`. -/
 private theorem integrableOn_of_continuousOn_of_eq_zero {Ω C : Set (E d)} {g : E d → ℝ}
     (hΩ : MeasurableSet Ω) (hC : IsCompact C) (hCΩ : C ⊆ Ω) (hg : ContinuousOn g Ω)
     (h0 : ∀ x ∈ Ω, x ∉ C → g x = 0) : IntegrableOn g Ω :=
-  ((hg.mono hCΩ).integrableOn_compact hC).of_forall_diff_eq_zero hΩ fun x hx ↦ h0 x hx.1 hx.2
+  ((hg.mono hCΩ).integrableOn_compact hC).of_forall_sdiff_eq_zero hΩ fun x hx ↦ h0 x hx.1 hx.2
 
 /-! ### The main theorem -/
 
@@ -276,7 +276,7 @@ theorem IsClassicalSolution.integral_innerVarIntegrand_eq_zero_of_tendsto {d : �
     have t3 : |fderiv ℝ (fun y ↦ Q y ^ 2) x (ξ x)| ≤ 2 * MQ * KQ * Mξ := by
       have hD2 : fderiv ℝ (fun y ↦ Q y ^ 2) x = (2 * Q x) • fderiv ℝ Q x := by
         rw [(hQx.hasFDerivAt.pow 2).fderiv]; simp
-      rw [hD2, ContinuousLinearMap.smul_apply, smul_eq_mul, abs_mul, abs_mul, abs_two]
+      rw [hD2, smul_apply, smul_eq_mul, abs_mul, abs_mul, abs_two]
       have h4 : |fderiv ℝ Q x (ξ x)| ≤ KQ * Mξ :=
         (((fderiv ℝ Q x).le_opNorm _).trans
           (mul_le_mul hDQ (hMξ x) (norm_nonneg _) KQ.2))
@@ -301,7 +301,7 @@ theorem IsClassicalSolution.integral_innerVarIntegrand_eq_zero_of_tendsto {d : �
       rw [ae_restrict_iff' hΩK]
       filter_upwards [hQae] with x hx hxΩK
       exact hfB x hxΩK (hx (hΩU hxΩK.1))
-    exact h1.of_forall_diff_eq_zero hΩm fun x hx ↦ hf0 x fun h ↦ hx.2 ⟨hx.1, h⟩
+    exact h1.of_forall_sdiff_eq_zero hΩm fun x hx ↦ hf0 x fun h ↦ hx.2 ⟨hx.1, h⟩
   -- the smooth cut-off `ψ = 1` on `spt ξ`
   obtain ⟨ψ, hψ, hψc, hψU, hψ01, hψ1⟩ := exists_smooth_cutoff hK hU hξU
   have hKψ : K ⊆ tsupport ψ := fun x hx ↦

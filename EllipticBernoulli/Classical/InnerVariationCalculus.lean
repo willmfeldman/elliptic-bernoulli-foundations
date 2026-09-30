@@ -55,7 +55,7 @@ theorem integral_divergence_eq_zero {W : E d → E d} {C : ℝ≥0} (hW : Lipsch
   set b := stdOrthonormalBasis ℝ (E d)
   set g : _ → E d → ℝ := fun i y ↦ ⟪b i, W y⟫ with hg
   have hgL : ∀ i, LipschitzWith (‖innerSL ℝ (b i)‖₊ * C) (g i) := fun i ↦
-    (innerSL ℝ (b i)).lipschitz.comp hW
+    (innerSL ℝ (b i)).lipschitzWith.comp hW
   have hgc : ∀ i, HasCompactSupport (g i) := fun i ↦ hWc.comp_left (g := fun v ↦ ⟪b i, v⟫)
     (by simp)
   have hdiv : (fun x ↦ divergence W x) =ᵐ[volume] fun x ↦ ∑ i, fderiv ℝ (g i) x (b i) := by
@@ -74,7 +74,7 @@ theorem integral_divergence_eq_zero {W : E d → E d} {C : ℝ≥0} (hW : Lipsch
         hK.measure_lt_top.ne (measurable_fderiv_apply_const ℝ _ _).aestronglyMeasurable
         (Eventually.of_forall fun x ↦ ((fderiv ℝ (g i) x).le_opNorm _).trans
           (mul_le_mul_of_nonneg_right (norm_fderiv_le_of_lipschitz ℝ (hgL i)) (norm_nonneg _)))
-    have := hon.of_forall_diff_eq_zero MeasurableSet.univ fun x hx ↦ by
+    have := hon.of_forall_sdiff_eq_zero MeasurableSet.univ fun x hx ↦ by
       rw [fderiv_of_notMem_tsupport ℝ hx.2]; rfl
     exact integrableOn_univ.1 this
   rw [integral_congr_ae hdiv, integral_finsetSum _ fun i _ ↦ hint i]
@@ -213,8 +213,8 @@ theorem contDiffAt_gradient {u : E d → ℝ} {x : E d} {n : ℕ∞} (h : ContDi
 theorem divergence_smul {a : E d → ℝ} {V : E d → E d} {x : E d} (ha : DifferentiableAt ℝ a x)
     (hV : DifferentiableAt ℝ V x) :
     divergence (fun y ↦ a y • V y) x = a x * divergence V x + fderiv ℝ a x (V x) := by
-  rw [divergence, fderiv_fun_smul ha hV, ContinuousLinearMap.coe_add, map_add,
-    ContinuousLinearMap.coe_smul, map_smul, smul_eq_mul, divergence]
+  rw [divergence, fderiv_fun_smul ha hV, ContinuousLinearMap.toLinearMap_add, map_add,
+    ContinuousLinearMap.toLinearMap_smul, map_smul, smul_eq_mul, divergence]
   congr 1
   have : ((fderiv ℝ a x).smulRight (V x) : E d →ₗ[ℝ] E d) =
       (fderiv ℝ a x : E d →ₗ[ℝ] ℝ).smulRight (V x) := rfl
@@ -225,7 +225,7 @@ theorem divergence_smul {a : E d → ℝ} {V : E d → E d} {x : E d} (ha : Diff
 theorem divergence_sub {V W : E d → E d} {x : E d} (hV : DifferentiableAt ℝ V x)
     (hW : DifferentiableAt ℝ W x) :
     divergence (fun y ↦ V y - W y) x = divergence V x - divergence W x := by
-  rw [divergence, fderiv_fun_sub hV hW, ContinuousLinearMap.coe_sub, map_sub]
+  rw [divergence, fderiv_fun_sub hV hW, ContinuousLinearMap.toLinearMap_sub, map_sub]
   rfl
 
 /-- `div ∇u = Δu`. -/
@@ -333,7 +333,7 @@ theorem integral_cutoff_divergence_eq_zero {U : Set (E d)} (hU : IsOpen U) {u : 
         funext y; simp [div_eq_inv_mul]
       exact (contDiff_cutη.differentiable (by simp) _).hasDerivAt.comp_hasFDerivAt x h1
     rw [hW_def, divergence_smul had.differentiableAt (hVx hx), had.fderiv]
-    simp only [ContinuousLinearMap.smul_apply, smul_eq_mul, ha_def]
+    simp only [smul_apply, smul_eq_mul, ha_def]
     rw [fderiv_apply_eq_inner_gradient]
     ring
   rw [setIntegral_congr_ae hΩ.measurableSet hdivΩ,

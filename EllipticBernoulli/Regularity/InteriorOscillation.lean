@@ -81,7 +81,7 @@ theorem measure_shrink_step_interior {U : Set (E d)} (hU : IsOpen U) {f : E d �
     by_cases hxD : x ∈ D
     · have hFx : F x = f x - a := max_eq_left (by linarith [hxD.1])
       have hnc : x ∉ {y | c < F y} := by
-        simp only [mem_setOf_eq, not_lt, hFx, hcdef]; linarith [hxD.2]
+        simp only [mem_ofPred_eq, not_lt, hFx, hcdef]; linarith [hxD.2]
       rw [indicator_of_mem hxD]
       simp only [hGgdef, indicator_of_notMem hnc, sub_zero]
       exact le_amgm hlam
@@ -96,7 +96,7 @@ theorem measure_shrink_step_interior {U : Set (E d)} (hU : IsOpen U) {f : E d �
         · have hfb : b < f x := by
             by_contra hfb; exact hxD ⟨not_le.1 hfa, not_lt.1 hfb⟩
           have hFx : F x = f x - a := max_eq_left (by linarith)
-          have h2 : x ∈ {y | c < F y} := by simp only [mem_setOf_eq, hFx, hcdef]; linarith
+          have h2 : x ∈ {y | c < F y} := by simp only [mem_ofPred_eq, hFx, hcdef]; linarith
           simp [hGgdef, indicator_of_mem h2]
       rw [this, norm_zero]; positivity
   set B := ball z ρ with hBdef
@@ -469,7 +469,7 @@ theorem half_measure_or (f : E d → ℝ) (y : E d) (r k : ℝ) :
 /-- An a.e. two-sided bound on a ball of positive radius forces `m ≤ M`. -/
 theorem le_of_ae_bounds {f : E d → ℝ} {y : E d} {ρ : ℝ} (hρ : 0 < ρ) {m M : ℝ}
     (h : ∀ᵐ x ∂(volume.restrict (ball y ρ)), m ≤ f x ∧ f x ≤ M) : m ≤ M := by
-  haveI : (ae (volume.restrict (ball y ρ))).NeBot := by
+  have : (ae (volume.restrict (ball y ρ))).NeBot := by
     rw [ae_neBot, Ne, Measure.restrict_eq_zero]
     exact (measure_ball_pos volume y hρ).ne'
   obtain ⟨x, hx⟩ := h.exists

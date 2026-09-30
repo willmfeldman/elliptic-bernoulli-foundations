@@ -78,6 +78,7 @@ theorem locallyIntegrableOn_inner_apply {s : Set (E d)} {G : E d → E d}
   obtain ⟨t, ht, hi⟩ := hG x hx
   refine ⟨t, ht, ?_⟩
   have := (innerSL ℝ v).integrable_comp hi
+  rw [IntegrableOn]
   simpa [innerSL_apply_apply, real_inner_comm] using this
 
 /-- A function locally integrable on `U`, times a continuous function with compact support in
@@ -142,7 +143,7 @@ theorem AEStronglyMeasurable.indicator_lt {F : Type*} [NormedAddCommGroup F] {μ
     (hG.stronglyMeasurable_mk).indicator (measurableSet_lt measurable_const
       hv.stronglyMeasurable_mk.measurable), ?_⟩
   filter_upwards [hv.ae_eq_mk, hG.ae_eq_mk] with y hy1 hy2
-  simp only [indicator, mem_setOf_eq, hy1, hy2]
+  simp only [indicator, mem_ofPred_eq, hy1, hy2]
 
 end Integrability
 
@@ -155,7 +156,7 @@ variable {u w : E d → ℝ} {G H : E d → E d}
 theorem fderiv_apply_eq_zero_of_notMem_tsupport {φ : E d → ℝ} {x : E d} (hx : x ∉ tsupport φ)
     (v : E d) : fderiv ℝ φ x v = 0 := by
   have : fderiv ℝ φ x = 0 := Function.notMem_support.1 fun h ↦ hx (support_fderiv_subset ℝ h)
-  rw [this, ContinuousLinearMap.zero_apply]
+  rw [this, zero_apply]
 
 /-- The weak-gradient identity as a whole-space integral. -/
 theorem _root_.EllipticBernoulli.HasWeakGradient.integral_eq
@@ -250,7 +251,7 @@ theorem integral_fderiv_apply_eq_zero {φ : E d → ℝ} (hφ : ContDiff ℝ ∞
   have hI2 : Integrable φ := hφ.continuous.integrable_of_hasCompactSupport hφc
   have key := integral_mul_fderiv_eq_neg_fderiv_mul_of_integrable (μ := volume)
     (f := fun _ ↦ (1 : ℝ)) (g := φ) (v := v)
-    (by simp only [h0, ContinuousLinearMap.zero_apply, zero_mul]; exact integrable_zero _ _ _)
+    (by simp only [h0, zero_apply, zero_mul]; exact integrable_zero _ _ _)
     (by simpa using hI1) (by simpa using hI2)
     (fun x _ ↦ differentiableAt_const _) (fun x _ ↦ (hφ.differentiable (by simp)) x)
   simpa [h0] using key
@@ -318,8 +319,8 @@ theorem _root_.EllipticBernoulli.HasWeakGradient.mul_smooth (hU : IsOpen U)
   have hηc : Continuous η := hη.continuous
   have hηd : Differentiable ℝ η := hη.differentiable (by simp)
   have hdη : Continuous (fun x ↦ fderiv ℝ η x) := hη.continuous_fderiv (by simp)
-  have hgrad : ∀ x v, inner ℝ (∇ η x) v = fderiv ℝ η x v := fun x v ↦
-    inner_gradient_left (hηd x)
+  have hgrad : ∀ x v, inner ℝ (∇ η x) v = fderiv ℝ η x v := fun _ _ ↦
+    inner_gradient_left
   have hgradc : Continuous (∇ η) := continuous_gradient (hη.of_le (by simp))
   refine HasWeakGradient.of_integral_eq ?_ ?_ fun φ hφ hφc hφU v ↦ ?_
   · simpa [smul_eq_mul] using locallyIntegrableOn_continuous_smul hU hu.1 hηc
@@ -483,8 +484,7 @@ theorem _root_.EllipticBernoulli.HasWeakGradient.comp (hU : IsOpen U)
     have := ((ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp hconvG).const_mul ((M : ℝ) * Cφ)
     simpa using this
   have hmeas : TendstoInMeasure volume vn atTop Uf :=
-    tendstoInMeasure_of_tendsto_eLpNorm one_ne_zero (fun n ↦ (hvc n).aestronglyMeasurable)
-      hUint.1 hconvU
+    tendstoInMeasure_of_tendsto_eLpNorm one_ne_zero hconvU
   obtain ⟨ns, hns, hae⟩ := hmeas.exists_seq_tendsto_ae
   have hclassical : ∀ n, ∫ x, f (vn n x) * pφ x = -∫ x, deriv f (vn n x) * wn n x * φ x := by
     intro n
@@ -495,7 +495,7 @@ theorem _root_.EllipticBernoulli.HasWeakGradient.comp (hU : IsOpen U)
       intro x
       have h := (hfd (vn n x)).hasDerivAt.comp_hasFDerivAt x
         (hv1.differentiable one_ne_zero x).hasFDerivAt
-      rw [h.fderiv, ContinuousLinearMap.smul_apply, smul_eq_mul]
+      rw [h.fderiv, smul_apply, smul_eq_mul]
     have hcont1 : Continuous fun x ↦ fderiv ℝ (f ∘ vn n) x v :=
       (hfv.continuous_fderiv one_ne_zero).clm_apply continuous_const
     have key := integral_mul_fderiv_eq_neg_fderiv_mul_of_integrable (μ := volume)
@@ -531,8 +531,10 @@ theorem _root_.EllipticBernoulli.HasWeakGradient.comp (hU : IsOpen U)
       calc ‖f (vn n x) - f (Uf x)‖ * ‖pφ x‖
           ≤ ((M : ℝ) * ‖vn n x - Uf x‖) * Cp := by gcongr; exact hCp x
         _ = (M : ℝ) * Cp * ‖vn n x - Uf x‖ := by ring
-    · rw [integral_const_mul, integral_norm_eq_lintegral_enorm ((hvc n).aestronglyMeasurable.sub
-        hUint.1), eLpNorm_one_eq_lintegral_enorm]
+    · have hm : AEStronglyMeasurable (vn n - Uf) volume :=
+        (hvc n).aestronglyMeasurable.sub hUint.1
+      rw [integral_const_mul, integral_norm_eq_lintegral_enorm hm,
+        eLpNorm_one_eq_lintegral_enorm hm]
   have hintG : Integrable (fun x ↦ deriv f (Uf x) * Gf x * φ x) :=
     integrable_bdd_mul_mul_bdd (hf'c.comp_aestronglyMeasurable hUint.1) (fun x ↦ hMr _)
       hGint hφcont.aestronglyMeasurable hCφ
@@ -565,9 +567,10 @@ theorem _root_.EllipticBernoulli.HasWeakGradient.comp (hU : IsOpen U)
               · exact hMr _
               · exact hCφ x
           _ = (M : ℝ) * Cφ * ‖wn (ns i) x - Gf x‖ := by ring
-      · dsimp only
-        rw [integral_const_mul, integral_norm_eq_lintegral_enorm
-          ((hwc _).aestronglyMeasurable.sub hGint.1), eLpNorm_one_eq_lintegral_enorm]
+      · have hm : AEStronglyMeasurable (wn (ns i) - Gf) volume :=
+          (hwc _).aestronglyMeasurable.sub hGint.1
+        rw [integral_const_mul, integral_norm_eq_lintegral_enorm hm,
+          eLpNorm_one_eq_lintegral_enorm hm]
     have hpiece2 : Tendsto (fun i ↦ ∫ x, deriv f (vn (ns i) x) * Gf x * φ x) atTop
         (𝓝 (∫ x, deriv f (Uf x) * Gf x * φ x)) := by
       refine tendsto_integral_of_dominated_convergence (fun x ↦ (M : ℝ) * Cφ * ‖Gf x‖)
@@ -768,7 +771,6 @@ theorem _root_.EllipticBernoulli.HasWeakGradient.posPart (hU : IsOpen U)
       (integrable_mul_of_locallyIntegrableOn hw.1 hpc hpcs hps).norm.integrableOn
       (fun n ↦ Eventually.of_forall fun x ↦ ?_) (Eventually.of_forall fun x ↦ ?_)
     · obtain ⟨h0, h1⟩ := posPartApprox_mem (hεpos n).le (u x)
-      dsimp only
       rw [norm_mul, norm_mul, Real.norm_eq_abs (posPartApprox _ _), abs_of_nonneg h0]
       gcongr
       refine h1.trans ?_
@@ -784,7 +786,6 @@ theorem _root_.EllipticBernoulli.HasWeakGradient.posPart (hU : IsOpen U)
       (integrable_mul_of_locallyIntegrableOn hgloc hφcont hφcs hφΩ).norm.integrableOn
       (fun n ↦ Eventually.of_forall fun x ↦ ?_) (Eventually.of_forall fun x ↦ ?_)
     · obtain ⟨h0, h1⟩ := deriv_posPartApprox_mem (hεpos n).ne' (u x)
-      dsimp only
       rw [norm_mul, norm_mul, norm_mul, Real.norm_eq_abs (deriv _ _), abs_of_nonneg h0]
       calc deriv (posPartApprox (ε n)) (u x) * ‖g x‖ * ‖φ x‖
           ≤ 1 * ‖g x‖ * ‖φ x‖ := by gcongr
@@ -810,7 +811,7 @@ theorem memLp_continuous_smul {F : Type*} [NormedAddCommGroup F] [NormedSpace �
     {K : Set (E d)} (hK : IsCompact K) {η : E d → ℝ} (hη : Continuous η) {f : E d → F}
     (hf : MemLp f 2 (volume.restrict K)) : MemLp (fun x ↦ η x • f x) 2 (volume.restrict K) := by
   obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hη.continuousOn
-  refine (hf.const_smul C).of_le (hη.aestronglyMeasurable.smul hf.1) ?_
+  refine (hf.const_smul C).of_le (hη.aestronglyMeasurable.smul hf.aestronglyMeasurable) ?_
   refine (ae_restrict_iff' hK.measurableSet).2 (Eventually.of_forall fun x hx ↦ ?_)
   rw [norm_smul, Pi.smul_apply, norm_smul]
   exact mul_le_mul_of_nonneg_right ((hC x hx).trans (le_abs_self C) |>.trans_eq
@@ -820,7 +821,7 @@ theorem memLp_smul_continuous {F : Type*} [NormedAddCommGroup F] [NormedSpace �
     {K : Set (E d)} (hK : IsCompact K) {f : E d → ℝ} (hf : MemLp f 2 (volume.restrict K))
     {g : E d → F} (hg : Continuous g) : MemLp (fun x ↦ f x • g x) 2 (volume.restrict K) := by
   obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hg.continuousOn
-  refine (hf.const_mul C).of_le (hf.1.smul hg.aestronglyMeasurable) ?_
+  refine (hf.const_mul C).of_le (hf.aestronglyMeasurable.smul hg.aestronglyMeasurable) ?_
   refine (ae_restrict_iff' hK.measurableSet).2 (Eventually.of_forall fun x hx ↦ ?_)
   rw [norm_smul, norm_mul, mul_comm]
   exact mul_le_mul_of_nonneg_right ((hC x hx).trans (le_abs_self C) |>.trans_eq
@@ -842,7 +843,7 @@ theorem _root_.EllipticBernoulli.MemH1Loc.sub (hu : MemH1Loc U u G) (hw : MemH1L
 
 theorem memH1Loc_const (c : ℝ) : MemH1Loc U (fun _ ↦ c) (fun _ ↦ 0) := by
   refine ⟨hasWeakGradient_const c, fun K _ hKc ↦ ?_⟩
-  haveI : IsFiniteMeasure (volume.restrict K) :=
+  have : IsFiniteMeasure (volume.restrict K) :=
     isFiniteMeasure_restrict.2 hKc.measure_lt_top.ne
   exact ⟨memLp_const c, memLp_const 0⟩
 
@@ -871,13 +872,15 @@ theorem memH1Loc_posPart {U : Set (E d)} {v : E d → ℝ} {G : E d → E d} (hU
     MemH1Loc U (fun y ↦ max (v y) 0) ({y | 0 < v y}.indicator G) := by
   refine ⟨hv.1.posPart hU, fun K hK hKc ↦ ⟨?_, ?_⟩⟩
   · have h := (hv.2 K hK hKc).1
-    refine h.of_le ((continuous_id.max continuous_const).comp_aestronglyMeasurable h.1)
+    refine h.of_le ((continuous_id.max continuous_const).comp_aestronglyMeasurable
+      h.aestronglyMeasurable)
       (Eventually.of_forall fun x ↦ ?_)
     simp only [Real.norm_eq_abs]
     rw [abs_of_nonneg (le_max_right _ _)]
     exact max_le (le_abs_self _) (abs_nonneg _)
   · have h := (hv.2 K hK hKc)
-    exact h.2.of_le (AEStronglyMeasurable.indicator_lt h.1.1 h.2.1 0)
+    exact h.2.of_le (AEStronglyMeasurable.indicator_lt h.1.aestronglyMeasurable
+      h.2.aestronglyMeasurable 0)
       (Eventually.of_forall fun x ↦ norm_indicator_le_norm_self _ _)
 
 /-- `(u - k)₊ ∈ H¹_loc` with weak gradient `1_{u > k} G`. -/

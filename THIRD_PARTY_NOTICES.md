@@ -15,7 +15,7 @@ This project is released under the Apache License 2.0 (`LICENSE`).
 Everything else is original to this project. It uses these Lake dependencies as ordinary libraries, with no code
 copied:
 - Mathlib;
-- viscosity-solution-theory (https://github.com/willmfeldman/viscosity-solution-theory, v0.2.0), which pulls in
+- viscosity-solution-theory (https://github.com/willmfeldman/viscosity-solution-theory, v0.3.0), which pulls in
   aleksandrov-differentiability.
 
 All are Apache-2.0.

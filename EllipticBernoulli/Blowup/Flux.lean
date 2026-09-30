@@ -206,7 +206,7 @@ theorem innerVarIntegrand_field {q s : ℝ} {v χ : E 2 → ℝ} {e y : E 2} (he
   have hee : ⟪e, e⟫ = 1 := by rw [real_inner_self_eq_norm_sq, he]; norm_num
   simp only [innerVarIntegrand, hg, divergence_field, fderiv_field_apply, norm_smul, he,
     Real.norm_eq_abs, map_smul, real_inner_smul_left, real_inner_smul_right, hee, flux,
-    fderiv_const_apply, ContinuousLinearMap.zero_apply, zero_mul, add_zero, mul_one, sq_abs]
+    fderiv_const_apply, zero_apply, zero_mul, add_zero, mul_one, sq_abs]
   ring
 
 end PlanarFlux

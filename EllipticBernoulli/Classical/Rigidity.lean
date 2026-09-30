@@ -106,7 +106,7 @@ theorem false_of_isViscSuper_of_norm_gradient_attained {v : E d → ℝ} (hvc : 
   have hhconst : ∀ z ∈ Ω, h z = ℓ₀ := by
     intro z hz
     have := HarmonicOnNhd.eqOn_of_isMaxOn hΩo hΩc (hhh.mono hΩP) h0Ω
-      (fun y hy ↦ by rw [mem_setOf_eq, hh0]; exact hh_le y (hΩP hy)) hz
+      (fun y hy ↦ by rw [mem_ofPred_eq, hh0]; exact hh_le y (hΩP hy)) hz
     rw [this, hh0]
   have hgradΩ : ∀ z ∈ Ω, ∇ v z = ℓ₀ • e := by
     intro z hz
@@ -132,18 +132,18 @@ theorem false_of_isViscSuper_of_norm_gradient_attained {v : E d → ℝ} (hvc : 
     rw [(haffd z).fderiv]
     ext w
     rw [fderiv_apply_eq_inner_gradient, hgradΩ z hz, real_inner_smul_left,
-      ContinuousLinearMap.smul_apply, hA, innerSL_apply_apply, smul_eq_mul, real_inner_comm]
+      smul_apply, hA, innerSL_apply_apply, smul_eq_mul, real_inner_comm]
   -- Step 2: `Ω` is the half-space `H`
   set H : Set (E d) := {z | 0 < aff z} with hH
   have hHc : IsPreconnected H := by
     have : H = {z | -v 0 < (ℓ₀ • A) z} := by
-      ext z; simp only [hH, haff, mem_setOf_eq, ContinuousLinearMap.smul_apply, smul_eq_mul]
+      ext z; simp only [hH, haff, mem_ofPred_eq, smul_apply, smul_eq_mul]
       constructor <;> intro h <;> linarith
     rw [this]
     exact (convex_halfSpace_gt (ℓ₀ • A).isLinear _).isPreconnected
   have hΩH : Ω ⊆ H := fun z hz ↦ by
     have := hΩP hz
-    simp only [hP, mem_setOf_eq] at this
+    simp only [hP, mem_ofPred_eq] at this
     rwa [hvaff hz] at this
   have hHΩ : H ⊆ Ω := by
     refine hHc.subset_of_closure_inter_subset hΩo ⟨0, hΩH h0Ω, h0Ω⟩ ?_
@@ -200,7 +200,9 @@ theorem false_of_isViscSuper_of_norm_gradient_attained {v : E d → ℝ} (hvc : 
   have hTp : T p = 0 := by rw [hTeq, sub_self, inner_zero_right]
   have hfd : ∀ s, HasDerivAt f (ℓ' + 2 * s) s := fun s ↦ by
     have := ((hasDerivAt_id s).const_mul ℓ').add ((hasDerivAt_id s).pow 2)
-    convert this using 1; simp
+    convert this using 1
+    · funext y; simp [hf]
+    · simp
   have hdf : deriv f = fun s ↦ ℓ' + 2 * s := funext fun s ↦ (hfd s).deriv
   have hddf : deriv (deriv f) = fun _ ↦ 2 := by
     rw [hdf]; funext s

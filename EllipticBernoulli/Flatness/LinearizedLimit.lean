@@ -372,7 +372,7 @@ theorem exists_touch_seq {D : ℕ → Set (E d)} {K : Set (E d)} {f : ℕ → E 
     simpa [hPx] using this
   refine ⟨xs, c, hxsx, hcx, hxsD.mono fun k h ↦ ⟨h.1.1, by simp [hc], fun y hy ↦ ?_⟩⟩
   have := h.2 hy
-  simp only [mem_setOf_eq] at this
+  simp only [mem_ofPred_eq] at this
   simp only [hc]
   linarith
 
@@ -789,7 +789,7 @@ theorem linearized_limit (hd : 2 ≤ d) {U : ℕ → Set (E d)} {Q u : ℕ → E
       have hq : 0 < (‖z - x‖ ^ 2) ^ 2 := by
         have : z - x ≠ 0 := sub_ne_zero.2 hzx
         positivity
-      simp only [mem_setOf_eq] at h
+      simp only [mem_ofPred_eq] at h
       linarith)
     rw [h2, h3] at hcore
     exact hcore
@@ -806,7 +806,7 @@ theorem linearized_limit (hd : 2 ≤ d) {U : ℕ → Set (E d)} {Q u : ℕ → E
       have hq : 0 < (‖z - x‖ ^ 2) ^ 2 := by
         have : z - x ≠ 0 := sub_ne_zero.2 hzx
         positivity
-      simp only [mem_setOf_eq] at h
+      simp only [mem_ofPred_eq] at h
       linarith [htouch.2.2])
     rw [h2, h3] at hcore
     exact hcore

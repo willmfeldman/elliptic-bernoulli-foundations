@@ -81,7 +81,7 @@ theorem eLpNorm_fderiv_convolution_le {g : E d → ℝ} {G : E d → E d}
   set gn := g ⋆[lsmul ℝ ℝ, volume] ρ.normed volume with hgn
   have hGip : ∀ i, MemLp (Gi i) p := fun i ↦ hGp.inner_const (b i)
   have hGiG : ∀ i, eLpNorm (Gi i) p volume ≤ eLpNorm G p volume := fun i ↦
-    eLpNorm_mono fun x ↦ by
+    eLpNorm_mono (hGip i).aestronglyMeasurable fun x ↦ by
       calc ‖Gi i x‖ = |inner ℝ (G x) (b i)| := Real.norm_eq_abs _
         _ ≤ ‖G x‖ * ‖b i‖ := abs_real_inner_le_norm _ _
         _ = ‖G x‖ := by rw [b.orthonormal.1 i, mul_one]
@@ -97,11 +97,6 @@ theorem eLpNorm_fderiv_convolution_le {g : E d → ℝ} {G : E d → E d}
   have hρnn : (0 : E d → ℝ) ≤ ρ.normed volume := fun x ↦ ρ.nonneg_normed x
   have hρm : AEStronglyMeasurable (ρ.normed volume) volume :=
     (ρ.contDiff_normed (n := 1)).continuous.aestronglyMeasurable
-  have hmeas : ∀ i, AEStronglyMeasurable
-      (fun x ↦ |(Gi i ⋆[lsmul ℝ ℝ, volume] ρ.normed volume) x|) volume := fun i ↦
-    (ρ.hasCompactSupport_normed.continuous_convolution_right (L := lsmul ℝ ℝ)
-      ((hGip i).locallyIntegrable (by exact_mod_cast hp1))
-      (ρ.contDiff_normed (n := 0)).continuous).abs.aestronglyMeasurable
   have hY : ∀ i, eLpNorm (fun x ↦ |(Gi i ⋆[lsmul ℝ ℝ, volume] ρ.normed volume) x|) p volume ≤
       eLpNorm G p volume := by
     intro i
@@ -112,19 +107,19 @@ theorem eLpNorm_fderiv_convolution_le {g : E d → ℝ} {G : E d → E d}
     rw [ENNReal.ofReal_coe_nnreal] at h
     have e : eLpNorm (fun x ↦ |(Gi i ⋆[lsmul ℝ ℝ, volume] ρ.normed volume) x|) p volume =
         eLpNorm (Gi i ⋆[lsmul ℝ ℝ, volume] ρ.normed volume) p volume := by
-      conv_rhs => rw [← eLpNorm_norm]
+      conv_rhs => rw [← eLpNorm_norm _ ((hGip i).aestronglyMeasurable.convolution _ hρm)]
       simp only [Real.norm_eq_abs]
     rw [e]
     exact h.trans (hGiG i)
   calc eLpNorm (fderiv ℝ gn) p volume
       ≤ eLpNorm (∑ i, fun x ↦ |(Gi i ⋆[lsmul ℝ ℝ, volume] ρ.normed volume) x|) p volume := by
-        refine eLpNorm_mono fun x ↦ ?_
+        refine eLpNorm_mono (measurable_fderiv ℝ gn).aestronglyMeasurable fun x ↦ ?_
         rw [Finset.sum_apply, Real.norm_eq_abs,
           abs_of_nonneg (Finset.sum_nonneg fun i _ ↦ abs_nonneg _)]
         refine (norm_le_sum_abs_apply_basisFun _).trans (le_of_eq ?_)
         exact Finset.sum_congr rfl fun i _ ↦ by rw [hder]
     _ ≤ ∑ i, eLpNorm (fun x ↦ |(Gi i ⋆[lsmul ℝ ℝ, volume] ρ.normed volume) x|) p volume :=
-        eLpNorm_sum_le (fun i _ ↦ hmeas i) (by exact_mod_cast hp1)
+        eLpNorm_sum_le (by exact_mod_cast hp1)
     _ ≤ ∑ _i : Fin d, eLpNorm G p volume := Finset.sum_le_sum fun i _ ↦ hY i
     _ = d * eLpNorm G p volume := by
         rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
@@ -190,11 +185,10 @@ theorem eLpNorm_le_sobolev_support (hd : 2 ≤ d) {g : E d → ℝ} {G : E d →
   have hbound : ∀ n, eLpNorm g 2 volume ≤ eLpNorm (gn n - g) 2 volume +
       (K : ℝ≥0∞) * (d * eLpNorm G p volume) := by
     intro n
-    have hm1 : AEStronglyMeasurable (gn n) volume := (hsmooth n).continuous.aestronglyMeasurable
     have e : g = gn n - (gn n - g) := by abel
     calc eLpNorm g 2 volume = eLpNorm (gn n - (gn n - g)) 2 volume := by rw [← e]
       _ ≤ eLpNorm (gn n) 2 volume + eLpNorm (gn n - g) 2 volume :=
-          eLpNorm_sub_le hm1 (hm1.sub hg.1) (by norm_num)
+          eLpNorm_sub_le (by norm_num)
       _ ≤ (K : ℝ≥0∞) * (d * eLpNorm G p volume) + eLpNorm (gn n - g) 2 volume := by
           gcongr
           exact hGNS n
@@ -214,9 +208,9 @@ theorem eLpNorm_le_sobolev_support (hd : 2 ≤ d) {g : E d → ℝ} {G : E d →
     field_simp
     ring
   have hHolder : eLpNorm G p volume ≤ eLpNorm G 2 volume * volume S ^ (1 / (d : ℝ)) := by
-    rw [← eLpNorm_restrict_eq_of_support_subset hGsupp]
+    rw [← eLpNorm_restrict_eq_of_support_subset hG.aestronglyMeasurable hGsupp]
     refine (eLpNorm_le_eLpNorm_mul_rpow_measure_univ (p := (p : ℝ≥0∞)) (q := 2)
-      (by exact_mod_cast hp2) hG.1.restrict).trans ?_
+      (by exact_mod_cast hp2) hG.aestronglyMeasurable.restrict).trans ?_
     rw [Measure.restrict_apply_univ, hS', measure_toMeasurable, hexp]
     gcongr
     exact Measure.restrict_le_self
@@ -266,7 +260,7 @@ theorem integral_sq_le_of_sobolevSupport {C : ℝ≥0} (hS : SobolevSupport d C)
     ne_top_of_le_ne_top hgc.isCompact.measure_lt_top.ne (measure_mono (subset_tsupport g))
   have hRHS : (C : ℝ≥0∞) * volume {x | g x ≠ 0} ^ (1 / (d : ℝ)) * eLpNorm G 2 volume ≠ ⊤ :=
     ENNReal.mul_ne_top (ENNReal.mul_ne_top ENNReal.coe_ne_top
-      (ENNReal.rpow_ne_top_of_nonneg (by positivity) hfin)) hG.2.ne
+      (ENNReal.rpow_ne_top_of_nonneg (by positivity) hfin)) hG.ne
   have h2 := ENNReal.toReal_mono hRHS h
   rw [ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.coe_toReal,
     ← ENNReal.toReal_rpow] at h2

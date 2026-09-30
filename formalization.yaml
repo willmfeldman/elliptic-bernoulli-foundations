@@ -14,8 +14,8 @@ project:
   license: "Apache-2.0"
   language: "Lean"
   theorem_prover: "Lean 4"
-  lean_toolchain: "leanprover/lean4:v4.30.0"
-  mathlib: "v4.30.0"
+  lean_toolchain: "leanprover/lean4:v4.34.1"
+  mathlib: "v4.34.1"
   description: >-
     Lean 4 formalization of foundational results for the elliptic one-phase
     Bernoulli free boundary problem Δu = 0 in {u > 0}, |∇u| = Q on ∂{u > 0},
@@ -27,13 +27,13 @@ project:
 dependencies:
   - name: "mathlib"
     url: "https://github.com/leanprover-community/mathlib4"
-    rev: "c5ea00351c28e24afc9f0f84379aa41082b1188f"
+    rev: "d13f23b723b8a846827a245b89c10fc7d3f11612"
   - name: "viscosity_solns"
     url: "https://github.com/willmfeldman/viscosity-solution-theory"
-    rev: "3a9310934abe88875ed27fc6343ec1423f2850bc"
+    rev: "067e2540ad1594408c0b6145c5bde01b4d5791a9"
   - name: "AleksandrovDifferentiability"
     url: "https://github.com/willmfeldman/aleksandrov-differentiability"
-    rev: "730e7e9256c7e8018abad3bbc50a0598c656b61c"
+    rev: "6b318246f170ac472de4728e22f95a2adae420a5"
 
 build:
   package_file: "lakefile.toml"
@@ -261,11 +261,11 @@ comparator:
       Mathlib only, Challenge.lean states the claims with `sorry`, and Solution.lean imports
       EllipticBernoulli and proves the same statements.
     release_workflow: ".github/workflows/release-comparator.yml"
-    comparator_revision: "d03acab154d269c06e60e4de7e4cc85deebff94b"
-    lean4export_revision: "a3e35a584f59b390667db7269cd37fca8575e4bf"
-    landrun_revision: "5ed4a3db3a4ad930d577215c6b9abaa19df7f99f"
-    toolchain: "leanprover/lean4:v4.30.0"
-    mathlib: "v4.30.0"
+    comparator_revision: "575674928e239f5bc452aab72d1dd7b0f1326494"
+    lean4export_revision: "076e8e57707e813375e8f9da8bf989799ace9680"
+    landrun_revision: "811cfff51ceaf3d9843708aa6d22e9b84ccac8b4"
+    toolchain: "leanprover/lean4:v4.34.1"
+    mathlib: "v4.34.1"
     permitted_axioms:
       - "propext"
       - "Classical.choice"

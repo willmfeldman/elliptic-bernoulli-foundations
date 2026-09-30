@@ -192,9 +192,9 @@ theorem caccioppoli_of_step {F : E d → ℝ} {GF : E d → E d} {z : E d} {R₀
         integral_const_mul, setIntegral_indicator measurableSet_closedBall.compl]
     have h4 : ∫ x in ball z t ∩ (closedBall z s)ᶜ, ‖GF x‖ ^ 2 ≤ Φ t - Φ s := by
       have e : ∫ x in ball z t \ ball z s, ‖GF x‖ ^ 2 = Φ t - Φ s :=
-        setIntegral_diff measurableSet_ball (hGFσ t htR₀) (ball_subset_ball hst.le)
+        setIntegral_sdiff measurableSet_ball (hGFσ t htR₀) (ball_subset_ball hst.le)
       rw [← e]
-      refine setIntegral_mono_set ((hGFσ t htR₀).mono_set diff_subset)
+      refine setIntegral_mono_set ((hGFσ t htR₀).mono_set sdiff_subset)
         (ae_of_all _ fun _ ↦ sq_nonneg _) (Eventually.of_forall fun x hx ↦ ?_)
       exact ⟨hx.1, fun h ↦ hx.2 (ball_subset_closedBall h)⟩
     have h5 : ∫ x in ball z t, F x ^ 2 ≤ S :=

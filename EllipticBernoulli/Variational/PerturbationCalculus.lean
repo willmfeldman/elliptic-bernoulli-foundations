@@ -57,7 +57,7 @@ theorem integral_pos_of_continuousOn {U K : Set (E d)} (hU : IsOpen U) (hK : IsC
     (hgK : ∀ x ∈ U \ K, g x = 0) {y : E d} (hy : y ∈ U) (hgy : 0 < g y) :
     0 < ∫ x in U, g x := by
   have hint : IntegrableOn g U :=
-    ((hg.mono hKU).integrableOn_compact hK).of_forall_diff_eq_zero hU.measurableSet hgK
+    ((hg.mono hKU).integrableOn_compact hK).of_forall_sdiff_eq_zero hU.measurableSet hgK
   have hnn : 0 ≤ᵐ[volume.restrict U] g := by
     rw [EventuallyLE, ae_restrict_iff' hU.measurableSet]
     exact Eventually.of_forall fun x hx ↦ hg0 x hx
@@ -72,7 +72,7 @@ theorem integrableOn_posTerm {K : Set (E d)} (hK : IsCompact K) {Q v : E d → �
     (hQ : ContinuousOn Q K) {C : ℝ} (hC : ∀ x ∈ K, |Q x| ≤ C)
     (hv : AEStronglyMeasurable v (volume.restrict K)) :
     IntegrableOn (fun x ↦ Q x ^ 2 * (Ioi (0 : ℝ)).indicator 1 (v x)) K := by
-  haveI : IsFiniteMeasure (volume.restrict K) :=
+  have : IsFiniteMeasure (volume.restrict K) :=
     isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
   have hKm : MeasurableSet K := hK.isClosed.measurableSet
   have hind : Measurable ((Ioi (0 : ℝ)).indicator (1 : ℝ → ℝ)) :=
@@ -96,7 +96,7 @@ theorem integrableOn_posTerm {K : Set (E d)} (hK : IsCompact K) {Q v : E d → �
 theorem integrableOn_inner_gradient {K : Set (E d)} (hK : IsCompact K) {G : E d → E d}
     (hG : MemLp G 2 (volume.restrict K)) {φ : E d → ℝ} (hφ : ContDiff ℝ 1 φ) :
     IntegrableOn (fun x ↦ inner ℝ (G x) (∇ φ x)) K := by
-  haveI : IsFiniteMeasure (volume.restrict K) :=
+  have : IsFiniteMeasure (volume.restrict K) :=
     isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
   have hKm : MeasurableSet K := hK.isClosed.measurableSet
   have hc : Continuous (∇ φ) := continuous_gradient hφ
@@ -133,10 +133,10 @@ theorem energyJ_lt_of_le_add_inner {U B K : Set (E d)} {Q w w' φ : E d → ℝ}
   rw [energyJ_split hKm hB hKB Q w', energyJ_split hKm hB hKB Q w] at *
   -- off `K` the energies agree
   have hGae : ∀ᵐ x ∂(volume.restrict (U \ K)), Gw' x = Gw x :=
-    hw'.1.ae_eq_of_eqOn hU (hU.sdiff hK.isClosed) diff_subset hw.1 fun x hx ↦ heq x hx
+    hw'.1.ae_eq_of_eqOn hU (hU.sdiff hK.isClosed) sdiff_subset hw.1 fun x hx ↦ heq x hx
   have hout : energyJ (B \ K) Q w' Gw' = energyJ (B \ K) Q w Gw :=
     energyJ_congr (fun x hx ↦ heq x ⟨hBU' hx.1, hx.2⟩)
-      (ae_restrict_of_ae_restrict_of_subset (diff_subset_diff_left hBU') hGae)
+      (ae_restrict_of_ae_restrict_of_subset (sdiff_subset_sdiff_left hBU') hGae)
   rw [hout]
   have hfin : energyJ (B \ K) Q w Gw ≠ ⊤ :=
     (lt_of_le_of_lt le_add_self hfinB).ne
@@ -154,9 +154,11 @@ theorem energyJ_lt_of_le_add_inner {U B K : Set (E d)} {Q w w' φ : E d → ℝ}
   have hF'nn : ∀ x, 0 ≤ F' x :=
     fun x ↦ add_nonneg (sq_nonneg _) (mul_nonneg (sq_nonneg _) (hind0 _))
   have hFi : IntegrableOn F K :=
-    hL2.2.norm.integrable_sq.add (integrableOn_posTerm hK (hQc.mono hKU) hQK hL2.1.1)
+    hL2.2.norm.integrable_sq.add
+      (integrableOn_posTerm hK (hQc.mono hKU) hQK hL2.1.aestronglyMeasurable)
   have hF'i : IntegrableOn F' K :=
-    hL2'.2.norm.integrable_sq.add (integrableOn_posTerm hK (hQc.mono hKU) hQK hL2'.1.1)
+    hL2'.2.norm.integrable_sq.add
+      (integrableOn_posTerm hK (hQc.mono hKU) hQK hL2'.1.aestronglyMeasurable)
   have hIi : IntegrableOn (fun x ↦ inner ℝ (Gw' x - Gw x) (∇ φ x)) K :=
     integrableOn_inner_gradient hK (hL2'.2.sub hL2.2) (hφ.of_le (by simp))
   -- integration by parts
@@ -166,7 +168,7 @@ theorem energyJ_lt_of_le_add_inner {U B K : Set (E d)} {Q w w' φ : E d → ℝ}
   have hIBP := (hw'.1.sub hw.1).integral_inner_gradient_eq_neg hU hK hKU h0 hφ
   have hKtoU : ∫ x in U, inner ℝ (Gw' x - Gw x) (∇ φ x) =
       ∫ x in K, inner ℝ (Gw' x - Gw x) (∇ φ x) := by
-    refine setIntegral_eq_of_subset_of_ae_diff_eq_zero hU.measurableSet.nullMeasurableSet hKU ?_
+    refine setIntegral_eq_of_subset_of_ae_sdiff_eq_zero hU.measurableSet.nullMeasurableSet hKU ?_
     rw [ae_restrict_iff' (hU.measurableSet.diff hKm)] at hGae
     filter_upwards [hGae] with x hx hxUK
     rw [hx hxUK, sub_self, inner_zero_left]

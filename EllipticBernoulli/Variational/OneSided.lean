@@ -129,7 +129,7 @@ theorem exists_energy_lt_of_touchesAbove {U B : Set (E d)} {Q w φ : E d → ℝ
     have hsub : ball x ε ∩ P ⊆ {y | 0 ≤ φ y} := fun y hy ↦ by
       have h1 := (hεP y hy.1).1 ⟨subset_closure hy.2, hy.2.1⟩
       by_contra hneg
-      rw [mem_setOf_eq, not_le] at hneg
+      rw [mem_ofPred_eq, not_le] at hneg
       rw [max_eq_right hneg.le] at h1
       exact absurd hy.2.2 (not_lt.2 h1)
     intro y hy
@@ -167,7 +167,8 @@ theorem energyJ_lt_of_lt_of_eqOn_compl {U B B' : Set (E d)} {Q w w' : E d → �
   have hGae := (hw'.1.sub hw.1).ae_eq_zero_of_eq_zero hU
   have hout : energyJ (B' \ B) Q w' Gw' = energyJ (B' \ B) Q w Gw := by
     refine energyJ_congr (fun y hy ↦ heq y ⟨hB'U' hy.1, hy.2⟩) ?_
-    have := ae_restrict_of_ae_restrict_of_subset (show B' \ B ⊆ U from diff_subset.trans hB'U') hGae
+    have :=
+      ae_restrict_of_ae_restrict_of_subset (show B' \ B ⊆ U from sdiff_subset.trans hB'U') hGae
     rw [ae_restrict_iff' (hB'.diff hB)] at this ⊢
     filter_upwards [this] with y hy hyB
     exact sub_eq_zero.1 (hy hyB (by rw [heq y ⟨hB'U' hyB.1, hyB.2⟩, sub_self]))

@@ -48,7 +48,7 @@ theorem memLp_two_and_eLpNorm_le_of_restrict {F F' : Type*} [NormedAddCommGroup 
   · rw [← hind, memLp_indicator_iff_restrict hT]
     exact hg.of_le_mul hf (Eventually.of_forall hfg)
   · rw [← hind, eLpNorm_indicator_eq_eLpNorm_restrict hT]
-    exact eLpNorm_le_mul_eLpNorm_of_ae_le_mul (Eventually.of_forall hfg) 2
+    exact eLpNorm_le_mul_eLpNorm_of_ae_le_mul hf (Eventually.of_forall hfg) 2
 
 /-- **Product rule with a cut-off.** If `G` is a weak gradient of `u` in `U`, `u, G` are locally
 integrable on `U`, and `ζ ∈ C^∞_c` with `tsupport ζ ⊆ U`, then `ζ u` has the weak gradient
@@ -73,7 +73,7 @@ theorem hasWeakGradientUniv_mul_cutoff {U : Set (E d)} {u : E d → ℝ}
     have h1 : DifferentiableAt ℝ ζ x := hζ.differentiable (by simp) x
     have h2 : DifferentiableAt ℝ φ x := hφ.differentiable (by simp) x
     rw [show ψ = fun y ↦ ζ y * φ y from rfl, fderiv_fun_mul h1 h2]
-    simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply, smul_eq_mul]
+    simp only [add_apply, smul_apply, smul_eq_mul]
   have hζ1 : ContDiff ℝ 1 ζ := hζ.of_le (by exact_mod_cast le_top)
   have hcont_dζ : Continuous fun x ↦ fderiv ℝ ζ x v :=
     (hζ1.continuous_fderiv one_ne_zero).clm_apply continuous_const
@@ -139,7 +139,7 @@ theorem exists_tendstoLpLoc_subseq_of_H1Loc {U : Set (E d)} (hU : IsOpen U)
         eLpNorm (G n) 2 (volume.restrict K) ≤ ENNReal.ofReal C) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧ ∃ u₀ : E d → ℝ, Measurable u₀ ∧
       TendstoLpLoc 2 volume U (fun n ↦ u (φ n)) u₀ atTop := by
-  haveI : Fact ((1 : ℝ≥0∞) ≤ 2) := ⟨by norm_num⟩
+  have : Fact ((1 : ℝ≥0∞) ≤ 2) := ⟨by norm_num⟩
   refine exists_tendstoLpLoc_subseq_of_cutoff (by norm_num) hU u ?_
   intro ζ hζ hζc hζU hζ01
   set T := tsupport ζ
@@ -194,8 +194,7 @@ theorem exists_tendstoLpLoc_subseq_of_H1Loc {U : Set (E d)} (hU : IsOpen U)
       eLpNorm (fun x ↦ ζ x • G n x + u n x • ∇ ζ x) 2 volume ≤ B := by
     intro n
     refine ⟨(hΓ1 n).1.add (hΓ2 n).1, ?_⟩
-    refine (eLpNorm_add_le (hΓ1 n).1.aestronglyMeasurable (hΓ2 n).1.aestronglyMeasurable
-      (by norm_num)).trans (add_le_add ?_ ?_)
+    refine (eLpNorm_add_le (by norm_num)).trans (add_le_add ?_ ?_)
     · simpa using (hΓ1 n).2.trans (by rw [ENNReal.ofReal_one, one_mul]; exact (hC n).2)
     · exact (hΓ2 n).2.trans (mul_le_mul' le_rfl (hC n).1)
   refine ⟨fun n ↦ (hw n).1, ⟨ENNReal.ofReal C, ENNReal.ofReal_ne_top, fun n ↦

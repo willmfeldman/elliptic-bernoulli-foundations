@@ -119,7 +119,7 @@ private theorem gradSup_zero (L : ℝ≥0) : gradSup (n := n) L 0 = 0 := by
   have : gradSet (n := n) L 0 = ∅ := by
     ext a
     simp only [gradSet, ball_zero, mem_empty_iff_false, false_and, exists_false, and_false,
-      mem_setOf_eq]
+      mem_ofPred_eq]
   rw [gradSup, this, Real.sSup_empty]
 
 /-! ### Blow-up helpers -/
@@ -149,7 +149,7 @@ private theorem norm_fderiv_rescale {u : E n → ℝ} {y z : E n} {d : ℝ} (hd 
   have hL : d⁻¹ • (fderiv ℝ u (y + d • z)).comp (d • ContinuousLinearMap.id ℝ (E n)) =
       fderiv ℝ u (y + d • z) := by
     ext w
-    simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.comp_apply,
+    simp only [smul_apply, ContinuousLinearMap.comp_apply,
       ContinuousLinearMap.id_apply, map_smul, smul_eq_mul]
     field_simp
   rw [hfun, hc.fderiv, hL, norm_gradient_eq_norm_fderiv]
@@ -326,7 +326,7 @@ private theorem gradLim_le_one (L : ℝ≥0) : sInf (gradSup (n := n) L '' Ioi 0
   have hlocal : ∀ z, 0 < V z → HarmonicAt V z ∧ ‖fderiv ℝ V z‖ ≤ ℓ₀ := by
     intro z hz
     obtain ⟨δ, hδ, hδV⟩ := Metric.isOpen_iff.1 (isOpen_lt continuous_const hVc :
-      IsOpen {w | V z / 2 < V w}) z (by simp only [mem_setOf_eq]; linarith)
+      IsOpen {w | V z / 2 < V w}) z (by simp only [mem_ofPred_eq]; linarith)
     set s := δ / 2 with hs
     have hs0 : 0 < s := by positivity
     have hsub : closedBall z s ⊆ ball z δ := closedBall_subset_ball (by linarith)

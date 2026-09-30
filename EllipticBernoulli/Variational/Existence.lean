@@ -66,8 +66,9 @@ variable {X F : Type*} [MeasurableSpace X] [NormedAddCommGroup F]
 
 /-- `‖f‖_{L²} ≤ M^{1/2}` from `∫⁻ |f|² ≤ M`. -/
 private theorem eLpNorm_two_le_of_lintegral_le {μ : Measure X} {f : X → F} {M : ℝ≥0∞}
-    (h : ∫⁻ x, ENNReal.ofReal (‖f x‖ ^ 2) ∂μ ≤ M) : eLpNorm f 2 μ ≤ M ^ (1 / 2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top]
+    (hf : AEStronglyMeasurable f μ) (h : ∫⁻ x, ENNReal.ofReal (‖f x‖ ^ 2) ∂μ ≤ M) :
+    eLpNorm f 2 μ ≤ M ^ (1 / 2 : ℝ) := by
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top hf]
   simp only [ENNReal.toReal_ofNat]
   refine ENNReal.rpow_le_rpow (le_trans (le_of_eq ?_) h) (by norm_num)
   refine lintegral_congr fun x ↦ ?_
@@ -93,7 +94,7 @@ end Helpers
 /-- A.e. on `U \ ball x₀ r` equals a.e. on the open set `U \ closedBall x₀ r`. -/
 private theorem restrict_diff_ball_eq {U : Set (E d)} {x₀ : E d} {r : ℝ} (hr : 0 < r) :
     volume.restrict (U \ ball x₀ r) = volume.restrict (U \ closedBall x₀ r) :=
-  Measure.restrict_congr_set ((ae_eq_refl U).diff (ball_ae_eq_closedBall x₀ hr))
+  Measure.restrict_congr_set ((EventuallyEqSet.refl _ U).diff (ball_ae_eq_closedBall x₀ hr))
 
 /-- **Uniform local `L²` bounds for admissible sequences.** If `v k = u` a.e. off the ball
 `B = ball x₀ r` and the Dirichlet energies `∫_B |G k|²` are bounded, then `v k` and `G k` are
@@ -118,20 +119,21 @@ private theorem bdd_of_admissible (hd : 1 ≤ d) {U : Set (E d)} (hU : IsOpen U)
   have hGu : ∀ k, ∀ᵐ y ∂(volume.restrict (U \ B)), G k y = Gu y := by
     intro k
     rw [restrict_diff_ball_eq hr]
-    refine (hv k).1.ae_eq_of_ae_eq_on (hU.sdiff isClosed_closedBall) diff_subset hu.1 ?_
+    refine (hv k).1.ae_eq_of_ae_eq_on (hU.sdiff isClosed_closedBall) sdiff_subset hu.1 ?_
     rw [← restrict_diff_ball_eq hr]
     exact hvu k
   -- `L²(B)` bounds on the gradients
   set A : ℝ≥0∞ := M ^ (1 / 2 : ℝ) with hAdef
   have hAtop : A ≠ ⊤ := ENNReal.rpow_ne_top_of_nonneg (by norm_num) hM
   have hGB : ∀ k, eLpNorm (G k) 2 (volume.restrict B) ≤ A :=
-    fun k ↦ eLpNorm_two_le_of_lintegral_le (hGM k)
+    fun k ↦ eLpNorm_two_le_of_lintegral_le
+      ((hvcb k).2.mono_measure hBcb).aestronglyMeasurable (hGM k)
   have hGuB : MemLp Gu 2 (volume.restrict B) := hcb.2.mono_measure hBcb
   set A' : ℝ := (A + eLpNorm Gu 2 (volume.restrict B)).toReal with hA'def
   have hGdiff : ∀ k, eLpNorm (G k - Gu) 2 (volume.restrict B) ≤ ENNReal.ofReal A' := by
     intro k
-    rw [hA'def, ENNReal.ofReal_toReal (ENNReal.add_ne_top.2 ⟨hAtop, hGuB.2.ne⟩)]
-    refine (eLpNorm_sub_le ((hvcb k).2.mono_measure hBcb).1 hGuB.1 (by norm_num)).trans ?_
+    rw [hA'def, ENNReal.ofReal_toReal (ENNReal.add_ne_top.2 ⟨hAtop, hGuB.ne⟩)]
+    refine (eLpNorm_sub_le (by norm_num)).trans ?_
     gcongr
     exact hGB k
   -- Poincaré for `v k - u`
@@ -172,12 +174,12 @@ private theorem bdd_of_admissible (hd : 1 ≤ d) {U : Set (E d)} (hU : IsOpen U)
   have huK := hu.2 K hKU hK
   set Cv : ℝ≥0∞ := ENNReal.ofReal (A'' ^ (1 / 2 : ℝ)) + eLpNorm u 2 (volume.restrict K)
   set CG : ℝ≥0∞ := A + eLpNorm Gu 2 (volume.restrict K)
-  have hCv : Cv ≠ ⊤ := ENNReal.add_ne_top.2 ⟨ENNReal.ofReal_ne_top, huK.1.2.ne⟩
-  have hCG : CG ≠ ⊤ := ENNReal.add_ne_top.2 ⟨hAtop, huK.2.2.ne⟩
+  have hCv : Cv ≠ ⊤ := ENNReal.add_ne_top.2 ⟨ENNReal.ofReal_ne_top, huK.1.ne⟩
+  have hCG : CG ≠ ⊤ := ENNReal.add_ne_top.2 ⟨hAtop, huK.2.ne⟩
   refine ⟨max Cv.toReal CG.toReal, fun n ↦ ⟨?_, ?_⟩⟩
   · rw [eLpNorm_congr_ae (hdecv n)]
     have hvK := (hv n).2 K hKU hK
-    refine (eLpNorm_add_le ((hvK.1.sub huK.1).1.indicator hBm) huK.1.1 (by norm_num)).trans ?_
+    refine (eLpNorm_add_le (by norm_num)).trans ?_
     refine le_trans ?_ ((ENNReal.ofReal_toReal hCv).symm.le.trans
       (ENNReal.ofReal_le_ofReal (le_max_left _ _)))
     refine add_le_add ?_ le_rfl
@@ -186,15 +188,14 @@ private theorem bdd_of_admissible (hd : 1 ≤ d) {U : Set (E d)} (hU : IsOpen U)
     exact hvB n
   · rw [eLpNorm_congr_ae (hdecG n)]
     have hvK := (hv n).2 K hKU hK
-    refine (eLpNorm_add_le (hvK.2.1.indicator hBm) (huK.2.1.indicator hBm.compl)
-      (by norm_num)).trans ?_
+    refine (eLpNorm_add_le (by norm_num)).trans ?_
     refine le_trans ?_ ((ENNReal.ofReal_toReal hCG).symm.le.trans
       (ENNReal.ofReal_le_ofReal (le_max_right _ _)))
     refine add_le_add ?_ ?_
     · refine (eLpNorm_mono_measure _ Measure.restrict_le_self).trans ?_
       rw [eLpNorm_indicator_eq_eLpNorm_restrict hBm]
       exact hGB n
-    · exact eLpNorm_indicator_le _
+    · exact eLpNorm_indicator_le _ hBm.compl
 
 /-- **The direct method** (`1 ≤ d`). -/
 private theorem exists_isObstacleMinimizer_of_one_le (hd : 1 ≤ d) {U : Set (E d)}
@@ -258,7 +259,7 @@ private theorem exists_isObstacleMinimizer_of_one_le (hd : 1 ≤ d) {U : Set (E 
     (fun n ↦ v (φ₁ n)) (fun n ↦ G (φ₁ n)) (fun n ↦ (hvAdm _).1)
     (fun K' hK'U hK' ↦ let ⟨C, hC⟩ := hbdd K' hK'U hK'; ⟨C, fun n ↦ hC (φ₁ n)⟩)
   obtain ⟨φ₃, hφ₃, hae⟩ := hw₀.exists_subseq_ae_tendsto hBU hcbc
-    (fun k ↦ ((hvAdm _).1.2 _ hBU hcbc).1.1) hw₀m.aestronglyMeasurable
+    (fun k ↦ ((hvAdm _).1.2 _ hBU hcbc).1.aestronglyMeasurable) hw₀m.aestronglyMeasurable
   set ψ : ℕ → ℕ := fun n ↦ φ₁ (φ₂ (φ₃ n)) with hψdef
   have hψ : StrictMono ψ := hφ₁.comp (hφ₂.comp hφ₃)
   have hGψ : ∀ K' ⊆ U, IsCompact K' → TendstoWeakL2 volume K' (fun n ↦ G (ψ n)) G₀ atTop :=
@@ -280,8 +281,8 @@ private theorem exists_isObstacleMinimizer_of_one_le (hd : 1 ≤ d) {U : Set (E 
   have hwK : ∀ y ∈ U, w y ∈ K y := by
     intro y hy
     by_cases h : y ∈ B ∧ w₀ y ∈ K y
-    · simp only [hwdef, if_pos h]; exact h.2
-    · simp only [hwdef, if_neg h]; exact huK y hy
+    · simp only [hwdef, ite_eq_left h]; exact h.2
+    · simp only [hwdef, ite_eq_right h]; exact huK y hy
   have hwm : AEStronglyMeasurable w (volume.restrict U) := by
     have hpw : AEStronglyMeasurable (B.piecewise w₀ u) (volume.restrict U) :=
       AEStronglyMeasurable.piecewise hBm hw₀m.aestronglyMeasurable.restrict
@@ -296,7 +297,8 @@ private theorem exists_isObstacleMinimizer_of_one_le (hd : 1 ≤ d) {U : Set (E 
     intro K' hK'U hK'
     have h0 := (hw₀ K' hK'U hK').comp hφ₃.tendsto_atTop
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds h0 (fun _ ↦ zero_le)
-      fun n ↦ eLpNorm_mono_ae ?_
+      fun n ↦ eLpNorm_mono_ae (((hvAdm (ψ n)).1.2 K' hK'U hK').1.aestronglyMeasurable.sub
+        (hwm.mono_measure (Measure.restrict_mono hK'U le_rfl))) ?_
     have h1 : ∀ᵐ y ∂volume, y ∈ U \ B → v (ψ n) y = u y :=
       (ae_restrict_iff' (hU.measurableSet.diff hBm)).1 (hvAdm _).2.1
     filter_upwards [ae_restrict_of_ae h1, ae_restrict_of_ae hwB,
@@ -311,13 +313,12 @@ private theorem exists_isObstacleMinimizer_of_one_le (hd : 1 ≤ d) {U : Set (E 
     refine ⟨hwg, fun K' hK'U hK' ↦ ⟨?_, (hGψ K' hK'U hK').2.1⟩⟩
     obtain ⟨n, hn⟩ := ((hvw K' hK'U hK').eventually (gt_mem_nhds ENNReal.zero_lt_top)).exists
     have hvn := ((hvAdm (ψ n)).1.2 K' hK'U hK').1
-    have hdiff : MemLp (v (ψ n) - w) 2 (volume.restrict K') :=
-      ⟨hvn.1.sub (hwm.mono_measure (Measure.restrict_mono hK'U le_rfl)), hn⟩
+    have hdiff : MemLp (v (ψ n) - w) 2 (volume.restrict K') := hn
     simpa using hvn.sub hdiff
   -- lower semicontinuity
   have hlsc : energyJ B Q w G₀ ≤ m := by
     have h := energyJ_le_liminf hBm hQm.aemeasurable (v := fun k ↦ v (ψ k)) (v₀ := w)
-      (fun k ↦ ((hvAdm _).1.2 _ hBU hcbc).1.1.aemeasurable.mono_measure
+      (fun k ↦ ((hvAdm _).1.2 _ hBU hcbc).1.aestronglyMeasurable.aemeasurable.mono_measure
         (Measure.restrict_mono ball_subset_closedBall le_rfl)) ?_
       ((hGψ _ hBU hcbc).mono_set hBm ball_subset_closedBall)
     · have h2 : Tendsto (fun k ↦ energyJ B Q (v (ψ k)) (G (ψ k))) atTop (𝓝 m) :=

@@ -154,7 +154,7 @@ theorem IsViscSubharmonicOn.le_integral_toSphere (hd : 1 ≤ d) {Ω : Set (E d)}
     {w : E d → ℝ} (hw : IsViscSubharmonicOn w Ω) (hwc : ContinuousOn w Ω) {x : E d} {r : ℝ}
     (hr : 0 < r) (hB : closedBall x r ⊆ Ω) :
     μ.toSphere.real univ * w x ≤ ∫ θ : sphere (0 : E d) 1, w (x + r • (θ : E d)) ∂μ.toSphere := by
-  haveI := nontrivial_E_of_one_le hd
+  have := nontrivial_E_of_one_le hd
   obtain ⟨h, hhc, hhh, hhw⟩ := exists_harmonic_ball_boundary hd x r w hr
     (hwc.mono (sphere_subset_closedBall.trans hB))
   have hcl : closure (ball x r) = closedBall x r := closure_ball x hr.ne'
@@ -191,7 +191,7 @@ theorem IsViscSubharmonicOn.le_setIntegral_ball (hd : 1 ≤ d) {Ω : Set (E d)} 
     (hw : IsViscSubharmonicOn w Ω) (hwc : ContinuousOn w Ω) {x : E d} {r : ℝ} (hr : 0 < r)
     (hB : closedBall x r ⊆ Ω) :
     μ.real (ball x r) * w x ≤ ∫ y in ball x r, w y ∂μ := by
-  haveI := nontrivial_E_of_one_le hd
+  have := nontrivial_E_of_one_le hd
   exact le_setIntegral_ball_of_le_integral_toSphere hr (hwc.mono hB) fun s hs hsr ↦
     IsViscSubharmonicOn.le_integral_toSphere hd hw hwc hs
       ((closedBall_subset_closedBall hsr.le).trans hB)

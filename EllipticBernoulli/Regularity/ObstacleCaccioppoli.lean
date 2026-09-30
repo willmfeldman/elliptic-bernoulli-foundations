@@ -42,12 +42,14 @@ variable {d : ℕ}
 theorem integrableOn_norm_sq_of_memH1Loc {U K : Set (E d)} {w : E d → ℝ} {G : E d → E d}
     (hw : MemH1Loc U w G) (hK : K ⊆ U) (hKc : IsCompact K) :
     IntegrableOn (fun x ↦ ‖G x‖ ^ 2) K :=
-  (memLp_two_iff_integrable_sq_norm (hw.2 K hK hKc).2.1).1 (hw.2 K hK hKc).2
+  (memLp_two_iff_integrable_sq_norm (hw.2 K hK hKc).2.aestronglyMeasurable).1 (hw.2 K hK hKc).2
 
 theorem integrableOn_sq_of_memH1Loc {U K : Set (E d)} {w : E d → ℝ} {G : E d → E d}
     (hw : MemH1Loc U w G) (hK : K ⊆ U) (hKc : IsCompact K) :
     IntegrableOn (fun x ↦ w x ^ 2) K := by
-  have := (memLp_two_iff_integrable_sq_norm (hw.2 K hK hKc).1.1).1 (hw.2 K hK hKc).1
+  have := (memLp_two_iff_integrable_sq_norm (hw.2 K hK hKc).1.aestronglyMeasurable).1
+    (hw.2 K hK hKc).1
+  rw [IntegrableOn]
   simpa [Real.norm_eq_abs, sq_abs] using this
 
 /-- Localization of the gradient comparison from the obstacle ball `B` to a ball `B_t(z)`. -/
@@ -65,11 +67,11 @@ theorem step_of_energy {U : Set (E d)} {B : Set (E d)} (hBm : MeasurableSet B) {
       (∫ x in ball z t, ‖(1 - η x) • GF x - F x • ∇ η x‖ ^ 2) + X := by
   set h : E d → ℝ := fun y ↦ ‖Gv y‖ ^ 2 - ‖Gw y‖ ^ 2 with hh
   have h1 : ∫ x in B, h x = ∫ x in B ∩ ball z t, h x :=
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero hBm inter_subset_left fun y hy ↦ by
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hBm inter_subset_left fun y hy ↦ by
       have : y ∉ ball z t := fun h' ↦ hy.2 ⟨hy.1, h'⟩
       simp [hh, hout y this]
   have h2 : ∫ x in ball z t, h x = ∫ x in B ∩ ball z t, h x :=
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero measurableSet_ball inter_subset_right
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero measurableSet_ball inter_subset_right
       fun y hy ↦ by
         have : y ∉ B := fun h' ↦ hy.2 ⟨h', hy.1⟩
         simp [hh, houtB y hy.1 this]
@@ -353,5 +355,6 @@ theorem isDeGiorgiAt_below {U : Set (E d)} {Q u w : E d → ℝ} {Gw : E d → E
       exact this) hρ hρR hR
   rw [setOf_posPart_sub_pos] at h
   convert h using 2
+  rfl
 
 end EllipticBernoulli

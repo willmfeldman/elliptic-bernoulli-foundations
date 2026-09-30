@@ -53,7 +53,7 @@ private theorem fderiv_fderiv_eq_zero_of_one {u : E 1 → ℝ} {y : E 1} (hu : H
   set B := fderiv ℝ (fderiv ℝ u) y with hB
   have hbil : ∀ v w : E 1, B v w = ⟪v, e⟫ * ⟪w, e⟫ * B e e := fun v w ↦ by
     rw [eq_inner_smul_of_one he v, eq_inner_smul_of_one he w]
-    simp only [map_smul, ContinuousLinearMap.smul_apply, smul_eq_mul, real_inner_smul_left,
+    simp only [map_smul, smul_apply, smul_eq_mul, real_inner_smul_left,
       real_inner_self_eq_norm_sq, he]
     ring
   have hbasis : ∀ i, B (stdOrthonormalBasis ℝ (E 1) i) (stdOrthonormalBasis ℝ (E 1) i) =
@@ -71,7 +71,7 @@ private theorem fderiv_fderiv_eq_zero_of_one {u : E 1 → ℝ} {y : E 1} (hu : H
       finrank_euclideanSpace_fin, one_smul] at hΔ
     exact hΔ
   ext v w
-  rw [ContinuousLinearMap.zero_apply, ContinuousLinearMap.zero_apply, hbil, hBee, mul_zero]
+  rw [zero_apply, zero_apply, hbil, hBee, mul_zero]
 
 public section
 
@@ -106,7 +106,7 @@ theorem norm_gradient_eq_of_ray_one {S : Set (E 1)} {u : E 1 → ℝ} (hS : IsOp
     have h1 := (hdiff _ (hsub ht)).hasFDerivAt.comp_hasDerivAt t hl
     have h2 := h1.sub ((hasDerivAt_id t).mul_const c)
     rw [hconst _ (hsub ht) _ hy₁] at h2
-    simpa [hk, ← hg, ← hc] using h2
+    convert h2 using 1 <;> first | rfl | simp [← hg, ← hc]
   have hkconst : ∀ s ∈ Ioo 0 t₀, ∀ t ∈ Ioo 0 t₀, k s = k t := fun s hs t ht ↦
     isOpen_Ioo.is_const_of_fderiv_eq_zero isPreconnected_Ioo
       (fun r hr ↦ (hkd r hr).differentiableAt.differentiableWithinAt)

@@ -96,10 +96,11 @@ theorem hasDerivAt_nondegProfileF (t : ℝ) :
       Real.exp (-((d : ℝ) / (2 * σ ^ 2) * (t - σ ^ 2)))) t := by
   set lm := (d : ℝ) / (2 * σ ^ 2)
   have h1 : HasDerivAt (fun t : ℝ ↦ -(lm * (t - σ ^ 2))) (-lm) t := by
-    simpa using (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lm).neg
+    convert (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lm).neg using 1 <;> first | rfl | simp
   have h2 := (h1.exp.const_mul A).const_sub A
   convert h2 using 1
-  ring
+  · rfl
+  · ring
 
 theorem deriv_nondegProfileF : deriv (nondegProfileF σ A d) = fun t ↦
     A * ((d : ℝ) / (2 * σ ^ 2)) * Real.exp (-((d : ℝ) / (2 * σ ^ 2) * (t - σ ^ 2))) :=
@@ -110,7 +111,7 @@ theorem deriv_deriv_nondegProfileF (t : ℝ) : deriv (deriv (nondegProfileF σ A
   rw [deriv_nondegProfileF]
   set lm := (d : ℝ) / (2 * σ ^ 2)
   have h1 : HasDerivAt (fun t : ℝ ↦ -(lm * (t - σ ^ 2))) (-lm) t := by
-    simpa using (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lm).neg
+    convert (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lm).neg using 1 <;> first | rfl | simp
   have h2 := h1.exp.const_mul (A * lm)
   rw [h2.deriv]
   ring
@@ -266,10 +267,11 @@ theorem contDiff_expProfile {n : WithTop ℕ∞} : ContDiff ℝ n (expProfile p 
 theorem hasDerivAt_expProfileF (t : ℝ) :
     HasDerivAt (expProfileF σ lam A) (A * lam * Real.exp (-(lam * (t - σ ^ 2)))) t := by
   have h1 : HasDerivAt (fun t : ℝ ↦ -(lam * (t - σ ^ 2))) (-lam) t := by
-    simpa using (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lam).neg
+    convert (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lam).neg using 1 <;> first | rfl | simp
   have h2 := (h1.exp.const_mul A).const_sub A
   convert h2 using 1
-  ring
+  · rfl
+  · ring
 
 theorem deriv_expProfileF :
     deriv (expProfileF σ lam A) = fun t ↦ A * lam * Real.exp (-(lam * (t - σ ^ 2))) :=
@@ -279,7 +281,7 @@ theorem deriv_deriv_expProfileF (t : ℝ) :
     deriv (deriv (expProfileF σ lam A)) t = -(A * lam ^ 2 * Real.exp (-(lam * (t - σ ^ 2)))) := by
   rw [deriv_expProfileF]
   have h1 : HasDerivAt (fun t : ℝ ↦ -(lam * (t - σ ^ 2))) (-lam) t := by
-    simpa using (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lam).neg
+    convert (((hasDerivAt_id t).sub_const (σ ^ 2)).const_mul lam).neg using 1 <;> first | rfl | simp
   rw [(h1.exp.const_mul (A * lam)).deriv]
   ring
 

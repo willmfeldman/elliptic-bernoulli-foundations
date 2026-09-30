@@ -54,7 +54,8 @@ theorem sq_intervalIntegral_le {g : ℝ → ℝ} {a b : ℝ} (hab : a ≤ b) (hg
     simp_rw [hexp]
     rw [intervalIntegral.integral_add
         ((by fun_prop : Continuous fun t ↦ g t ^ 2 - 2 * m * g t).intervalIntegrable a b)
-        intervalIntegrable_const, intervalIntegral.integral_sub ((hg.pow 2).intervalIntegrable a b)
+        intervalIntegrable_const, intervalIntegral.integral_sub
+        ((by fun_prop : Continuous fun t ↦ g t ^ 2).intervalIntegrable a b)
         ((by fun_prop : Continuous fun t ↦ 2 * m * g t).intervalIntegrable a b),
       intervalIntegral.integral_const_mul, intervalIntegral.integral_const, smul_eq_mul]
     ring
@@ -195,7 +196,7 @@ theorem lintegral_sq_compl_ball_le {v : E d → ℝ} (hv : ContDiff ℝ 1 v) {x 
         rw [lintegral_lintegral_swap hjoint]
     _ ≤ ENNReal.ofReal ((Λ - 1) * R' ^ 2) *
           ∫⁻ _μ in Ioc 1 Λ, ∫⁻ z in (ball x r)ᶜ, f z := by
-        gcongr ?_ * ?_
+        gcongr ENNReal.ofReal ((Λ - 1) * R' ^ 2) * ?_
         exact setLIntegral_mono' measurableSet_Ioc fun μ hμ ↦
           lintegral_compl_ball_comp_dilate_le hfm x r hμ.1.le
     _ = ENNReal.ofReal ((Λ - 1) * R' ^ 2) *

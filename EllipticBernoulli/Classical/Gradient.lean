@@ -63,7 +63,8 @@ theorem gradient_eq_smul_of_zero_set {F G : E d → ℝ} {y : E d} (hF : ContDif
     (hF.hasStrictFDerivAt one_ne_zero) (hG.hasStrictFDerivAt one_ne_zero)
   have hlagv : ∀ v, a * ⟪∇ F y, v⟫ + b * ⟪∇ G y, v⟫ = 0 := fun v ↦ by
     have := congrArg (fun L : StrongDual ℝ (E d) ↦ L v) hlag
-    simpa [fderiv_apply_eq_inner_gradient] using this
+    simp only [add_apply, smul_apply, zero_apply, smul_eq_mul] at this
+    rwa [fderiv_apply_eq_inner_gradient, fderiv_apply_eq_inner_gradient] at this
   have hFnorm : 0 < ‖∇ F y‖ := norm_pos_iff.2 hFn
   have hGnorm : 0 < ‖∇ G y‖ := norm_pos_iff.2 hGn
   have hb : b ≠ 0 := by
@@ -118,7 +119,7 @@ private theorem posSet_side {x₀ : E d} {ρ σ : ℝ}
     {F : E d → ℝ} (hpos : ball x₀ ρ ∩ {y | 0 < σ * F y} ⊆ posSet u U) :
     posSet ({y | 0 < σ * F y}.indicator u) (ball x₀ ρ) = ball x₀ ρ ∩ {y | 0 < σ * F y} := by
   ext y
-  simp only [posSet, mem_setOf_eq, mem_inter_iff]
+  simp only [posSet, mem_ofPred_eq, mem_inter_iff]
   constructor
   · rintro ⟨hyB, hy⟩
     refine ⟨hyB, ?_⟩
@@ -141,7 +142,7 @@ private theorem freeBoundary_side {x₀ : E d} {ρ σ : ℝ} {F : E d → ℝ} {
     isOpen_ball.inter (isOpen_lt continuous_const (continuous_const.mul hFc))
   rw [freeBoundary, hP]
   ext y
-  simp only [mem_inter_iff, mem_setOf_eq]
+  simp only [mem_inter_iff, mem_ofPred_eq]
   constructor
   · rintro ⟨hfr, hyB⟩
     refine ⟨hyB, ?_⟩
@@ -165,7 +166,7 @@ private theorem freeBoundary_side {x₀ : E d} {ρ σ : ℝ} {F : E d → ℝ} {
       exact mem_closure_of_tendsto (tendsto_ray y _) (hB.and hray)
     · rw [hSo.interior_eq]
       rintro ⟨-, h⟩
-      rw [mem_setOf_eq, hFy, mul_zero] at h
+      rw [mem_ofPred_eq, hFy, mul_zero] at h
       exact lt_irrefl _ h
 
 /-- The one-sided restriction is Lipschitz on the ball. -/
@@ -513,7 +514,7 @@ theorem flat_of_side {x₀ : E d} {ρ σ q ε : ℝ} {F v : E d → ℝ} {L : �
   -- (ii) the limit is harmonic on the upper half-space
   have hharm₀ : HarmonicOnNhd f₀ {z | 0 < ⟪z, e⟫} := by
     intro z₀ hz₀
-    simp only [mem_setOf_eq] at hz₀
+    simp only [mem_ofPred_eq] at hz₀
     set b := ⟪z₀, e⟫ with hb
     set s := b / 2 with hs
     have hs0 : 0 < s := by positivity
@@ -835,8 +836,8 @@ theorem IsClassicalSolution.tendsto_norm_gradient (hu : IsClassicalSolution U Q 
       rw [← hFB] at this
       exact hu.notMem_posSet_of_mem_freeBoundary this.2 hyP
     rcases hFy.lt_or_gt with h | h
-    · exact Or.inr ⟨hyP, by simp only [mem_setOf_eq]; linarith⟩
-    · exact Or.inl ⟨hyP, by simp only [mem_setOf_eq]; linarith⟩
+    · exact Or.inr ⟨hyP, by simp only [mem_ofPred_eq]; linarith⟩
+    · exact Or.inl ⟨hyP, by simp only [mem_ofPred_eq]; linarith⟩
   rw [nhdsWithin_restrict _ hxN hNo]
   refine Tendsto.mono_left ?_ (nhdsWithin_mono _ hsplit)
   rw [nhdsWithin_union]

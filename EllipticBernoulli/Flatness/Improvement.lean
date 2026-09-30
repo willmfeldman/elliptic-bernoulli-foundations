@@ -210,7 +210,7 @@ theorem improve_of_approx {U : Set (E d)} {u : E d → ℝ} {e p : E d} {ε r Ct
         rw [mem_ball, dist_zero_right] at hy; linarith
       have h1 : 0 < ⟪y, ν⟫ := by
         have : 0 < r * ε / 2 := half_pos (mul_pos hr hε)
-        simp only at hy0; linarith
+        linarith
       have h2 : 0 < ⟪y, N⟫ := by
         rw [hν, inner_smul_right] at h1
         exact pos_of_mul_pos_right h1 (inv_nonneg.2 hn0)
@@ -221,7 +221,6 @@ theorem improve_of_approx {U : Set (E d)} {u : E d → ℝ} {e p : E d} {ε r Ct
           _ = Ct := mul_one _
       linarith [mul_le_mul_of_nonneg_left h3 hε.le])
     (fun y _ t ht _ ↦ by
-      simp only
       have heν : ⟪e, ν⟫ = n⁻¹ := by
         rw [hν, inner_smul_right, hN, inner_add_right, inner_smul_right,
           real_inner_self_eq_norm_sq, he, hep]
@@ -233,7 +232,6 @@ theorem improve_of_approx {U : Set (E d)} {u : E d → ℝ} {e p : E d} {ε r Ct
       have : 0 ≤ t * n⁻¹ := mul_nonneg ht (inv_nonneg.2 hn0)
       linarith)
     (fun y hy ↦ by
-      simp only
       linarith [(abs_le.1 (hkey y hy)).1])
   refine ⟨ν, hνn, hνe, fun y hy ↦ ⟨max_le (hlow y hy) (hu0 y (hB2 (hBr hy))), ?_⟩⟩
   -- the upper bound: at positive points, from the approximation on `Ω_{2r}`

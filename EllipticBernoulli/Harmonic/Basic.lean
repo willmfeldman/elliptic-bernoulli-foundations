@@ -176,7 +176,7 @@ theorem HarmonicOnNhd.contDiffOn_top {U : Set E} (hU : IsOpen U) {u : E → ℝ}
 /-- A harmonic function on a neighbourhood of a point is `C^∞` at that point. -/
 theorem HarmonicAt.contDiffAt_top {u : E → ℝ} {x : E} (hu : HarmonicAt u x) :
     ContDiffAt ℝ ∞ u x := by
-  have hU : IsOpen {y : E | HarmonicAt u y} := isOpen_setOf_harmonicAt u
+  have hU : IsOpen {y : E | HarmonicAt u y} := isOpen_setOfPred_harmonicAt u
   exact (HarmonicOnNhd.contDiffOn_top hU fun y hy ↦ hy).contDiffAt (hU.mem_nhds hu)
 
 /-- **Dilation.** `Δ (f (c • ·)) x = c² Δ f (c • x)`. No differentiability hypothesis. (Private
@@ -225,7 +225,7 @@ theorem HarmonicOnNhd.comp_add_smul {u : E → ℝ} {S : Set E} (hu : HarmonicOn
 
 /-- `E d` is nontrivial as soon as `1 ≤ d`. -/
 theorem nontrivial_E_of_one_le {d : ℕ} (hd : 1 ≤ d) : Nontrivial (EllipticBernoulli.E d) := by
-  haveI : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
+  have : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
   infer_instance
 
 /-- **Bridge to the `C²` encoding of harmonicity.** On an open set, `u` is

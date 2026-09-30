@@ -197,7 +197,7 @@ theorem HarmonicOnNhd.fderiv_apply {U : Set E} (hU : IsOpen U) {u : E → ℝ}
       (fun z ↦ fderiv ℝ (fun y ↦ fderiv ℝ u y (b i)) z (b i)) y := fun i _ ↦
     ((hDD (b i) (b i)).contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp)
   have hsum := fderiv_fun_sum (u := Finset.univ) hdiff
-  rw [← ContinuousLinearMap.sum_apply, ← hsum]
+  rw [← sum_apply, ← hsum]
   have hΔ : (fun z ↦ ∑ i, fderiv ℝ (fun y ↦ fderiv ℝ u y (b i)) z (b i)) =ᶠ[𝓝 y]
       fun _ ↦ (0 : ℝ) := by
     filter_upwards [hU.mem_nhds hy] with z hz
@@ -217,8 +217,8 @@ theorem exists_norm_fderiv_le_div_of_harmonic (hd : 1 ≤ d) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (u : E d → ℝ) (x₀ : E d) (r M : ℝ), 0 < r →
       HarmonicOnNhd u (closedBall x₀ r) → (∀ y ∈ closedBall x₀ r, |u y| ≤ M) →
       ‖fderiv ℝ u x₀‖ ≤ C * M / r := by
-  haveI : Nontrivial (E d) := by
-    haveI : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
+  have : Nontrivial (E d) := by
+    have : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
     infer_instance
   obtain ⟨C, hC, hest⟩ :=
     exists_norm_fderiv_le_of_weaklyHarmonic (volume : Measure (E d)) (r := 1 / 2) (by norm_num)
@@ -226,7 +226,7 @@ theorem exists_norm_fderiv_le_div_of_harmonic (hd : 1 ≤ d) :
   -- the rescaled function `v y = u (x₀ + r y)`
   set v : E d → ℝ := fun y ↦ u (x₀ + r • y) with hv
   set U := {y : E d | HarmonicAt v y}
-  have hU : IsOpen U := isOpen_setOf_harmonicAt v
+  have hU : IsOpen U := isOpen_setOfPred_harmonicAt v
   have hvU : HarmonicOnNhd v U := fun y hy ↦ hy
   have hmaps : ∀ y ∈ closedBall (0 : E d) 1, x₀ + r • y ∈ closedBall x₀ r := fun y hy ↦ by
     rw [mem_closedBall, dist_eq_norm, add_sub_cancel_left, norm_smul, Real.norm_of_nonneg hr.le]
@@ -283,7 +283,7 @@ theorem norm_hessian_le_of_harmonic (hd : 1 ≤ d) :
   refine ⟨4 * C ^ 2, by positivity, fun u x₀ r M hr hu hM ↦ ?_⟩
   have hM0 : 0 ≤ M := (abs_nonneg _).trans (hM x₀ (mem_closedBall_self hr.le))
   set V := {y | HarmonicAt u y}
-  have hV : IsOpen V := isOpen_setOf_harmonicAt u
+  have hV : IsOpen V := isOpen_setOfPred_harmonicAt u
   have huV : HarmonicOnNhd u V := fun y hy ↦ hy
   have hBV : closedBall x₀ r ⊆ V := fun y hy ↦ hu y hy
   have hr2 : 0 < r / 2 := by positivity

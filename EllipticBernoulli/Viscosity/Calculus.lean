@@ -98,7 +98,7 @@ theorem laplacian_comp {f : ℝ → ℝ} {g : F → ℝ} {x : F} (hf : ContDiffA
   rw [laplacian_eq_sum_fderiv_fderiv, laplacian_eq_sum_fderiv_fderiv, hfd,
     ← sum_fderiv_basis_sq, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
-  simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+  simp only [add_apply, smul_apply,
     ContinuousLinearMap.smulRight_apply, smul_eq_mul]
   ring
 

@@ -70,7 +70,7 @@ theorem tendsto_ballLimit {f : E d → ℝ} {x : E d} {W : Set (E d)} (hW : W �
   refine ⟨_, image_mem_map hev, ?_⟩
   rintro _ ⟨s, hs, rfl⟩ _ ⟨t, ht, rfl⟩
   rw [Real.dist_eq, abs_lt]
-  simp only [mem_setOf_eq, mem_Icc] at hs ht
+  simp only [mem_ofPred_eq, mem_Icc] at hs ht
   constructor <;> linarith [hs.1, hs.2, ht.1, ht.2]
 
 /-- **`ballLimit f x ∈ S`** if `f ∈ S` a.e. near `x` (`S` closed and convex). -/

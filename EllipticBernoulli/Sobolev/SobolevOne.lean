@@ -73,9 +73,9 @@ theorem eLpNorm_one_le_of_support {F : Type*} [NormedAddCommGroup F] {h : E 1 �
   have hexp : 1 / ((1 : ℝ≥0∞)).toReal - 1 / (2 : ℝ≥0∞).toReal = 1 / 2 := by norm_num
   have hsupp : Function.support h ⊆ S' := fun x hx ↦
     subset_toMeasurable _ _ (by by_contra h'; exact hx (h0 x h'))
-  rw [← eLpNorm_restrict_eq_of_support_subset hsupp]
+  rw [← eLpNorm_restrict_eq_of_support_subset hh.aestronglyMeasurable hsupp]
   refine (eLpNorm_le_eLpNorm_mul_rpow_measure_univ (p := 1) (q := 2)
-    (by norm_num) hh.1.restrict).trans ?_
+    (by norm_num) hh.aestronglyMeasurable.restrict).trans ?_
   rw [Measure.restrict_apply_univ, hS', measure_toMeasurable, hexp]
   gcongr
   exact Measure.restrict_le_self
@@ -107,12 +107,13 @@ theorem sobolevSupport_one : SobolevSupport 1 1 := by
     HasCompactSupport.convolution (L := lsmul ℝ ℝ) hgc (φb n).hasCompactSupport_normed
   set A := eLpNorm G 1 volume with hA
   set Bg := eLpNorm g 1 volume with hBg
-  have hAtop : A ≠ ⊤ := hG1.2.ne
+  have hAtop : A ≠ ⊤ := hG1.ne
   -- the sup bound
   have hsup : ∀ n x, ‖gn n x‖ₑ ≤ A := by
     intro n x
     refine (enorm_le_lintegral_fderiv_one ((hsmooth n).of_le (by simp)) (hcs n) x).trans ?_
-    rw [← eLpNorm_one_eq_lintegral_enorm]
+    rw [← eLpNorm_one_eq_lintegral_enorm
+      ((hsmooth n).continuous_fderiv (by simp)).aestronglyMeasurable]
     have := eLpNorm_fderiv_convolution_le hw hgint (p := 1) le_rfl hG1 (φb n)
     simpa using this
   -- Young in `L¹`
@@ -125,7 +126,8 @@ theorem sobolevSupport_one : SobolevSupport 1 1 := by
   -- the `L²` bound of the mollifications
   have hL2 : ∀ n, eLpNorm (gn n) 2 volume ≤ (A * Bg) ^ (1 / 2 : ℝ) := by
     intro n
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
+    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+      (hsmooth n).continuous.aestronglyMeasurable]
     simp only [ENNReal.toReal_ofNat]
     gcongr
     calc ∫⁻ x, ‖gn n x‖ₑ ^ (2 : ℝ) ≤ ∫⁻ x, A * ‖gn n x‖ₑ := by
@@ -135,7 +137,7 @@ theorem sobolevSupport_one : SobolevSupport 1 1 := by
           exact hsup n x
       _ = A * ∫⁻ x, ‖gn n x‖ₑ := lintegral_const_mul' _ _ hAtop
       _ ≤ A * Bg := by
-          rw [← eLpNorm_one_eq_lintegral_enorm]
+          rw [← eLpNorm_one_eq_lintegral_enorm (hsmooth n).continuous.aestronglyMeasurable]
           gcongr
           exact hYoung n
   -- the limit
@@ -147,11 +149,10 @@ theorem sobolevSupport_one : SobolevSupport 1 1 := by
     exact this
   have hbound : ∀ n, eLpNorm g 2 volume ≤ eLpNorm (gn n - g) 2 volume + (A * Bg) ^ (1 / 2 : ℝ) := by
     intro n
-    have hm1 : AEStronglyMeasurable (gn n) volume := (hsmooth n).continuous.aestronglyMeasurable
     have e : g = gn n - (gn n - g) := by abel
     calc eLpNorm g 2 volume = eLpNorm (gn n - (gn n - g)) 2 volume := by rw [← e]
       _ ≤ eLpNorm (gn n) 2 volume + eLpNorm (gn n - g) 2 volume :=
-          eLpNorm_sub_le hm1 (hm1.sub hg.1) (by norm_num)
+          eLpNorm_sub_le (by norm_num)
       _ ≤ (A * Bg) ^ (1 / 2 : ℝ) + eLpNorm (gn n - g) 2 volume := by gcongr; exact hL2 n
       _ = _ := add_comm _ _
   have hlim : eLpNorm g 2 volume ≤ (A * Bg) ^ (1 / 2 : ℝ) := by
@@ -181,7 +182,7 @@ theorem sobolevSupport_one : SobolevSupport 1 1 := by
   simp only [ENNReal.coe_one, one_mul, Nat.cast_one, div_one, ENNReal.rpow_one]
   by_cases ha0 : a = 0
   · rw [ha0]; simp
-  · exact (ENNReal.mul_le_mul_iff_left ha0 hg.2.ne).1 hkey
+  · exact (ENNReal.mul_le_mul_iff_left ha0 hg.ne).1 hkey
 
 theorem exists_sobolevSupport {d : ℕ} (hd : 1 ≤ d) : ∃ CS : ℝ≥0, SobolevSupport d CS := by
   rcases Nat.lt_or_ge d 2 with h | h

@@ -107,19 +107,25 @@ challenge set, what is left out, and the acceptance procedure.
   untrusted `Solution.lean` files).
 - `scripts/fingerprint-challenges.sh` emulates Comparator's statement and definition-equality check locally. It
   reports every workspace identical.
-- A Comparator release run has not been made yet.
+- Each release is checked by a Comparator run on the public commit, and the attestation is attached to the
+  GitHub release.
 
 ## Building
 
 The toolchain and dependencies are pinned in `lean-toolchain`, `lakefile.toml` and `lake-manifest.json`:
-- Lean `v4.30.0`;
-- Mathlib `v4.30.0` (commit `c5ea003`),
+- Lean `v4.34.1`;
+- Mathlib `v4.34.1` (commit `d13f23b`),
   [leanprover-community/mathlib4](https://github.com/leanprover-community/mathlib4);
-- viscosity-solution-theory `v0.2.0` (Lake package `viscosity_solns`, commit `3a93109`),
+- viscosity-solution-theory `v0.3.0` (Lake package `viscosity_solns`, commit `067e254`),
   [willmfeldman/viscosity-solution-theory](https://github.com/willmfeldman/viscosity-solution-theory). It is used
-  only in `EllipticBernoulli/Harmonic/`. It pulls in aleksandrov-differentiability (commit `730e7e9`),
+  only in `EllipticBernoulli/Harmonic/`. It pulls in aleksandrov-differentiability `v0.3.0` (commit `6b31824`),
   [willmfeldman/aleksandrov-differentiability](https://github.com/willmfeldman/aleksandrov-differentiability),
   which this library does not import directly.
+
+Lake fetches both from their public Git repositories at the release tags and downloads each release's prebuilt build
+archive when one is available for your platform; otherwise it builds them from source. Releases of this library
+likewise carry prebuilt build archives (Linux x86-64 and macOS arm64), which Lake downloads for projects that require
+it at a release tag.
 
 The other packages in `lake-manifest.json` (batteries, aesop, Qq, ProofWidgets, plausible, LeanSearchClient,
 import-graph, lean4-cli) are Mathlib's own dependencies. All dependencies are Apache-2.0.

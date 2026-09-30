@@ -366,7 +366,7 @@ theorem flat_upper_step (hd : 2 ≤ d) : ∃ εbar > 0, ∃ c ∈ Ioo (0 : ℝ) 
     rintro y ⟨hyc, hy1⟩
     have hyc' : y ∈ closure (ball (0 : E d) 1 ∩ posSet u U) := isOpen_ball.inter_closure ⟨hy1, hyc⟩
     refine ContinuousWithinAt.closure_le hyc' ((hcu y (hB hy1)).mono fun z hz ↦ hB hz.1)
-      (by change ContinuousWithinAt (fun y ↦ ⟪y, e⟫ + σ + ε) _ y; fun_prop) ?_
+      (show ContinuousWithinAt (fun y ↦ ⟪y, e⟫ + σ + ε) _ y by fun_prop) ?_
     rintro z ⟨hz1, hz⟩
     exact hup_pos z hz1 hz.2
   -- Harnack for `p + ε - u ≥ 0` in `B_{1/10}(x̄) ⊆ {u > 0}`.

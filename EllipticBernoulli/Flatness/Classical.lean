@@ -193,7 +193,7 @@ theorem IsC1GammaHypersurfaceNear.affine {S : Set (E d)} {ρ r : ℝ} (hr : 0 < 
       funext hfd]
   · ext y
     have hy := Set.ext_iff.1 hgraph (r⁻¹ • (y - x₀))
-    simp only [mem_inter_iff, mem_preimage, mem_setOf_eq, sub_zero] at hy ⊢
+    simp only [mem_inter_iff, mem_preimage, mem_ofPred_eq, sub_zero] at hy ⊢
     have hball : r⁻¹ • (y - x₀) ∈ ball (0 : E d) ρ ↔ y ∈ ball x₀ (r * ρ) := by
       rw [mem_ball, mem_ball, dist_zero_right, dist_eq_norm, norm_smul, Real.norm_eq_abs,
         abs_of_pos (inv_pos.2 hr), inv_mul_lt_iff₀ hr]
@@ -275,7 +275,7 @@ theorem deSilva_flat_implies_regular_core (hd : 2 ≤ d) :
     exact zero_ne_one h1
   · ext y
     have hy := Set.ext_iff.1 hgraph y
-    simp only [mem_inter_iff, mem_setOf_eq, sub_zero] at hy ⊢
+    simp only [mem_inter_iff, mem_ofPred_eq, sub_zero] at hy ⊢
     rw [innerSL_apply_apply, hPapp, real_inner_comm, sub_eq_zero]
     exact ⟨fun ⟨hb, hfb⟩ ↦ hy.1 ⟨hfb, hb⟩, fun h ↦ (hy.2 h).symm⟩
 
@@ -451,8 +451,8 @@ theorem gradient_extends_to_fb (hd : 2 ≤ d) : ∃ ε₁ > 0,
       _ = (ε ^ 2 + 64 * (C * ε)) * ‖a - b‖ ^ α := by ring
   classical
   set G : E d → E d := fun y ↦ if y ∈ posSet v U then ∇ v y else q y • ν y with hG_def
-  have hGP : ∀ y ∈ posSet v U, G y = ∇ v y := fun y hy ↦ if_pos hy
-  have hGN : ∀ y ∉ posSet v U, G y = q y • ν y := fun y hy ↦ if_neg hy
+  have hGP : ∀ y ∈ posSet v U, G y = ∇ v y := fun y hy ↦ ite_eq_left hy
+  have hGN : ∀ y ∉ posSet v U, G y = q y • ν y := fun y hy ↦ ite_eq_right hy
   refine ⟨G, ?_, fun y hy ↦ hGP y hy.1, fun y hy ↦ ?_⟩
   swap
   · -- `‖G‖ = q` on the free boundary
@@ -567,7 +567,7 @@ private theorem gradient_rescale {u : E d → ℝ} {x₀ z : E d} {r c : ℝ} (h
   have hD : (r * c)⁻¹ • (fderiv ℝ u (x₀ + r • z)).comp (r • ContinuousLinearMap.id ℝ (E d)) =
       c⁻¹ • fderiv ℝ u (x₀ + r • z) := by
     ext w
-    simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.comp_apply,
+    simp only [smul_apply, ContinuousLinearMap.comp_apply,
       ContinuousLinearMap.id_apply, map_smul, smul_eq_mul]
     field_simp
   rw [gradient, hfun, h1.fderiv, hD, map_smul, gradient]
@@ -637,7 +637,7 @@ theorem isClassicalNear_of_flat : FlatClassicalStatement := by
     fun y ↦ Q x₀ • Gv (Bm y), ?_, fun y hy ↦ ?_, fun y hy ↦ ?_⟩
   · -- continuity
     have hBc : Continuous Bm := by fun_prop
-    refine (continuous_const.continuousOn.smul (hGc.comp hBc.continuousOn ?_))
+    refine (hGc.comp hBc.continuousOn ?_).const_smul (Q x₀)
     exact fun y hy ↦ ⟨hcl_v y hy.1, hBball y hy.2⟩
   · -- `G = ∇u` in the positivity set
     have hyv := hpos_v y hy.1

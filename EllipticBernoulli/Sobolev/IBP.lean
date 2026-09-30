@@ -53,7 +53,7 @@ theorem HasWeakGradient.integral_inner_gradient_eq_neg {U : Set (E d)} (hU : IsO
   obtain ⟨ζ, hζ, hζc, hζU, -, hζ1⟩ := exists_smooth_cutoff hK' hU hK'U
   have hUK : MeasurableSet (U \ K) := hU.measurableSet.diff hK.measurableSet
   have hG0 : ∀ᵐ x ∂(volume.restrict (U \ K)), G x = 0 :=
-    hh.ae_eq_zero_of_ae_eq_zero_on (hU.sdiff hK.isClosed) diff_subset h0
+    hh.ae_eq_zero_of_ae_eq_zero_on (hU.sdiff hK.isClosed) sdiff_subset h0
   rw [ae_restrict_iff' hUK] at h0 hG0
   set b := EuclideanSpace.basisFun (Fin d) ℝ with hb
   have hdφ : ContDiff ℝ ∞ (fderiv ℝ φ) := hφ.fderiv_right (m := ∞) (by norm_cast)

@@ -97,7 +97,8 @@ theorem jet_add_inner_sq {φ : E d → ℝ} (hφ : ContDiff ℝ ∞ φ) (e : E d
       simpa [hx] using this
     have hW : HasGradientAt (fun y ↦ φ y + κ * ⟪y, e⟫ ^ 2) (∇ φ x) x := by
       rw [hasGradientAt_iff_hasFDerivAt] at hdφ ⊢
-      simpa using hdφ.add hsq
+      have h2 : HasFDerivAt (fun y ↦ φ y + κ * ⟪y, e⟫ ^ 2) _ x := hdφ.add hsq
+      simpa using h2
     have h := hasGradientAt_mul_inner_add_mul (e := e) hW a 0 1
     have hf : (fun y ↦ a * ⟪y, e⟫ + 0 + 1 * (fun y ↦ φ y + κ * ⟪y, e⟫ ^ 2) y) =
         fun y ↦ φ y + a * ⟪y, e⟫ + κ * ⟪y, e⟫ ^ 2 := by funext y; ring

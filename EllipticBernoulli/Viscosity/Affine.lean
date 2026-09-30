@@ -124,7 +124,7 @@ theorem posSet_rescale {U : Set (E d)} {u : E d → ℝ} (x₀ : E d) {r s : ℝ
     posSet (fun y ↦ u (x₀ + r • y) / (r * s)) ((fun y ↦ x₀ + r • y) ⁻¹' U) =
       (fun y ↦ x₀ + r • y) ⁻¹' posSet u U := by
   ext y
-  simp only [posSet, mem_setOf_eq, mem_preimage, div_pos_iff_of_pos_right (mul_pos hr hs)]
+  simp only [posSet, mem_ofPred_eq, mem_preimage, div_pos_iff_of_pos_right (mul_pos hr hs)]
 
 /-- Closures commute with preimages under `y ↦ x₀ + r • y`, `r ≠ 0`. -/
 theorem closure_preimage_affine (x₀ : E d) {r : ℝ} (hr : r ≠ 0) (S : Set (E d)) :

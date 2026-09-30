@@ -165,7 +165,7 @@ theorem le_of_frontier_le_of_laplacian_nonpos (hd : 1 ≤ d) {Ω : Set (E d)} (h
     (hwc : ContinuousOn w (closure Ω)) (hH : ContDiffOn ℝ ∞ H Ω) (hΔ : ∀ x ∈ Ω, Δ H x ≤ 0)
     (hHc : ContinuousOn H (closure Ω)) (hfr : ∀ x ∈ frontier Ω, w x ≤ H x) :
     ∀ x ∈ closure Ω, w x ≤ H x := by
-  haveI := nontrivial_E_of_one_le hd
+  have := nontrivial_E_of_one_le hd
   intro x₁ hx₁
   by_contra hlt
   obtain ⟨c, ε, hε, x₀, hx₀, hmax⟩ := exists_isMaxOn_add_sq_of_frontier_nonpos hΩ hΩb
@@ -234,12 +234,12 @@ theorem le_of_sphere_le_of_laplacian_nonpos_annulus (hd : 1 ≤ d) {z : E d} {ρ
   intro x hx
   have hopen : IsOpen (ball z ρ₂ \ closedBall z ρ₁) := isOpen_ball.sdiff isClosed_closedBall
   by_cases hA : x ∈ ball z ρ₂ \ closedBall z ρ₁
-  · refine le_of_frontier_le_of_laplacian_nonpos hd hopen (isBounded_ball.subset diff_subset) hw
+  · refine le_of_frontier_le_of_laplacian_nonpos hd hopen (isBounded_ball.subset sdiff_subset) hw
       (hwc.mono (closure_annulus_subset z ρ₁ ρ₂)) hH hΔ (hHc.mono (closure_annulus_subset z ρ₁ ρ₂))
       (fun y hy ↦ ?_) x (subset_closure hA)
     rcases frontier_annulus_subset z ρ₁ ρ₂ hy with hy | hy
     exacts [h₁ y hy, h₂ y hy]
-  · simp only [mem_diff, mem_closedBall, mem_ball, not_lt, not_and, not_le] at hx hA
+  · simp only [Set.mem_sdiff, mem_closedBall, mem_ball, not_lt, not_and, not_le] at hx hA
     by_cases hlt : dist x z < ρ₂
     · exact h₁ x (le_antisymm (hA hlt) hx.2)
     · exact h₂ x (le_antisymm hx.1 (not_lt.1 hlt))

@@ -77,7 +77,7 @@ theorem HasWeakGradient.univ_of_ae_eq_zero {U K : Set (E d)} (hU : IsOpen U) {v 
   obtain ⟨ζ, hζ, hζc, hζU, hζ01, hζ1⟩ := exists_smooth_cutoff hK hU hKU
   have hUK : MeasurableSet (U \ K) := hU.measurableSet.diff hK.measurableSet
   have hG0 : ∀ᵐ x ∂(volume.restrict (U \ K)), G x = 0 :=
-    hv.ae_eq_zero_of_ae_eq_zero_on (hU.sdiff hK.isClosed) diff_subset h0
+    hv.ae_eq_zero_of_ae_eq_zero_on (hU.sdiff hK.isClosed) sdiff_subset h0
   rw [ae_restrict_iff' hUK] at h0 hG0
   have hle : ∀ x, ζ x ≤ 1 := fun x ↦ (hζ01 x).2
   have hζout : ∀ x, x ∉ U → ζ x = 0 := fun x hx ↦

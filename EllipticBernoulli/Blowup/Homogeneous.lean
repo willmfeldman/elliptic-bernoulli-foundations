@@ -99,7 +99,7 @@ theorem fderiv_smul {y : E 2} (hy : 0 < v y) {t : ℝ} (ht : 0 < t) :
   have huniq := h1.unique h2
   ext w
   have := congrArg (fun L ↦ L w) huniq
-  simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.smul_apply,
+  simp only [ContinuousLinearMap.comp_apply, smul_apply,
     ContinuousLinearMap.id_apply, map_smul, smul_eq_mul] at this
   exact mul_left_cancel₀ ht.ne' this
 
@@ -150,8 +150,8 @@ theorem fderiv_fderiv_eq_zero {y : E 2} (hy : 0 < v y) : fderiv ℝ (fderiv ℝ 
   rw [← hH, hyeq] at hker
   have e0 := congrArg (fun L ↦ L b0) hker
   have e1 := congrArg (fun L ↦ L b1) hker
-  simp only [map_add, map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
-    smul_eq_mul, ContinuousLinearMap.zero_apply] at e0 e1
+  simp only [map_add, map_smul, add_apply, smul_apply,
+    smul_eq_mul, zero_apply] at e0 e1
   have hy0 : y ≠ 0 := by
     rintro rfl
     rw [apply_zero h] at hy

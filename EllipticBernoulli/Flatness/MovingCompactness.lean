@@ -75,7 +75,7 @@ theorem exists_subseq_tendsto_of_holder_upTo {X : Type*} [PseudoMetricSpace X]
   -- a countable dense subset `S` of `K`
   obtain ⟨S, hSK, hSc, hKS⟩ :=
     (TopologicalSpace.IsSeparable.of_separableSpace K).exists_countable_dense_subset
-  haveI : Countable S := hSc.to_subtype
+  have : Countable S := hSc.to_subtype
   -- the diagonal extraction, via sequential compactness of `[-M, M]^S`
   let v : ℕ → S → ℝ := fun k s ↦ max (-M) (min M (f k (A s k)))
   have hv : ∀ k, v k ∈ Set.pi univ (fun _ : S ↦ Icc (-M) M) := fun k s _ ↦

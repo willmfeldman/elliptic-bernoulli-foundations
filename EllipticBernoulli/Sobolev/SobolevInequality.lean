@@ -64,9 +64,9 @@ theorem integral_sq_le_of_ae_eq_zero_off_ball (hd : 1 ≤ d) :
   have hKm : MeasurableSet K := measurableSet_closedBall
   have hUK : MeasurableSet (U \ K) := hU.measurableSet.diff hKm
   have h0K : ∀ᵐ y ∂(volume.restrict (U \ K)), v y = 0 :=
-    ae_restrict_of_ae_restrict_of_subset (diff_subset_diff_right ball_subset_closedBall) h0
+    ae_restrict_of_ae_restrict_of_subset (sdiff_subset_sdiff_right ball_subset_closedBall) h0
   have hG0 : ∀ᵐ y ∂(volume.restrict (U \ K)), G y = 0 :=
-    hv.1.ae_eq_zero_of_ae_eq_zero_on (hU.sdiff hKc.isClosed) diff_subset h0K
+    hv.1.ae_eq_zero_of_ae_eq_zero_on (hU.sdiff hKc.isClosed) sdiff_subset h0K
   have hext := hv.1.univ_of_ae_eq_zero hU hKc hKU h0K
   rw [ae_restrict_iff' hUK] at h0K hG0
   set g : E d → ℝ := K.indicator v with hg
@@ -92,8 +92,8 @@ theorem integral_sq_le_of_ae_eq_zero_off_ball (hd : 1 ≤ d) :
   have hΓU : Γ =ᵐ[volume] U.indicator G := by
     filter_upwards [hst] with x hx
     by_cases hgx : g x = 0
-    · simp only [hΓ, if_pos hgx]; exact (hx hgx).symm
-    · simp only [hΓ, if_neg hgx]
+    · simp only [hΓ, ite_eq_left hgx]; exact (hx hgx).symm
+    · simp only [hΓ, ite_eq_right hgx]
   have hwΓ : HasWeakGradient univ g Γ :=
     hwg.congr_ae (by rw [Measure.restrict_univ]; exact hΓU.symm)
   have hgL : MemLp g 2 volume := (memLp_indicator_iff_restrict hKm).2 (hv.2 K hKU hKc).1
@@ -101,7 +101,7 @@ theorem integral_sq_le_of_ae_eq_zero_off_ball (hd : 1 ≤ d) :
     ((memLp_indicator_iff_restrict hKm).2 (hv.2 K hKU hKc).2).ae_eq (hΓU.trans hGU).symm
   have hgc : HasCompactSupport g :=
     HasCompactSupport.intro hKc fun x hx ↦ by rw [hg, indicator_of_notMem hx]
-  have hGz : ∀ x, g x = 0 → Γ x = 0 := fun x hx ↦ by simp only [hΓ, if_pos hx]
+  have hGz : ∀ x, g x = 0 → Γ x = 0 := fun x hx ↦ by simp only [hΓ, ite_eq_left hx]
   have key := integral_sq_le_of_sobolevSupport hS hwΓ hgL hΓL hgc hGz
   have hsph := ball_ae_eq_closedBall x₀ hr
   have e1 : ∫ x, g x ^ 2 = ∫ y in ball x₀ r, v y ^ 2 := by

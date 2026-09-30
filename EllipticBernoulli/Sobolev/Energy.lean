@@ -42,7 +42,7 @@ theorem energyJ_congr {V : Set (E d)} {Q f₁ f₂ : E d → ℝ}
     {G₁ G₂ : E d → E d} (hf : EqOn f₁ f₂ V) (hG : ∀ᵐ x ∂(volume.restrict V), G₁ x = G₂ x) :
     energyJ V Q f₁ G₁ = energyJ V Q f₂ G₂ := by
   have hpos : posSet f₁ V = posSet f₂ V := by
-    ext y; simp only [posSet, mem_setOf_eq]
+    ext y; simp only [posSet, mem_ofPred_eq]
     exact ⟨fun h ↦ ⟨h.1, hf h.1 ▸ h.2⟩, fun h ↦ ⟨h.1, (hf h.1).symm ▸ h.2⟩⟩
   unfold energyJ
   rw [hpos]
@@ -69,11 +69,11 @@ theorem energyJ_split {B B' : Set (E d)} (hB : MeasurableSet B) (hB' : Measurabl
     (Q f : E d → ℝ) (G : E d → E d) :
     energyJ B' Q f G = energyJ B Q f G + energyJ (B' \ B) Q f G := by
   unfold energyJ
-  rw [← lintegral_inter_add_diff _ B' hB, inter_eq_right.2 hBB']
+  rw [← lintegral_inter_add_sdiff _ B' hB, inter_eq_right.2 hBB']
   congr 1
   · refine setLIntegral_congr_fun hB fun x hx ↦ ?_
     have : x ∈ posSet f B' ↔ x ∈ posSet f B := by
-      simp only [posSet, mem_setOf_eq]; exact ⟨fun h ↦ ⟨hx, h.2⟩, fun h ↦ ⟨hBB' hx, h.2⟩⟩
+      simp only [posSet, mem_ofPred_eq]; exact ⟨fun h ↦ ⟨hx, h.2⟩, fun h ↦ ⟨hBB' hx, h.2⟩⟩
     have hind : (posSet f B').indicator (1 : E d → ℝ) x = (posSet f B).indicator 1 x := by
       by_cases h : x ∈ posSet f B
       · rw [indicator_of_mem h, indicator_of_mem (this.2 h)]
@@ -81,7 +81,7 @@ theorem energyJ_split {B B' : Set (E d)} (hB : MeasurableSet B) (hB' : Measurabl
     rw [hind]
   · refine setLIntegral_congr_fun (hB'.diff hB) fun x hx ↦ ?_
     have : x ∈ posSet f B' ↔ x ∈ posSet f (B' \ B) := by
-      simp only [posSet, mem_setOf_eq]; exact ⟨fun h ↦ ⟨hx, h.2⟩, fun h ↦ ⟨hx.1, h.2⟩⟩
+      simp only [posSet, mem_ofPred_eq]; exact ⟨fun h ↦ ⟨hx, h.2⟩, fun h ↦ ⟨hx.1, h.2⟩⟩
     have hind : (posSet f B').indicator (1 : E d → ℝ) x = (posSet f (B' \ B)).indicator 1 x := by
       by_cases h : x ∈ posSet f (B' \ B)
       · rw [indicator_of_mem h, indicator_of_mem (this.2 h)]
@@ -210,11 +210,11 @@ theorem energyJ_le_liminf {B : Set (E d)} (hB : MeasurableSet B) {Q : E d → �
   have hPl : (∫⁻ x in B, P v₀ x) ≤ liminf (fun k ↦ ∫⁻ x in B, P (v k) x) atTop :=
     (lintegral_mono_ae hPt).trans
       (lintegral_liminf_le' fun k ↦ aemeasurable_posTerm hQ (hvm k))
-  rw [hsplit v₀ G₀ hG.2.1.1]
+  rw [hsplit v₀ G₀ hG.2.1.aestronglyMeasurable]
   have heq : (fun k ↦ energyJ B Q (v k) (G k)) =
       (fun k ↦ ∫⁻ x in B, ENNReal.ofReal (‖G k x‖ ^ 2)) + fun k ↦ ∫⁻ x in B, P (v k) x := by
     funext k
-    rw [hsplit (v k) (G k) (hG.1 k).1, Pi.add_apply]
+    rw [hsplit (v k) (G k) (hG.1 k).aestronglyMeasurable, Pi.add_apply]
   rw [heq]
   exact (add_le_add hA hPl).trans (le_liminf_add_ennreal _ _)
 

@@ -79,7 +79,7 @@ theorem TendstoWeakL2.of_ae_eq_off {Ω₀ Ω : Set X} (hΩ₀ : MeasurableSet Ω
       ∫ x in Ω, inner ℝ (g x) (φ x) ∂μ =
         (∫ x in Ω₀, inner ℝ (g x) (φ' x) ∂μ) + ∫ x in Ω \ Ω₀, inner ℝ (g x) (φ x) ∂μ := by
     intro g hg
-    rw [← integral_inter_add_diff hΩ₀ (integrable_inner_of_memLp hg hφ)]
+    rw [← integral_inter_add_sdiff hΩ₀ (integrable_inner_of_memLp hg hφ)]
     congr 1
     have e : (fun x ↦ inner ℝ (g x) (φ' x)) = Ω.indicator (fun x ↦ inner ℝ (g x) (φ x)) := by
       funext x
@@ -218,7 +218,7 @@ theorem exists_tendstoWeakL2_subseq_of_monotone (K : ℕ → Set X) (hKm : ∀ m
     · exact Eventually.of_forall fun x h ↦ absurd h hjm
   filter_upwards [hall, ae_restrict_mem (hKm m)] with x hx hxm
   have hex : ∃ j, x ∈ K j := ⟨m, hxm⟩
-  have hidx : idx x = Nat.find hex := dif_pos hex
+  have hidx : idx x = Nat.find hex := dite_eq_left hex
   change L (Q m) m x = L (Q (idx x)) (idx x) x
   rw [hidx]
   exact (hx _ (Nat.find_min' hex hxm) (Nat.find_spec hex)).symm
@@ -256,11 +256,11 @@ variable {d : ℕ}
 convergence in measure). -/
 theorem TendstoLpLoc.exists_subseq_ae_tendsto {U K : Set (E d)} {v : ℕ → E d → ℝ}
     {v₀ : E d → ℝ} (hv : TendstoLpLoc 2 volume U v v₀ atTop) (hKU : K ⊆ U) (hK : IsCompact K)
-    (hvm : ∀ k, AEStronglyMeasurable (v k) (volume.restrict K))
-    (hv₀ : AEStronglyMeasurable v₀ (volume.restrict K)) :
+    (_hvm : ∀ k, AEStronglyMeasurable (v k) (volume.restrict K))
+    (_hv₀ : AEStronglyMeasurable v₀ (volume.restrict K)) :
     ∃ ns : ℕ → ℕ, StrictMono ns ∧
       ∀ᵐ x ∂(volume.restrict K), Tendsto (fun i ↦ v (ns i) x) atTop (𝓝 (v₀ x)) :=
-  (tendstoInMeasure_of_tendsto_eLpNorm two_ne_zero hvm hv₀ (hv K hKU hK)).exists_seq_tendsto_ae
+  (tendstoInMeasure_of_tendsto_eLpNorm two_ne_zero (hv K hKU hK)).exists_seq_tendsto_ae
 
 /-- **Closure of weak gradients.** Let `U` be open, `G k` a weak gradient of `v k` on
 `U`, `v₀` a.e.-strongly measurable on `U` with `v k → v₀` in `L²_loc(U)`, and `G k ⇀ G₀` weakly in
@@ -268,7 +268,7 @@ theorem TendstoLpLoc.exists_subseq_ae_tendsto {U K : Set (E d)} {v : ℕ → E d
 theorem HasWeakGradient.of_tendsto {U : Set (E d)} (hU : IsOpen U) {v : ℕ → E d → ℝ}
     {G : ℕ → E d → E d} {v₀ : E d → ℝ} {G₀ : E d → E d}
     (hvG : ∀ k, HasWeakGradient U (v k) (G k))
-    (hv₀ : AEStronglyMeasurable v₀ (volume.restrict U))
+    (_hv₀ : AEStronglyMeasurable v₀ (volume.restrict U))
     (hv : TendstoLpLoc 2 volume U v v₀ atTop)
     (hG : ∀ K ⊆ U, IsCompact K → TendstoWeakL2 volume K G G₀ atTop) :
     HasWeakGradient U v₀ G₀ := by
@@ -276,15 +276,13 @@ theorem HasWeakGradient.of_tendsto {U : Set (E d)} (hU : IsOpen U) {v : ℕ → 
   have hev : ∀ K ⊆ U, IsCompact K →
       ∀ᶠ k in atTop, MemLp (fun x ↦ v k x - v₀ x) 2 (volume.restrict K) := by
     intro K hKU hK
-    haveI : IsFiniteMeasure (volume.restrict K) :=
+    have : IsFiniteMeasure (volume.restrict K) :=
       isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
     filter_upwards [(hv K hKU hK).eventually (gt_mem_nhds ENNReal.zero_lt_top)] with k hk
-    refine ⟨?_, hk⟩
-    exact ((hvG k).1.integrableOn_compact_subset hKU hK).1.sub
-      (hv₀.mono_measure (Measure.restrict_mono hKU le_rfl))
+    exact hk
   have hv₀int : ∀ K ⊆ U, IsCompact K → IntegrableOn v₀ K := by
     intro K hKU hK
-    haveI : IsFiniteMeasure (volume.restrict K) :=
+    have : IsFiniteMeasure (volume.restrict K) :=
       isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
     obtain ⟨k, hk⟩ := (hev K hKU hK).exists
     have h1 : IntegrableOn (v k) K := (hvG k).1.integrableOn_compact_subset hKU hK
@@ -296,7 +294,7 @@ theorem HasWeakGradient.of_tendsto {U : Set (E d)} (hU : IsOpen U) {v : ℕ → 
     (locallyIntegrableOn_iff hU.isLocallyClosed).2 hv₀int
   have hlocG : LocallyIntegrableOn G₀ U :=
     (locallyIntegrableOn_iff hU.isLocallyClosed).2 fun K hKU hK ↦ by
-      haveI : IsFiniteMeasure (volume.restrict K) :=
+      have : IsFiniteMeasure (volume.restrict K) :=
         isFiniteMeasure_restrict.2 hK.measure_lt_top.ne
       exact (hG K hKU hK).2.1.integrable one_le_two
   refine ⟨hloc₀, hlocG, fun φ hφ hφc hφU e ↦ ?_⟩
@@ -309,7 +307,7 @@ theorem HasWeakGradient.of_tendsto {U : Set (E d)} (hU : IsOpen U) {v : ℕ → 
   have hφ0 : ∀ x ∉ T, φ x = 0 := fun x hx ↦ image_eq_zero_of_notMem_tsupport hx
   -- reduce the integrals over `U` to integrals over `T`
   have hUT : ∀ F : E d → ℝ, (∀ x ∉ T, F x = 0) → ∫ x in U, F x = ∫ x in T, F x := fun F hF ↦
-    setIntegral_eq_of_subset_of_forall_diff_eq_zero hU.measurableSet hφU fun x hx ↦ hF x hx.2
+    setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hU.measurableSet hφU fun x hx ↦ hF x hx.2
   have hψL : MemLp ψ 2 (volume.restrict T) :=
     (hψc.memLp_of_hasCompactSupport (hφc.fderiv_apply (𝕜 := ℝ) e)).restrict T
   -- left-hand side

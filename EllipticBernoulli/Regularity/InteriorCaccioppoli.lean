@@ -273,6 +273,7 @@ theorem isDeGiorgiAt_below_of_lower (hU : IsOpen U) {Cq : ℝ} (hCq : 0 ≤ Cq)
       exact this) hρ hρR hR
   rw [setOf_posPart_sub_pos] at h
   convert h using 2
+  rfl
 
 end Lower
 

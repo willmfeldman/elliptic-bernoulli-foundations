@@ -194,7 +194,7 @@ theorem fderiv_apply_eq_zero_of_comp_planeReflection {e : E d} (he : ‖e‖ = 1
   have h2 := (planeReflection e).toContinuousLinearEquiv.comp_right_fderiv (f := S) (x := x)
   have h3 := congrArg (fun L : E d →L[ℝ] ℝ ↦ L e) h2
   simp only [LinearIsometryEquiv.coe_toContinuousLinearEquiv, h1,
-    ContinuousLinearMap.coe_comp', Function.comp_apply] at h3
+    ContinuousLinearMap.coe_comp, Function.comp_apply] at h3
   have h4 : ((planeReflection e).toContinuousLinearEquiv : E d →L[ℝ] E d) e = -e := by
     rw [ContinuousLinearEquiv.coe_coe, LinearIsometryEquiv.coe_toContinuousLinearEquiv,
       planeReflection_self he]
@@ -297,7 +297,7 @@ private theorem plane_case {w : E d → ℝ} {e : E d} {ρ : ℝ} (he : ‖e‖ 
   set m := g xε with hm
   have hm0 : m ≤ 0 := by
     have h := hmin (mem_closedBall_self hδ.le)
-    simp only [mem_setOf_eq] at h
+    simp only [mem_ofPred_eq] at h
     have : g x = 0 := by simp only [hg, hSx, hx]; ring
     linarith
   have hlow : ∀ z ∈ closedBall x δ, (‖z - x‖ ^ 2) ^ 2 - ε * ‖z - x‖ ≤ g z := by
@@ -329,7 +329,7 @@ private theorem plane_case {w : E d → ℝ} {e : E d} {ρ : ℝ} (he : ‖e‖ 
   have hψle : ∀ᶠ z in 𝓝 xε, ψ z ≤ w (fold e z) := by
     filter_upwards [isOpen_ball.mem_nhds hxεin] with z hz
     have h := hmin (ball_subset_closedBall hz)
-    simp only [mem_setOf_eq] at h
+    simp only [mem_ofPred_eq] at h
     simp only [hψ, hm, hg] at h ⊢
     linarith
   have hΔψ : Δ ψ xε = Δ S xε := by

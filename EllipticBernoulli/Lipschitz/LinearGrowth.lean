@@ -140,11 +140,11 @@ theorem exists_le_mul_of_isViscSuper_sphere (hd : 1 ≤ d) :
     have hzK : z ∈ K := ⟨mem_closedBall_iff_norm.2 hzδ.le, fun h ↦
       absurd (mem_ball_iff_norm.1 h) (not_lt.2 hz)⟩
     have hwc : ContinuousOn (u - Φ) K :=
-      (hu.1.mono (diff_subset.trans hδU)).sub hΦs.continuous.continuousOn
+      (hu.1.mono (sdiff_subset.trans hδU)).sub hΦs.continuous.continuousOn
     obtain ⟨z₀, hz₀K, hmin⟩ := hKk.exists_isMinOn ⟨z, hzK⟩ hwc
     have hw0 : u z₀ - Φ z₀ < 0 := by
       have := hmin hzK
-      simp only [Pi.sub_apply, mem_setOf_eq] at this
+      simp only [Pi.sub_apply, mem_ofPred_eq] at this
       linarith
     have hz₀U : z₀ ∈ U := hδU hz₀K.1
     have hr₁ : ‖z₀ - x‖ ≤ δ := mem_closedBall_iff_norm.1 hz₀K.1

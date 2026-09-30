@@ -167,8 +167,9 @@ theorem hasGradientAt_deSilvaBarrier (xbar z : E d) :
       (f := fun y : E d ↦ ‖y - xbar‖ ^ 2) z (hasFDerivAt_normSq_sub_const xbar z)
   rw [hasGradientAt_iff_hasFDerivAt]
   convert hcomp using 1
+  · rfl
   ext v
-  simp only [toDual_apply_apply, inner_smul_left, ContinuousLinearMap.smul_apply,
+  simp only [toDual_apply_apply, inner_smul_left, smul_apply,
     innerSL_apply_apply, smul_eq_mul, deSilvaBarrierSlope, RCLike.conj_to_real]
   ring
 

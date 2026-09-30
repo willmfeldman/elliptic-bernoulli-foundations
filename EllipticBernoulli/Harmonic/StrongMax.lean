@@ -97,7 +97,7 @@ theorem HarmonicOnNhd.eqOn_of_isMinOn {Ω : Set E} (hΩ : IsOpen Ω) (hΩc : IsP
     {h : E → ℝ} (hh : HarmonicOnNhd h Ω) {x₀ : E} (hx₀ : x₀ ∈ Ω) (hmin : IsMinOn h Ω x₀) :
     EqOn h (fun _ ↦ h x₀) Ω := by
   have hmax : IsMaxOn (-h) Ω x₀ := fun y hy ↦ by
-    simp only [mem_setOf_eq, Pi.neg_apply, neg_le_neg_iff]; exact hmin hy
+    simp only [mem_ofPred_eq, Pi.neg_apply, neg_le_neg_iff]; exact hmin hy
   have := HarmonicOnNhd.eqOn_of_isMaxOn hΩ hΩc hh.neg hx₀ hmax
   intro y hy
   have h1 := this hy
@@ -110,7 +110,7 @@ theorem HarmonicOnNhd.eq_zero_of_nonneg_of_eq_zero {Ω : Set E} (hΩ : IsOpen Ω
     (hΩc : IsPreconnected Ω) {h : E → ℝ} (hh : HarmonicOnNhd h Ω) (h0 : ∀ y ∈ Ω, 0 ≤ h y)
     {x₀ : E} (hx₀ : x₀ ∈ Ω) (hz : h x₀ = 0) : ∀ y ∈ Ω, h y = 0 := by
   have hmin : IsMinOn h Ω x₀ := fun y hy ↦ by
-    simp only [mem_setOf_eq, hz]; exact h0 y hy
+    simp only [mem_ofPred_eq, hz]; exact h0 y hy
   intro y hy
   rw [HarmonicOnNhd.eqOn_of_isMinOn hΩ hΩc hh hx₀ hmin hy, hz]
 
