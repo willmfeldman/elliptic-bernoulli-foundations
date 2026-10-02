@@ -11,9 +11,11 @@
 #   declaration is declared somewhere in the library; each target's expected_axioms equal
 #   axioms.expected;
 # * the challenge inventory (the targets' challenge fields) equals challenges/*/config.json;
-#   each workspace is complete, trusted-only by default, with Challenge.lean and
-#   Challenge/*.lean importing only Mathlib and the workspace's own vocabulary files
-#   (Challenge.*), and Solution.lean importing only EllipticBernoulli modules; config theorem
+#   each workspace is complete (STANDARD v1.4 layout) and trusted-only by default; its vocabulary
+#   (Vocabulary.lean, and Vocabulary/*.lean in split mode) imports only Mathlib and the workspace's
+#   own Vocabulary modules; Challenge.lean imports only Mathlib (its generated block), or in split
+#   mode also the workspace's Vocabulary modules; Solution.lean imports only EllipticBernoulli
+#   modules (`scripts/challenge-prep.py check` checks the generated block itself); config theorem
 #   names equal the target's challenge_theorems, and config permitted axioms equal
 #   axioms.expected;
 # * the pinned Comparator tool revisions agree with scripts/release-comparator.sh.
@@ -116,18 +118,24 @@ unless listed.sort == on_disk
 end
 
 imports = lambda do |f|
-  File.file?(f) ? File.read(f).scan(/^\s*import\s+(\S+)/).flatten : []
+  File.file?(f) ? File.read(f).scan(/^\s*(?:public\s+)?(?:meta\s+)?import\s+(\S+)/).flatten : []
 end
 
 targets.each do |t|
   path = t['challenge'].to_s
   next unless File.directory?(path)
-  %w[Challenge.lean Solution.lean config.json lakefile.toml lake-manifest.json lean-toolchain].each do |f|
+  %w[Vocabulary.lean Challenge.lean Solution.lean config.json lakefile.toml lake-manifest.json lean-toolchain].each do |f|
     failures << "#{path}: missing #{f}" unless File.file?(File.join(path, f))
   end
-  vocabulary = Dir.glob(File.join(path, 'Challenge', '*.lean')).sort
-  failures << "#{path}: no vocabulary files Challenge/*.lean" if vocabulary.empty?
-  vocabulary_modules = vocabulary.map { |f| "Challenge.#{File.basename(f, '.lean')}" }
+  failures << "#{path}: Challenge/ is the pre-v1.4 vocabulary layout" if File.directory?(File.join(path, 'Challenge'))
+  vocabulary = [File.join(path, 'Vocabulary.lean'), *Dir.glob(File.join(path, 'Vocabulary', '**', '*.lean')).sort]
+    .select { |f| File.file?(f) }
+  vocabulary_modules = vocabulary.map do |f|
+    Pathname(f).relative_path_from(Pathname(path)).sub_ext('').each_filename.to_a.join('.')
+  end
+  challenge_file = File.join(path, 'Challenge.lean')
+  split = File.file?(challenge_file) &&
+          File.read(challenge_file).lines.any? { |l| l.start_with?('-- challenge-prep: split vocabulary') }
   toolchain = File.join(path, 'lean-toolchain')
   failures << "#{path}: lean-toolchain differs from the root" \
     if File.file?(toolchain) && File.read(toolchain).strip != root_toolchain
@@ -138,10 +146,15 @@ targets.each do |t|
     failures << "#{path}: lake-manifest.json package revisions differ from the root manifest" \
       unless ws_revs == locked
   end
-  [File.join(path, 'Challenge.lean'), *vocabulary].each do |f|
+  vocabulary.each do |f|
     bad = imports.call(f).reject { |m| m == 'Mathlib' || m.start_with?('Mathlib.') || vocabulary_modules.include?(m) }
     failures << "#{f}: imports outside Mathlib and the workspace vocabulary: #{bad.inspect}" unless bad.empty?
   end
+  bad = imports.call(challenge_file).reject do |m|
+    m == 'Mathlib' || m.start_with?('Mathlib.') || (split && vocabulary_modules.include?(m))
+  end
+  failures << "#{challenge_file}: imports outside Mathlib#{split ? ' and the workspace vocabulary' : ''}: " \
+              "#{bad.inspect}" unless bad.empty?
   solution_imports = imports.call(File.join(path, 'Solution.lean'))
   bad = solution_imports.reject { |m| m == 'EllipticBernoulli' || m.start_with?('EllipticBernoulli.') }
   failures << "#{path}/Solution.lean: imports outside EllipticBernoulli: #{bad.inspect}" unless bad.empty?

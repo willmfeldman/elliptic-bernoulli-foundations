@@ -5,11 +5,16 @@ This directory contains release comparator workspaces for the headline theorems 
 [viscosity-solution-theory](https://github.com/willmfeldman/viscosity-solution-theory) v0.2.0.
 Each subdirectory is a standalone Lake workspace with:
 
-- `Challenge.lean` and `Challenge/*.lean`: the trusted statement surface, importing Mathlib
-  modules only;
+- `Vocabulary.lean`, or `Vocabulary/*.lean` re-exported by `Vocabulary.lean`: the library's
+  vocabulary restated over Mathlib (see below);
+- `Challenge.lean`: the trusted statement surface. It imports Mathlib modules only, or, in a
+  workspace with split vocabulary, Mathlib and its own `Vocabulary/*.lean`;
 - `Solution.lean`: the solution, importing the library modules that prove the statements;
 - `config.json`: comparator module names, theorem names and permitted axioms;
-- `lakefile.toml` and `lake-manifest.json`: workspace metadata pinned through the parent project.
+- `lakefile.toml`, `lake-manifest.json` and `lean-toolchain`: workspace metadata pinned through the
+  parent project.
+
+Every `.lean` file is a Lean module.
 
 The challenges certify a selection of the library's headline statements
 (`EllipticBernoulli/Statements/*`), not all of them. Left out:
@@ -35,32 +40,36 @@ library-side regression test.
 
 ## Vocabulary files
 
-The project vocabulary is restated in `Challenge/*.lean`, one file per library vocabulary file,
-with the library's names, the library's definitions verbatim, and the library's declaration
-order:
+The project vocabulary is restated with the library's names, the library's definitions verbatim,
+and the library's declaration order, one part per library vocabulary file:
 
-| Challenge file | Library file | Definitions |
+| Vocabulary part | Library file | Definitions |
 |---|---|---|
-| `Challenge/Setting.lean` | `Basic/Setting.lean` | `E`, `posSet`, `freeBoundary`, `CompactlyContained`, `divergence` |
-| `Challenge/Sobolev.lean` | `Basic/Sobolev.lean` | `HasWeakGradient`, `MemH1`, `MemH1Loc`, `energyJ`, `energyJχ`, `TendstoLpLoc`, `TendstoWeakL2` |
-| `Challenge/Touching.lean` | `Basic/Touching.lean` | `TouchesBelow`, `TouchesAbove` |
-| `Challenge/Viscosity.lean` | `Defs/Viscosity.lean` | viscosity super/sub/solutions (Abedin–Feldman–Stinson, Definition 2.1) and the related notions |
-| `Challenge/Regularity.lean` | `Defs/Regularity.lean` | `blowup`, `IsC1GammaHypersurfaceNear`, `IsClassicalNear`, non-degeneracy, `IsClassicalSolution` |
-| `Challenge/Variational.lean` | `Defs/Variational.lean` | `innerVarIntegrand`, `IsInnerVarSolution`, directional, obstacle and local energy minimizers |
+| `Setting` | `Basic/Setting.lean` | `E`, `posSet`, `freeBoundary`, `CompactlyContained`, `divergence` |
+| `Sobolev` | `Basic/Sobolev.lean` | `HasWeakGradient`, `MemH1`, `MemH1Loc`, `energyJ`, `energyJχ`, `TendstoLpLoc`, `TendstoWeakL2` |
+| `Touching` | `Basic/Touching.lean` | `TouchesBelow`, `TouchesAbove` |
+| `Viscosity` | `Defs/Viscosity.lean` | viscosity super/sub/solutions (Abedin–Feldman–Stinson, Definition 2.1) and the related notions |
+| `Regularity` | `Defs/Regularity.lean` | `blowup`, `IsC1GammaHypersurfaceNear`, `IsClassicalNear`, non-degeneracy, `IsClassicalSolution` |
+| `Variational` | `Defs/Variational.lean` | `innerVarIntegrand`, `IsInnerVarSolution`, directional, obstacle and local energy minimizers |
 
-Each vocabulary file drops the module-system syntax (`module`, `public`, `@[expose]`) and the
-library file's theorems, and imports the same Mathlib modules as the library file. Two cautions,
-both checked by `scripts/fingerprint-challenges.sh`:
+Each part drops the library file's theorems and imports the same Mathlib modules as the library
+file. `scripts/challenge-prep.py sync` copies `Vocabulary.lean` into a generated block at the top
+of `Challenge.lean`, so that `Challenge.lean` is self-contained; `scripts/challenge-prep.py check`
+checks that the copy is current. Two cautions, both checked by `scripts/fingerprint-challenges.sh`:
 
 - Comparator checks that every restated definition is exactly the library's. That includes the
   names of the auxiliary proofs Lean creates inside definitions (for example
-  `HasWeakGradient._proof_1`), and Lean shares those only within a file. So the vocabulary is
-  split along the library's file boundaries, in the library's order.
-- `Challenge.lean` does **not** import all of `Mathlib`. With the whole library in scope, instance
-  search can elaborate a statement differently from the library. For example, `Fintype (Fin 2)`
-  inside `E 2` resolves through a `SimplexCategory` instance, and Comparator would reject the
-  statement. `Challenge.lean` imports the vocabulary files, plus the Mathlib modules of the
-  corresponding `Statements/*` file.
+  `HasWeakGradient._proof_1`), and Lean shares those within a module. Merged into one file, later
+  definitions reuse earlier auxiliary proofs where the library has its own. So every workspace
+  except `energy-perturbation` keeps its vocabulary split along the library's module boundaries,
+  as `Vocabulary/*.lean` (marked `challenge-prep: split vocabulary` in `Challenge.lean`, which
+  imports those modules). `energy-perturbation` uses only `Setting` and `Sobolev`, which do not
+  interact this way, and has a single `Vocabulary.lean`.
+- The challenge statements do **not** import all of `Mathlib`. With the whole library in scope,
+  instance search can elaborate a statement differently from the library. For example,
+  `Fintype (Fin 2)` inside `E 2` resolves through a `SimplexCategory` instance, and Comparator
+  would reject the statement. Each workspace imports the vocabulary's Mathlib modules, plus those
+  of the corresponding `Statements/*` file.
 
 ## Challenge set
 
@@ -106,18 +115,20 @@ The statements are spelled out in full in each `Challenge.lean`; they do not ref
 
 ## Toolchain
 
-- Lean: `leanprover/lean4:v4.34.1`
-- Mathlib: `v4.34.1` (`d13f23b`)
-- viscosity_solns `v0.3.0` and AleksandrovDifferentiability `v0.3.0`: pinned through the parent
+- Lean: `leanprover/lean4:v4.35.0-rc3`
+- Mathlib: `v4.35.0-rc3` (`c55e6e7`)
+- viscosity_solns `v0.4.0` and AleksandrovDifferentiability `v0.4.0`: pinned through the parent
   `lake-manifest.json`
-- Comparator: `leanprover/comparator` at `5756749`, with lean4export `076e8e5` and landrun
-  `811cfff`, pinned in `scripts/release-comparator.sh` and recorded in `formalization.yaml`
+- Comparator: `leanprover/comparator` at `fd5d5bcf14177b187f66d4502071268d877887c3`, with
+  lean4export `66f1fb4bc256072069767fce52d39480e4524869` and landrun
+  `811cfff51ceaf3d9843708aa6d22e9b84ccac8b4`, pinned in `scripts/release-comparator.sh` and
+  recorded in `formalization.yaml`
 
 Every workspace sets `packagesDir = "../../.lake/packages"` in its `lakefile.toml` (and records
 the same folder in its `lake-manifest.json`), so all eight share the root workspace's dependency
 checkouts and builds. The manifests lock the same revisions as the root manifest. Each workspace
-defaults to its `Challenge` target only, so a plain `lake build` never elaborates
-`Solution.lean`. The workspaces set `autoImplicit = false`.
+defaults to its `Vocabulary` and `Challenge` targets only, so a plain `lake build` never
+elaborates `Solution.lean`. The workspaces set `autoImplicit = false`.
 
 ## Acceptance
 
@@ -130,7 +141,7 @@ lake build
 ./scripts/fingerprint-challenges.sh
 ```
 
-`scripts/check-challenges.sh` (run by CI) builds `Challenge` and `Solution` in every workspace and
+`scripts/check-challenges.sh` (run by CI) builds `Vocabulary`, `Challenge` and `Solution` in every workspace and
 checks that every solution theorem depends on exactly `propext`, `Classical.choice` and
 `Quot.sound`. It does not compare statements. `scripts/build-challenges.sh --trusted-all` builds
 the same targets without the axiom check.
@@ -141,7 +152,7 @@ of every `EllipticBernoulli` constant they depend on, once in the `Challenge` en
 in the `Solution` environment, and diffs the results. It does not replay proofs or check axioms.
 
 For a Comparator release run, treat `Solution.lean` as potentially adversarial, and review and
-trust each workspace's `Challenge.lean`, `Challenge/*.lean`, `lakefile.toml`,
+trust each workspace's `Vocabulary.lean`, `Vocabulary/*.lean`, `Challenge.lean`, `lakefile.toml`,
 `lake-manifest.json`, `lean-toolchain` and `config.json`. The release workflow
 `.github/workflows/release-comparator.yml` (dispatched by hand, and run on `release/**` branches
 and `v*` tags) then:
@@ -149,17 +160,17 @@ and `v*` tags) then:
 1. validates the challenge inventory against `formalization.yaml`
    (`scripts/check-formalization-manifest.rb --metadata-only`);
 2. installs the pinned Comparator tools (`scripts/release-comparator.sh install`);
-3. builds only the trusted `Challenge` targets outside the sandbox;
+3. builds only the trusted `Vocabulary` and `Challenge` targets outside the sandbox;
 4. runs Comparator in its sandbox on each workspace's `config.json`, without first building
    `Solution` (`scripts/release-comparator.sh run`), which checks statement and definition
    equality and that each theorem depends only on `propext`, `Classical.choice` and
    `Quot.sound`;
 5. uploads an attestation (`comparator-report/attestation.json` and the logs).
 
-**Status (2026-09-27).**
+**Status (2026-10-02).**
 - Both build-challenges modes are green locally.
 - `fingerprint-challenges.sh` reports every workspace IDENTICAL.
 - `#print axioms` on each solution theorem's library counterpart (`EllipticBernoulli.Comparator`)
   shows only the three permitted axioms.
-- **A Comparator run has not been made yet.** The release workflow will be run on the release
-  commit, and its result recorded here.
+- Each release is checked by a Comparator run on the public commit, and its attestation is
+  attached to the GitHub release.

@@ -1,6 +1,14 @@
-import Challenge.Setting
-import Challenge.Sobolev
-import Challenge.Variational
+module
+
+-- challenge-prep: split vocabulary (aux-proof reuse: a merged file fails the fingerprint diff)
+-- One module per library file. Concatenating them lets later definitions reuse earlier auxiliary
+-- `_proof_k` constants that the library mints per module, so the values would no longer match
+-- (`scripts/fingerprint-challenges.sh`).
+public import Vocabulary.Setting
+public import Vocabulary.Sobolev
+public import Vocabulary.Variational
+
+@[expose] public section
 
 /-!
 # Challenge: existence and continuity for the obstacle problem
@@ -14,7 +22,7 @@ conditions pointwise. Minimizers exist for bounded measurable `Q` and closed con
 `0 < c ≤ Q ≤ C` and `u ≥ 0` locally Lipschitz, every minimizer has a representative continuous on
 all of `U`, including across `∂B` (De Giorgi; the interior continuity argument is new here).
 
-The project vocabulary is restated in `Challenge/*.lean`, one file per library file
+The project vocabulary is restated in `Vocabulary/*.lean`, one module per library file
 (`Basic/Setting.lean`, `Basic/Sobolev.lean`, `Defs/Variational.lean`), with the library's names,
 definitions and order. Every file imports Mathlib modules only (the same ones as the library file
 it restates).

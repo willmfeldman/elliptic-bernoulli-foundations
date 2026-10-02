@@ -1,4 +1,6 @@
-import EllipticBernoulli.Blowup.PlanarClassification
+module
+
+public import EllipticBernoulli.Blowup.PlanarClassification
 
 /-!
 # Solution: planar 1-homogeneous inner variational solutions
@@ -7,7 +9,7 @@ Discharges the challenge through the library modules imported above, by
 `classification_homogeneous_planar`.
 -/
 
-noncomputable section
+@[expose] public noncomputable section
 
 open Set Filter Topology MeasureTheory
 

@@ -1,4 +1,6 @@
-import EllipticBernoulli.Variational.OneSided
+module
+
+public import EllipticBernoulli.Variational.OneSided
 
 /-!
 # Solution: minimizers are viscosity solutions
@@ -7,7 +9,7 @@ Discharges the challenge through the library module imported above, by the libra
 and obstacle-minimizer theorems.
 -/
 
-noncomputable section
+@[expose] public noncomputable section
 
 open Set Filter Topology MeasureTheory Metric
 open scoped ContDiff Gradient Laplacian

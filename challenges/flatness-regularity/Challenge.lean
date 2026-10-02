@@ -1,8 +1,16 @@
-import Challenge.Setting
-import Challenge.Sobolev
-import Challenge.Touching
-import Challenge.Viscosity
-import Challenge.Regularity
+module
+
+-- challenge-prep: split vocabulary (aux-proof reuse: a merged file fails the fingerprint diff)
+-- One module per library file. Concatenating them lets later definitions reuse earlier auxiliary
+-- `_proof_k` constants that the library mints per module, so the values would no longer match
+-- (`scripts/fingerprint-challenges.sh`).
+public import Vocabulary.Setting
+public import Vocabulary.Sobolev
+public import Vocabulary.Touching
+public import Vocabulary.Viscosity
+public import Vocabulary.Regularity
+
+@[expose] public section
 
 /-!
 # Challenge: flat free boundaries are regular (De Silva)
@@ -17,7 +25,7 @@ at a free boundary point `x₀` has a `C^{1,γ}` free boundary in `B_{r/2}(x₀)
 boundary with `|∇u| = Q` there). The exponent `γ`, the Hölder constant and the `IsClassicalNear`
 radius are existential for each solution; in De Silva they do not depend on the solution.
 
-The project vocabulary is restated in `Challenge/*.lean`, one file per library file
+The project vocabulary is restated in `Vocabulary/*.lean`, one module per library file
 (`Basic/Setting.lean`, `Basic/Sobolev.lean`, `Basic/Touching.lean`,
 `Defs/Viscosity.lean`, `Defs/Regularity.lean`), with the library's names, definitions and
 order. Every file imports Mathlib modules only (the same ones as the library file it restates).

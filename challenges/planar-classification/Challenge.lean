@@ -1,6 +1,14 @@
-import Challenge.Setting
-import Challenge.Sobolev
-import Challenge.Variational
+module
+
+-- challenge-prep: split vocabulary (aux-proof reuse: a merged file fails the fingerprint diff)
+-- One module per library file. Concatenating them lets later definitions reuse earlier auxiliary
+-- `_proof_k` constants that the library mints per module, so the values would no longer match
+-- (`scripts/fingerprint-challenges.sh`).
+public import Vocabulary.Setting
+public import Vocabulary.Sobolev
+public import Vocabulary.Variational
+
+@[expose] public section
 
 /-!
 # Challenge: planar 1-homogeneous inner variational solutions
@@ -12,7 +20,7 @@ inner variational solution `(v, χ)` of the one-phase problem with constant `Q �
 half-plane solution, a two-plane solution `α |x · e|` with `χ = 1` a.e., or trivial with `χ = 0`
 a.e.
 
-The project vocabulary is restated in `Challenge/*.lean`, one file per library file
+The project vocabulary is restated in `Vocabulary/*.lean`, one module per library file
 (`Basic/Setting.lean`, `Basic/Sobolev.lean`, `Defs/Variational.lean`), with the library's names,
 definitions and order. Every file imports Mathlib modules only (the same ones as the library file
 it restates).

@@ -1,4 +1,6 @@
-import EllipticBernoulli.Variational.Perturbation
+module
+
+public import EllipticBernoulli.Variational.Perturbation
 
 /-!
 # Solution: energy-decreasing perturbations (the proof of Feldman–Kim–Požár, Lemma 3.3)
@@ -13,7 +15,7 @@ Discharges the challenge through the library module imported above, by
   Result numbers are those of arXiv:2310.03656v2.
 -/
 
-noncomputable section
+@[expose] public noncomputable section
 
 open Set Filter Topology MeasureTheory Metric
 open scoped ContDiff Gradient Laplacian

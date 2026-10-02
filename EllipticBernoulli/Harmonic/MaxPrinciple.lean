@@ -113,7 +113,7 @@ private theorem fderiv_fderiv_nonneg_of_isLocalMin' {f : E → ℝ} {x : E} (hmi
     rwa [one_smul] at h
   have hψmin : IsLocalMin (f ∘ L) 0 := by
     have h2 : IsMinFilter f (𝓝 x) (L 0) := by rwa [hL0]
-    exact h2.comp_tendsto hLt
+    exact h2.comp_of_tendsto hLt
   have hf'1 : ContDiffAt ℝ 1 (fderiv ℝ f) x := hf.fderiv_right (by norm_num)
   have hB : HasFDerivAt (fderiv ℝ f) (fderiv ℝ (fderiv ℝ f) x) (L 0) := by
     rw [hL0]; exact (hf'1.differentiableAt one_ne_zero).hasFDerivAt

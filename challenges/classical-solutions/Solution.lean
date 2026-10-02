@@ -1,6 +1,8 @@
-import EllipticBernoulli.Classical.Viscosity
-import EllipticBernoulli.Classical.InnerVariation
-import EllipticBernoulli.Classical.GradientBound
+module
+
+public import EllipticBernoulli.Classical.Viscosity
+public import EllipticBernoulli.Classical.InnerVariation
+public import EllipticBernoulli.Classical.GradientBound
 
 /-!
 # Solution: classical solutions
@@ -10,7 +12,7 @@ Discharges the challenge through the library modules imported above:
 `classical_lipschitz_bound`.
 -/
 
-noncomputable section
+@[expose] public noncomputable section
 
 open Set Filter Topology MeasureTheory Metric
 open scoped NNReal

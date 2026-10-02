@@ -96,9 +96,9 @@ Where a statement deviates from its source, its docstring says so. The main devi
 ## Comparator challenges
 
 `challenges/` holds eight standalone [Comparator](https://github.com/leanprover/comparator) workspaces. They restate
-a selection of the headline statements over Mathlib only, and `formalization.yaml` lists them. In each,
-`Challenge/*.lean` restates the library's definitions over Mathlib, `Challenge.lean` states the theorems with
-`sorry`, and `Solution.lean` proves them from the library. See [`challenges/README.md`](challenges/README.md) for the
+a selection of the headline statements over Mathlib only, and `formalization.yaml` lists them. Every file is a Lean
+module. In each workspace, `Vocabulary.lean` (or `Vocabulary/*.lean`) restates the library's definitions over
+Mathlib, `Challenge.lean` states the theorems with `sorry`, and `Solution.lean` proves them from the library. See [`challenges/README.md`](challenges/README.md) for the
 challenge set, what is left out, and the acceptance procedure.
 - Ordinary CI only elaborates these files. Exact statement and definition equality, and the permitted-axiom check,
   are established by the release workflow `.github/workflows/release-comparator.yml`
@@ -113,12 +113,12 @@ challenge set, what is left out, and the acceptance procedure.
 ## Building
 
 The toolchain and dependencies are pinned in `lean-toolchain`, `lakefile.toml` and `lake-manifest.json`:
-- Lean `v4.34.1`;
-- Mathlib `v4.34.1` (commit `d13f23b`),
+- Lean `v4.35.0-rc3`;
+- Mathlib `v4.35.0-rc3` (commit `c55e6e7`),
   [leanprover-community/mathlib4](https://github.com/leanprover-community/mathlib4);
-- viscosity-solution-theory `v0.3.0` (Lake package `viscosity_solns`, commit `067e254`),
+- viscosity-solution-theory `v0.4.0` (Lake package `viscosity_solns`, commit `b9dc82d`),
   [willmfeldman/viscosity-solution-theory](https://github.com/willmfeldman/viscosity-solution-theory). It is used
-  only in `EllipticBernoulli/Harmonic/`. It pulls in aleksandrov-differentiability `v0.3.0` (commit `6b31824`),
+  only in `EllipticBernoulli/Harmonic/`. It pulls in aleksandrov-differentiability `v0.4.0` (commit `5e5c2ec`),
   [willmfeldman/aleksandrov-differentiability](https://github.com/willmfeldman/aleksandrov-differentiability),
   which this library does not import directly.
 

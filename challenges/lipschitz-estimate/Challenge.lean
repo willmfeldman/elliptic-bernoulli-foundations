@@ -1,8 +1,16 @@
-import Challenge.Setting
-import Challenge.Sobolev
-import Challenge.Touching
-import Challenge.Viscosity
-import Mathlib.Analysis.InnerProductSpace.Harmonic.Basic
+module
+
+-- challenge-prep: split vocabulary (aux-proof reuse: a merged file fails the fingerprint diff)
+-- One module per library file. Concatenating them lets later definitions reuse earlier auxiliary
+-- `_proof_k` constants that the library mints per module, so the values would no longer match
+-- (`scripts/fingerprint-challenges.sh`).
+public import Vocabulary.Setting
+public import Vocabulary.Sobolev
+public import Vocabulary.Touching
+public import Vocabulary.Viscosity
+public import Mathlib.Analysis.InnerProductSpace.Harmonic.Basic
+
+@[expose] public section
 
 /-!
 # Challenge: the Lipschitz estimate for viscosity supersolutions
@@ -14,7 +22,7 @@ non-strictly, and at a free boundary point either `Δφ ≤ 0` or `φ = 0` and `
 (supersolution). A viscosity supersolution which is harmonic in `{u > 0}` is Lipschitz,
 quantitatively on balls and locally on `U`.
 
-The project vocabulary is restated in `Challenge/*.lean`, one file per library file
+The project vocabulary is restated in `Vocabulary/*.lean`, one module per library file
 (`Basic/Setting.lean`, `Basic/Sobolev.lean`, `Basic/Touching.lean`,
 `Defs/Viscosity.lean`), with the library's names, definitions and order. Every file imports Mathlib
 modules only (the same ones as the library file it restates).

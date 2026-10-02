@@ -1,12 +1,20 @@
-import Challenge.Setting
-import Challenge.Sobolev
-import Challenge.Touching
-import Challenge.Viscosity
-import Challenge.Regularity
-import Challenge.Variational
-import Mathlib.Analysis.InnerProductSpace.Harmonic.Basic
-import Mathlib.MeasureTheory.Constructions.HaarToSphere
-import Mathlib.MeasureTheory.Integral.Average
+module
+
+-- challenge-prep: split vocabulary (aux-proof reuse: a merged file fails the fingerprint diff)
+-- One module per library file. Concatenating them lets later definitions reuse earlier auxiliary
+-- `_proof_k` constants that the library mints per module, so the values would no longer match
+-- (`scripts/fingerprint-challenges.sh`).
+public import Vocabulary.Setting
+public import Vocabulary.Sobolev
+public import Vocabulary.Touching
+public import Vocabulary.Viscosity
+public import Vocabulary.Regularity
+public import Vocabulary.Variational
+public import Mathlib.Analysis.InnerProductSpace.Harmonic.Basic
+public import Mathlib.MeasureTheory.Constructions.HaarToSphere
+public import Mathlib.MeasureTheory.Integral.Average
+
+@[expose] public section
 
 /-!
 # Challenge: non-degeneracy
@@ -29,7 +37,7 @@ constant `K` in the planar case), never on the solution.
   for `u` that is `K`-Lipschitz, `C²` and harmonic in `{u > 0}` (hypotheses Abedin–Feldman–Stinson
   do not state), `sup_{B̄_r(x₀)} u ≥ c r` for `r ≤ R/2`, with `c = c(q₀, K)`.
 
-The project vocabulary is restated in `Challenge/*.lean`, one file per library file
+The project vocabulary is restated in `Vocabulary/*.lean`, one module per library file
 (`Basic/Setting.lean`, `Basic/Sobolev.lean`, `Basic/Touching.lean`, `Defs/Viscosity.lean`,
 `Defs/Regularity.lean`, `Defs/Variational.lean`), with the library's names, definitions and
 order. Every file imports Mathlib modules only (the same ones as the library file it restates).

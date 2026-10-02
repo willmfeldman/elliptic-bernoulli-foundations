@@ -1,8 +1,16 @@
-import Challenge.Setting
-import Challenge.Sobolev
-import Challenge.Touching
-import Challenge.Viscosity
-import Challenge.Variational
+module
+
+-- challenge-prep: split vocabulary (aux-proof reuse: a merged file fails the fingerprint diff)
+-- One module per library file. Concatenating them lets later definitions reuse earlier auxiliary
+-- `_proof_k` constants that the library mints per module, so the values would no longer match
+-- (`scripts/fingerprint-challenges.sh`).
+public import Vocabulary.Setting
+public import Vocabulary.Sobolev
+public import Vocabulary.Touching
+public import Vocabulary.Viscosity
+public import Vocabulary.Variational
+
+@[expose] public section
 
 /-!
 # Challenge: minimizers are viscosity solutions
@@ -20,7 +28,7 @@ one-phase problem `Δu = 0` in `{u > 0}`, `|∇u| = Q` on `∂{u > 0}`, for the 
   below a supersolution `u` is a supersolution in `U`, and a continuous minimizer under `u ≤ w`
   above a subsolution `u` is a subsolution in `U`.
 
-The project vocabulary is restated in `Challenge/*.lean`, one file per library file
+The project vocabulary is restated in `Vocabulary/*.lean`, one module per library file
 (`Basic/Setting.lean`, `Basic/Sobolev.lean`, `Basic/Touching.lean`, `Defs/Viscosity.lean`,
 `Defs/Variational.lean`), with the library's names, definitions and order. Every file imports
 Mathlib modules only (the same ones as the library file it restates).

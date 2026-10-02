@@ -1,5 +1,7 @@
-import EllipticBernoulli.Variational.Existence
-import EllipticBernoulli.Variational.Continuity
+module
+
+public import EllipticBernoulli.Variational.Existence
+public import EllipticBernoulli.Variational.Continuity
 
 /-!
 # Solution: existence and continuity for the obstacle problem
@@ -8,7 +10,7 @@ Discharges the challenge through the library modules imported above, by `exists_
 and `IsObstacleMinimizer.exists_continuousOn`.
 -/
 
-noncomputable section
+@[expose] public noncomputable section
 
 open Set Filter Topology MeasureTheory Metric
 

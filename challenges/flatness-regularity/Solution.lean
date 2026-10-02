@@ -1,4 +1,6 @@
-import EllipticBernoulli.Flatness.Classical
+module
+
+public import EllipticBernoulli.Flatness.Classical
 
 /-!
 # Solution: flat free boundaries are regular (De Silva)
@@ -12,7 +14,7 @@ Discharges the challenge through the library modules imported above:
   13 (2011), no. 2, 223–238; arXiv:0912.2057.
 -/
 
-noncomputable section
+@[expose] public noncomputable section
 
 open Set Filter Topology Metric
 open scoped NNReal

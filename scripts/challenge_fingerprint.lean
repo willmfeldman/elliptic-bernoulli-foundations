@@ -3,9 +3,12 @@ Copyright (c) 2026 William M. Feldman. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: William M. Feldman
 -/
--- Plain (non-module) script, run with `lake env lean --run`; not part of any library.
+module
+
+-- Standalone script, run with `lake env lean --run`; not part of any library.
 -- Driver: `scripts/fingerprint-challenges.sh`.
-import Lean
+public import Lean
+
 open Lean
 
 /-- Print a structural fingerprint of the given theorems and of every `EllipticBernoulli`
@@ -44,7 +47,7 @@ partial def visit (env : Environment) (n : Name) (seen : IO.Ref NameSet) (out : 
     out.modify (·.push s!"{n} other {hash ci.type}")
     descend ci.type
 
-unsafe def main (args : List String) : IO UInt32 := do
+public unsafe def main (args : List String) : IO UInt32 := do
   match args with
   | modName :: thms =>
     initSearchPath (← findSysroot)

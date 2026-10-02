@@ -2,8 +2,7 @@
 # Elaborate every comparator challenge workspace in a trusted checkout, and check the axioms of
 # every solution theorem.
 #
-# For each challenges/*/config.json this builds Challenge (with its vocabulary files
-# Challenge/*.lean) and Solution, then runs
+# For each challenges/*/config.json this builds Vocabulary, Challenge and Solution, then runs
 # `#print axioms` on each theorem in the config and requires exactly the config's
 # permitted_axioms. It shows that the files elaborate and that the solutions are sorry-free. It
 # does NOT check that Challenge and Solution state the same theorems: only Comparator does that
@@ -15,8 +14,8 @@ status=0
 for config in "$ROOT"/challenges/*/config.json; do
   dir=$(dirname "$config")
   name=$(basename "$dir")
-  echo "==> $name: lake build Challenge Solution"
-  (cd "$dir" && lake build Challenge Solution)
+  echo "==> $name: lake build Vocabulary Challenge Solution"
+  (cd "$dir" && lake build Vocabulary Challenge Solution)
   check=$(mktemp "${TMPDIR:-/tmp}/challenge-axioms-XXXXXX")
   ruby -rjson -e '
     cfg = JSON.parse(File.read(ARGV[0]))

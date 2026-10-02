@@ -1,9 +1,9 @@
 name = "planar_classification"
-version = "0.2.0"
+version = "0.3.0"
 # Keep `lake build` safe for the comparator workflow: it elaborates only the
 # trusted statement surface.  The repository driver builds `Solution`
 # explicitly in a trusted CI checkout.
-defaultTargets = ["Challenge"]
+defaultTargets = ["Vocabulary", "Challenge"]
 # Share the root workspace's dependency checkouts and builds; the manifests
 # lock identical revisions.
 packagesDir = "../../.lake/packages"
@@ -15,6 +15,9 @@ relaxedAutoImplicit = false
 [[require]]
 name = "elliptic_bernoulli_foundations"
 path = "../.."
+
+[[lean_lib]]
+name = "Vocabulary"
 
 [[lean_lib]]
 name = "Challenge"

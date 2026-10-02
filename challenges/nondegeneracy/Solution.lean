@@ -1,8 +1,10 @@
-import EllipticBernoulli.Nondegeneracy.SmallestSuper
-import EllipticBernoulli.Nondegeneracy.ExteriorBall
-import EllipticBernoulli.Nondegeneracy.Equivalences
-import EllipticBernoulli.Nondegeneracy.Minimizer
-import EllipticBernoulli.Nondegeneracy.LargestSub2D
+module
+
+public import EllipticBernoulli.Nondegeneracy.SmallestSuper
+public import EllipticBernoulli.Nondegeneracy.ExteriorBall
+public import EllipticBernoulli.Nondegeneracy.Equivalences
+public import EllipticBernoulli.Nondegeneracy.Minimizer
+public import EllipticBernoulli.Nondegeneracy.LargestSub2D
 
 /-!
 # Solution: non-degeneracy
@@ -11,7 +13,7 @@ Discharges the challenge through the library modules imported above, by the libr
 non-degeneracy theorems.
 -/
 
-noncomputable section
+@[expose] public noncomputable section
 
 open Set Filter Topology MeasureTheory Metric InnerProductSpace
 open scoped ContDiff Laplacian NNReal

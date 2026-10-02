@@ -1,4 +1,6 @@
-import EllipticBernoulli.Lipschitz.Estimate
+module
+
+public import EllipticBernoulli.Lipschitz.Estimate
 
 /-!
 # Solution: the Lipschitz estimate for viscosity supersolutions
@@ -7,7 +9,7 @@ Discharges the challenge through the library modules imported above:
 `lipschitzOnWith_of_isViscSuper` and `locallyLipschitzOn_of_isViscSuper`.
 -/
 
-noncomputable section
+@[expose] public noncomputable section
 
 open Set Filter Topology MeasureTheory Metric InnerProductSpace
 open scoped NNReal

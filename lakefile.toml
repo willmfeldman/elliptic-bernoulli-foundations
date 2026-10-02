@@ -1,5 +1,5 @@
 name = "elliptic_bernoulli_foundations"
-version = "0.2.0"
+version = "0.3.0"
 description = "Foundations of the elliptic one-phase Bernoulli free boundary problem (variable coefficient)"
 keywords = ["math"]
 defaultTargets = ["EllipticBernoulli"]
@@ -15,12 +15,12 @@ maxSynthPendingDepth = 3
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "v4.34.1"
+rev = "v4.35.0-rc3"
 
 [[require]]
 name = "viscosity_solns"
 git = "https://github.com/willmfeldman/viscosity-solution-theory"
-rev = "v0.3.0"
+rev = "v0.4.0"
 
 [[lean_lib]]
 name = "EllipticBernoulli"
