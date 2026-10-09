@@ -43,15 +43,6 @@ namespace EllipticBernoulli
 
 variable {d : ℕ}
 
-/-- The zero function is a viscosity solution for every coefficient. -/
-private theorem isViscSolution_zero {U : Set (E d)} (hU : IsOpen U) (Q : E d → ℝ) :
-    IsViscSolution U Q (fun _ ↦ 0) := by
-  refine ⟨isViscSuper_const hU le_rfl, continuousOn_const, fun _ _ ↦ le_rfl, ?_⟩
-  intro φ _ x hx
-  have : posSet (fun _ : E d ↦ (0 : ℝ)) U = ∅ := by ext; simp [posSet]
-  rw [this, closure_empty, empty_inter] at hx
-  exact absurd hx.1 (notMem_empty x)
-
 /-- `max (s + min A B) 0 ≥ u` from the two bounds. -/
 private theorem le_max_add_min {w s A B : ℝ} (hA : w ≤ max (s + A) 0) (hB : w ≤ max (s + B) 0) :
     w ≤ max (s + min A B) 0 := by

@@ -1,5 +1,5 @@
 name = "elliptic_bernoulli_foundations"
-version = "0.3.0"
+version = "0.3.1"
 description = "Foundations of the elliptic one-phase Bernoulli free boundary problem (variable coefficient)"
 keywords = ["math"]
 defaultTargets = ["EllipticBernoulli"]

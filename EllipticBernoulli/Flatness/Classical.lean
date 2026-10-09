@@ -29,8 +29,6 @@ De Silva (2011), Theorem 1.1, with `f = 0` and `g = Q`, plus an interior-estimat
   property under `z ↦ x₀ + r z`, and restriction to smaller balls.
 * `isC1GammaHypersurfaceNear_of_flat : FlatGraphStatement` (radius `r/2`), from
   `isC1GammaHypersurfaceNear_of_flat_normalized` (`Flatness/Graph.lean`).
-* `deSilva_flat_implies_regular_core` (`Q ≡ 1`): the free boundary is the zero set of the
-  defining function `F y = ⟪e', y⟫ - f (y - ⟪y, e'⟫ e')`, with `⟪∇F, e'⟫ = 1`.
 * `gradient_extends_to_fb` and `isClassicalNear_of_flat : FlatClassicalStatement`: the gradient
   up to the free boundary, and the classical property near a flat free-boundary point.
 
@@ -237,47 +235,6 @@ theorem isC1GammaHypersurfaceNear_of_flat : FlatGraphStatement := by
   convert this using 1
   ext y
   simp [smul_smul, mul_inv_cancel₀ hr.ne']
-
-/-- **Flat free boundaries are regular level sets** (`Q ≡ 1`; De Silva (2011), Theorem 1.1).
-An `ε₀`-flat viscosity solution on `B_1` has, in `B_{1/2}`, a free boundary that is the
-zero set of a `C¹` function `F` with nonvanishing gradient: `F y = ⟪e', y⟫ - f (y - ⟪y, e'⟫ e')`,
-with `f` and `e'` from the normalized graph theorem, so `⟪∇F, e'⟫ = 1`. The hypothesis
-`0 ∈ F(v)` is not used. -/
-theorem deSilva_flat_implies_regular_core (hd : 2 ≤ d) :
-    ∃ ε₀ : ℝ, 0 < ε₀ ∧ ∀ (v : E d → ℝ) (e : E d), ‖e‖ = 1 →
-      IsViscSolution (ball 0 1) (fun _ ↦ 1) v → (0 : E d) ∈ freeBoundary v (ball 0 1) →
-      (∀ y ∈ ball (0 : E d) 1, max (⟪y, e⟫ - ε₀) 0 ≤ v y ∧ v y ≤ max (⟪y, e⟫ + ε₀) 0) →
-      ∃ F : E d → ℝ, ContDiff ℝ 1 F ∧ (∀ y ∈ ball (0 : E d) (1 / 2), gradient F y ≠ 0) ∧
-        ball (0 : E d) (1 / 2) ∩ freeBoundary v (ball 0 1) = ball 0 (1 / 2) ∩ {y | F y = 0} := by
-  obtain ⟨ε₁, hε₁, H⟩ := isC1GammaHypersurfaceNear_of_flat_normalized (d := d) hd
-  refine ⟨ε₁, hε₁, fun v e he hv _ hflat ↦ ?_⟩
-  have hLip1 : LipschitzOnWith (ε₁ ^ 2).toNNReal (fun _ : E d ↦ (1 : ℝ)) (ball 0 1) :=
-    (LipschitzWith.const (1 : ℝ)).lipschitzOnWith.weaken zero_le
-  obtain ⟨γ, -, -, e', he', f, C, hf, -, hgraph⟩ := H (ball 0 1) (fun _ ↦ 1) v e ε₁ isOpen_ball
-    subset_rfl hv he hε₁ le_rfl (fun _ _ ↦ by simp only [sub_self, abs_zero]; positivity) hLip1
-    hflat
-  set P : E d →L[ℝ] E d := ContinuousLinearMap.id ℝ (E d) - (innerSL ℝ e').smulRight e' with hP
-  have hPapp : ∀ y, P y = y - ⟪y, e'⟫ • e' := fun y ↦ by
-    simp [hP, real_inner_comm]
-  have hee : ⟪e', e'⟫ = 1 := by rw [real_inner_self_eq_norm_sq, he', one_pow]
-  have hPe : P e' = 0 := by rw [hPapp, hee, one_smul, sub_self]
-  refine ⟨fun y ↦ innerSL ℝ e' y - f (P y), ?_, ?_, ?_⟩
-  · exact (innerSL ℝ e').contDiff.sub (hf.comp P.contDiff)
-  · intro y _ h0
-    have hder : HasFDerivAt (fun y ↦ innerSL ℝ e' y - f (P y))
-        (innerSL ℝ e' - (fderiv ℝ f (P y)).comp P) y :=
-      (innerSL ℝ e').hasFDerivAt.sub
-        (((hf.differentiable (by norm_num)) (P y)).hasFDerivAt.comp y P.hasFDerivAt)
-    have h1 : ⟪gradient (fun y ↦ innerSL ℝ e' y - f (P y)) y, e'⟫ = 1 := by
-      rw [gradient, toDual_symm_apply, hder.fderiv]
-      simp [hPe, he']
-    rw [h0, inner_zero_left] at h1
-    exact zero_ne_one h1
-  · ext y
-    have hy := Set.ext_iff.1 hgraph y
-    simp only [mem_inter_iff, mem_ofPred_eq, sub_zero] at hy ⊢
-    rw [innerSL_apply_apply, hPapp, real_inner_comm, sub_eq_zero]
-    exact ⟨fun ⟨hb, hfb⟩ ↦ hy.1 ⟨hfb, hb⟩, fun h ↦ (hy.2 h).symm⟩
 
 /-! ### The gradient up to the free boundary -/
 

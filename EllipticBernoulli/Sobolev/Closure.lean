@@ -13,8 +13,6 @@ public import EllipticBernoulli.Sobolev.LocalCompactness
 # Closure of weak gradients under limits
 
 * `TendstoWeakL2.congr_ae`: the weak limit may be changed on a null set.
-* `TendstoWeakL2.of_ae_eq_off`: weak convergence on `Ω₀` extends to `Ω` if the sequence already
-  equals the limit a.e. on `Ω \ Ω₀`.
 * `TendstoWeakL2.mono_set`: weak convergence on `Ω` restricts to measurable `K ⊆ Ω`.
 * `TendstoWeakL2.ae_eq_of_tendsto`: weak limits are unique a.e.
 * `exists_tendstoWeakL2_subseq_of_monotone`, `exists_tendstoWeakL2Loc_subseq`: diagonal weak
@@ -25,9 +23,7 @@ public import EllipticBernoulli.Sobolev.LocalCompactness
   `G₀` is a weak gradient of `v₀` on `U`.
 
 For the direct method: `exists_tendstoWeakL2Loc_subseq` gives the weak-convergence hypothesis
-of `HasWeakGradient.of_tendsto` directly. Alternatively, with weak convergence on one compact `K₀`
-and `G k = G₀` a.e. off a smaller set, `TendstoWeakL2.of_ae_eq_off` supplies it on every compact
-`K ⊆ U`.
+of `HasWeakGradient.of_tendsto` directly.
 -/
 
 open Set Filter Topology MeasureTheory
@@ -50,49 +46,6 @@ theorem TendstoWeakL2.congr_ae {Ω : Set X} (h : TendstoWeakL2 μ Ω f f₀ l)
     integral_congr_ae (by filter_upwards [hfg] with x hx; rw [hx])
   rw [← e]
   exact h.2.2 φ hφ
-
-/-- **Extension of weak convergence.** If `f i ⇀ f₀` weakly in `L²(Ω₀)`, `f₀ ∈ L²(Ω)` and every
-`f i` equals `f₀` a.e. on `Ω \ Ω₀`, then `f i ⇀ f₀` weakly in `L²(Ω)`. -/
-theorem TendstoWeakL2.of_ae_eq_off {Ω₀ Ω : Set X} (hΩ₀ : MeasurableSet Ω₀) (hΩ : MeasurableSet Ω)
-    (h : TendstoWeakL2 μ Ω₀ f f₀ l) (hf₀ : MemLp f₀ 2 (μ.restrict Ω))
-    (heq : ∀ i, ∀ᵐ x ∂(μ.restrict (Ω \ Ω₀)), f i x = f₀ x) :
-    TendstoWeakL2 μ Ω f f₀ l := by
-  have hD : MeasurableSet (Ω \ Ω₀) := hΩ.diff hΩ₀
-  -- membership in `L²(Ω)`
-  have hmem : ∀ i, MemLp (f i) 2 (μ.restrict Ω) := by
-    intro i
-    have h1 : MemLp (Ω₀.indicator (f i)) 2 (μ.restrict Ω) :=
-      ((memLp_indicator_iff_restrict hΩ₀).2 (h.1 i)).restrict Ω
-    have h2 : MemLp ((Ω \ Ω₀).indicator f₀) 2 (μ.restrict Ω) := hf₀.indicator hD
-    refine (h1.add h2).ae_eq ?_
-    have := heq i
-    rw [ae_restrict_iff' hD] at this
-    filter_upwards [ae_restrict_of_ae this, ae_restrict_mem hΩ] with x hx hxΩ
-    by_cases hx0 : x ∈ Ω₀
-    · simp [indicator_of_mem hx0, indicator_of_notMem (fun h' : x ∈ Ω \ Ω₀ ↦ h'.2 hx0)]
-    · simp [indicator_of_notMem hx0, indicator_of_mem (show x ∈ Ω \ Ω₀ from ⟨hxΩ, hx0⟩),
-        hx ⟨hxΩ, hx0⟩]
-  refine ⟨hmem, hf₀, fun φ hφ ↦ ?_⟩
-  set φ' : X → F := Ω.indicator φ with hφ'def
-  have hφ' : MemLp φ' 2 (μ.restrict Ω₀) := ((memLp_indicator_iff_restrict hΩ).2 hφ).restrict Ω₀
-  have hdec : ∀ g : X → F, MemLp g 2 (μ.restrict Ω) →
-      ∫ x in Ω, inner ℝ (g x) (φ x) ∂μ =
-        (∫ x in Ω₀, inner ℝ (g x) (φ' x) ∂μ) + ∫ x in Ω \ Ω₀, inner ℝ (g x) (φ x) ∂μ := by
-    intro g hg
-    rw [← integral_inter_add_sdiff hΩ₀ (integrable_inner_of_memLp hg hφ)]
-    congr 1
-    have e : (fun x ↦ inner ℝ (g x) (φ' x)) = Ω.indicator (fun x ↦ inner ℝ (g x) (φ x)) := by
-      funext x
-      by_cases hx : x ∈ Ω
-      · simp [hφ'def, indicator_of_mem hx]
-      · simp [hφ'def, indicator_of_notMem hx]
-    rw [e, setIntegral_indicator hΩ, inter_comm]
-  have hc : ∀ i, ∫ x in Ω \ Ω₀, inner ℝ (f i x) (φ x) ∂μ =
-      ∫ x in Ω \ Ω₀, inner ℝ (f₀ x) (φ x) ∂μ := fun i ↦
-    integral_congr_ae (by filter_upwards [heq i] with x hx; rw [hx])
-  rw [hdec f₀ hf₀]
-  simp_rw [hdec _ (hmem _), hc]
-  exact (h.2.2 φ' hφ').add_const _
 
 /-- Weak convergence on `Ω` restricts to measurable subsets. -/
 theorem TendstoWeakL2.mono_set {Ω K : Set X} (hK : MeasurableSet K) (hKΩ : K ⊆ Ω)

@@ -28,8 +28,7 @@ On `E d`, for a centre `z` and an exponent `γ`:
   a test function in the viscosity definitions, whose test functions are globally `C^∞`.
 * `annulusBarrier z ρ₁ ρ₂ γ = (‖· - z‖^{-γ} - ρ₂^{-γ}) / (ρ₁^{-γ} - ρ₂^{-γ})`: equal to `1` on
   `sphere z ρ₁` and `0` on `sphere z ρ₂`, strictly subharmonic for `d - 2 < γ`, with gradient
-  norm `γ ρ₂^{-γ-1} / (ρ₁^{-γ} - ρ₂^{-γ})` on `sphere z ρ₂`. `annulusBarrierSmooth` is its
-  globally smooth version.
+  norm `γ ρ₂^{-γ-1} / (ρ₁^{-γ} - ρ₂^{-γ})` on `sphere z ρ₂`.
 
 Used for the Lipschitz estimate, exterior-ball non-degeneracy and the barriers of the flat
 Harnack inequality.
@@ -67,10 +66,6 @@ def radialPowSmooth (z : E d) (γ ε : ℝ) : E d → ℝ := fun y ↦ radialPro
 /-- The normalized annulus barrier `(‖y - z‖^{-γ} - ρ₂^{-γ}) / (ρ₁^{-γ} - ρ₂^{-γ})`. -/
 def annulusBarrier (z : E d) (ρ₁ ρ₂ γ : ℝ) : E d → ℝ :=
   fun y ↦ (‖y - z‖ ^ (-γ) - ρ₂ ^ (-γ)) / (ρ₁ ^ (-γ) - ρ₂ ^ (-γ))
-
-/-- The globally smooth annulus barrier, equal to `annulusBarrier` on `{ε ≤ ‖y - z‖}`. -/
-def annulusBarrierSmooth (z : E d) (ρ₁ ρ₂ γ ε : ℝ) : E d → ℝ :=
-  fun y ↦ (radialPowSmooth z γ ε y - ρ₂ ^ (-γ)) / (ρ₁ ^ (-γ) - ρ₂ ^ (-γ))
 
 end EllipticBernoulli
 
@@ -312,38 +307,5 @@ theorem norm_gradient_annulusBarrier_of_mem_sphere {z y : E d} {ρ₁ ρ₂ γ :
     norm_gradient_radialPow hyz γ hγ.le, Real.norm_eq_abs, abs_inv, abs_of_pos hD]
   rw [mem_sphere, dist_eq_norm] at hy
   rw [hy, inv_mul_eq_div]
-
-/-! ### The globally smooth annulus barrier -/
-
-theorem contDiff_annulusBarrierSmooth (z : E d) (ρ₁ ρ₂ γ : ℝ) {ε : ℝ} (hε : 0 < ε) :
-    ContDiff ℝ ∞ (annulusBarrierSmooth z ρ₁ ρ₂ γ ε) :=
-  ((contDiff_radialPowSmooth z γ hε).sub contDiff_const).div_const _
-
-theorem annulusBarrierSmooth_eqOn (z : E d) (ρ₁ ρ₂ γ : ℝ) {ε : ℝ} (hε : 0 < ε) :
-    EqOn (annulusBarrierSmooth z ρ₁ ρ₂ γ ε) (annulusBarrier z ρ₁ ρ₂ γ) {y | ε ≤ ‖y - z‖} := by
-  intro y hy
-  simp only [annulusBarrierSmooth, annulusBarrier, radialPowSmooth_eqOn z γ hε hy, radialPow]
-
-theorem annulusBarrierSmooth_eventuallyEq {z y : E d} {ρ₁ ρ₂ γ ε : ℝ} (hε : 0 < ε)
-    (hy : ε < ‖y - z‖) : annulusBarrierSmooth z ρ₁ ρ₂ γ ε =ᶠ[𝓝 y] annulusBarrier z ρ₁ ρ₂ γ := by
-  have ho : IsOpen {w : E d | ε < ‖w - z‖} := isOpen_lt continuous_const (by fun_prop)
-  filter_upwards [ho.mem_nhds hy] with w hw
-  exact annulusBarrierSmooth_eqOn z ρ₁ ρ₂ γ hε (le_of_lt hw)
-
-theorem laplacian_annulusBarrierSmooth {z y : E d} {ρ₁ ρ₂ γ ε : ℝ} (hε : 0 < ε)
-    (hy : ε < ‖y - z‖) :
-    Δ (annulusBarrierSmooth z ρ₁ ρ₂ γ ε) y =
-      γ * (γ + 2 - d) * ‖y - z‖ ^ (-γ - 2) / (ρ₁ ^ (-γ) - ρ₂ ^ (-γ)) := by
-  have hyz : y ≠ z := fun h ↦ by simp [h] at hy; linarith
-  rw [(laplacian_congr_nhds (annulusBarrierSmooth_eventuallyEq hε hy)).eq_of_nhds,
-    laplacian_annulusBarrier hyz]
-
-theorem gradient_annulusBarrierSmooth {z y : E d} {ρ₁ ρ₂ γ ε : ℝ} (hε : 0 < ε)
-    (hy : ε < ‖y - z‖) :
-    ∇ (annulusBarrierSmooth z ρ₁ ρ₂ γ ε) y =
-      (ρ₁ ^ (-γ) - ρ₂ ^ (-γ))⁻¹ • ((-γ * ‖y - z‖ ^ (-γ - 2)) • (y - z)) := by
-  have hyz : y ≠ z := fun h ↦ by simp [h] at hy; linarith
-  exact ((hasGradientAt_affine (hasGradientAt_radialPow hyz γ) _ _).congr_of_eventuallyEq
-    (annulusBarrierSmooth_eventuallyEq hε hy)).gradient
 
 end EllipticBernoulli

@@ -88,9 +88,6 @@ theorem contDiff_nondegProfile (z : E d) (σ A : ℝ) {n : WithTop ℕ∞} :
   exact contDiff_const.sub (contDiff_const.mul (Real.contDiff_exp.comp
     ((contDiff_const.mul (hg.sub contDiff_const)).neg)))
 
-theorem nondegProfile_eq (y : E d) :
-    nondegProfile z σ A y = nondegProfileF σ A d (‖y - z‖ ^ 2) := rfl
-
 theorem hasDerivAt_nondegProfileF (t : ℝ) :
     HasDerivAt (nondegProfileF σ A d) (A * ((d : ℝ) / (2 * σ ^ 2)) *
       Real.exp (-((d : ℝ) / (2 * σ ^ 2) * (t - σ ^ 2)))) t := by

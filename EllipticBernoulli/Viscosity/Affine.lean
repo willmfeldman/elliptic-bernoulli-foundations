@@ -313,11 +313,6 @@ alias IsViscSub.comp_affine := IsViscSub.rescale
 alias IsViscSolution.comp_affine := IsViscSolution.rescale
 /-- Alias of `IsRelaxedSub.rescale`. -/
 alias IsRelaxedSub.comp_affine := IsRelaxedSub.rescale
-/-- Alias of `posSet_rescale`. -/
-alias posSet_comp_affine := posSet_rescale
-/-- Alias of `freeBoundary_rescale`. -/
-alias freeBoundary_comp_affine := freeBoundary_rescale
-
 end EllipticBernoulli
 
 end

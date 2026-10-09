@@ -70,7 +70,4 @@ namespace EllipticBernoulli
 
 variable {d : ℕ}
 
-theorem mem_halfBall {e x : E d} {ρ : ℝ} : x ∈ halfBall e ρ ↔ 0 ≤ ⟪x, e⟫ ∧ x ∈ ball 0 ρ :=
-  Iff.rfl
-
 end EllipticBernoulli
