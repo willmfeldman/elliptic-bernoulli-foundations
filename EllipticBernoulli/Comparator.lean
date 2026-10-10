@@ -19,6 +19,7 @@ public import EllipticBernoulli.Variational.Existence
 public import EllipticBernoulli.Variational.Continuity
 public import EllipticBernoulli.Variational.Perturbation
 public import EllipticBernoulli.Variational.OneSided
+public import EllipticBernoulli.Variational.EnergyMinimizer
 public import EllipticBernoulli.Lipschitz.Estimate
 public import EllipticBernoulli.Nondegeneracy.SmallestSuper
 public import EllipticBernoulli.Nondegeneracy.ExteriorBall
@@ -28,6 +29,7 @@ public import EllipticBernoulli.Nondegeneracy.LargestSub2D
 public import EllipticBernoulli.Flatness.Harnack
 public import EllipticBernoulli.Flatness.Improvement
 public import EllipticBernoulli.Flatness.Classical
+public import EllipticBernoulli.Hodograph.Chart
 public import EllipticBernoulli.Classical.Viscosity
 public import EllipticBernoulli.Classical.GradientBound
 public import EllipticBernoulli.Classical.InnerVariation
@@ -55,6 +57,8 @@ over `Mathlib` only; this file guards the library side of that surface on every 
   Bound. 13 (2011), no. 2, 223–238; arXiv:0912.2057.
 * H. W. Alt, L. A. Caffarelli, *Existence and regularity for a minimum problem with free
   boundary*, J. Reine Angew. Math. 325 (1981), 105–144.
+* D. Kinderlehrer, L. Nirenberg, *Regularity in free boundary problems*, Ann. Sc. Norm. Sup. Pisa
+  Cl. Sci. (4) 4 (1977), no. 2, 373–391.
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -135,6 +139,11 @@ theorem challenge_one_sided : OneSidedViscStatement :=
 theorem challenge_obstacle_visc : ObstacleViscStatement :=
   ⟨IsObstacleMinimizer.isViscSuper_of_upper, IsObstacleMinimizer.isViscSub_of_lower⟩
 
+/-- Challenge: local energy minimizers have a locally Lipschitz representative, `C^∞` and
+harmonic in its positivity set. -/
+theorem challenge_energy_minimizer_regularity : EnergyMinimizerRegularityStatement :=
+  IsLocalEnergyMinimizer.exists_regular_representative
+
 /-! ### Lipschitz estimate and non-degeneracy -/
 
 /-- Challenge: the Lipschitz estimate for viscosity supersolutions harmonic in `{u > 0}`. -/
@@ -178,6 +187,12 @@ theorem challenge_improvement : ImprovementStatement := improvement_of_flatness
 /-- Challenge: flat free boundaries are `C^{1,γ}` graphs, and flat solutions are classical. -/
 theorem challenge_flat_regularity : FlatGraphStatement ∧ FlatClassicalStatement :=
   ⟨isC1GammaHypersurfaceNear_of_flat, isClassicalNear_of_flat⟩
+
+/-! ### Smooth charts at flat free-boundary points -/
+
+/-- Challenge: a smooth one-sided chart at a flat free-boundary point of a local minimizer
+(Kinderlehrer–Nirenberg). -/
+theorem challenge_flat_chart : FlatChartStatement := flat_chart
 
 /-! ### Classical solutions and blow-up classification -/
 

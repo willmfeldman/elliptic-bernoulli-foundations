@@ -18,6 +18,7 @@ One `def …Statement : Prop` per headline result. The theorems proving them liv
 * `ObstacleContinuityStatement` (interior and boundary continuity, De Giorgi).
 * `EnergyDecreaseSuperStatement`, `EnergyDecreaseSubStatement`, `OneSidedViscStatement`,
   `ObstacleViscStatement`.
+* `EnergyMinimizerRegularityStatement` (regularity of local energy minimizers).
 
 The obstacle constraint is the pointwise constraint set `K : E d → Set ℝ` of `IsObstacleMinimizer`.
 
@@ -27,11 +28,14 @@ are used here with `Q` replaced by `Q²` in the energy.
 
 ## References
 
+* H. W. Alt, L. A. Caffarelli, *Existence and regularity for a minimum problem with free
+  boundary*, J. Reine Angew. Math. 325 (1981), 105–144.
 * F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in
   the Bernoulli one-phase problem*, arXiv:2609.14981.
 * W. M. Feldman, I. C. Kim, N. Požár, *On the geometry of rate-independent droplet evolution*,
   Calc. Var. Partial Differential Equations 65 (2026), no. 10, Paper No. 265; arXiv:2310.03656.
   Result numbers are those of arXiv:2310.03656v2.
+* E. Giusti, *Direct Methods in the Calculus of Variations*, World Scientific, 2003.
 * B. Velichkov, *Regularity of the One-phase Free Boundaries*, Lecture Notes of the Unione
   Matematica Italiana 28, Springer, 2023.
 -/
@@ -174,5 +178,25 @@ def ObstacleViscSubStatement : Prop :=
 /-- Both obstacle statements. -/
 def ObstacleViscStatement : Prop :=
   ObstacleViscSuperStatement ∧ ObstacleViscSubStatement
+
+
+/-! ### Regularity of local energy minimizers -/
+
+/-- **Regularity of local energy minimizers** (Alt–Caffarelli, §§2–3; Velichkov, Ch. 3 and
+Proposition 7.1). Let `Q` be continuous with `0 ≤ Q ≤ C` on the open set `U`, and let `u ≥ 0` a.e.
+on `U` be a local minimizer of `J_Q(v; B) = ∫_B |∇v|² + Q² 1_{v>0}` in `U`. Then `u` has an
+a.e.-equal representative `v` on `U` which is again a local energy minimizer, is locally
+Lipschitz and nonnegative on `U`, has open positivity set `{v > 0} ∩ U`, and is `C^∞` with
+`Δv = 0` there. Continuity is proved by De Giorgi's method (Giusti, Ch. 7) rather than by the
+harmonic replacement of Alt–Caffarelli, §2; the Lipschitz bound and harmonicity then come from
+the viscosity formulation. Proved by `IsLocalEnergyMinimizer.exists_regular_representative`
+(`Variational/EnergyMinimizer.lean`). -/
+def EnergyMinimizerRegularityStatement : Prop :=
+  ∀ {d : ℕ} {U : Set (E d)} {Q u : E d → ℝ}, IsOpen U → ContinuousOn Q U →
+    (∀ x ∈ U, 0 ≤ Q x) → (∃ C, ∀ x ∈ U, Q x ≤ C) →
+    (∀ᵐ x ∂volume.restrict U, 0 ≤ u x) → IsLocalEnergyMinimizer U Q u →
+    ∃ v : E d → ℝ, (∀ᵐ x ∂volume.restrict U, v x = u x) ∧ IsLocalEnergyMinimizer U Q v ∧
+      LocallyLipschitzOn U v ∧ (∀ x ∈ U, 0 ≤ v x) ∧ IsOpen (posSet v U) ∧
+      ContDiffOn ℝ ∞ v (posSet v U) ∧ ∀ x ∈ posSet v U, Δ v x = 0
 
 end EllipticBernoulli

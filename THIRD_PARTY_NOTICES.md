@@ -16,6 +16,8 @@ Everything else is original to this project. It uses these Lake dependencies as 
 copied:
 - Mathlib;
 - viscosity-solution-theory (https://github.com/willmfeldman/viscosity-solution-theory, v0.4.0), which pulls in
-  aleksandrov-differentiability.
+  aleksandrov-differentiability;
+- elliptic-schauder-theory (https://github.com/willmfeldman/elliptic-schauder-theory, v0.1.0, Lake package
+  `basic_elliptic_theory`).
 
 All are Apache-2.0.

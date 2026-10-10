@@ -53,7 +53,9 @@ repo_root=$(CDPATH= cd -- "$script_dir/.." && pwd)
 # directories: this driver is part of the reviewed release configuration.
 workspaces='
 classical-solutions
+energy-minimizer-regularity
 energy-perturbation
+flat-chart
 flatness-regularity
 lipschitz-estimate
 nondegeneracy

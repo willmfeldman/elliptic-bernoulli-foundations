@@ -51,6 +51,15 @@ public import EllipticBernoulli.Harmonic.StrongMax
 public import EllipticBernoulli.Harmonic.SubMeanValue
 public import EllipticBernoulli.Harmonic.ViscosityHarmonic
 public import EllipticBernoulli.Harmonic.WeylWeakGradient
+public import EllipticBernoulli.Hodograph.Boundary
+public import EllipticBernoulli.Hodograph.Chart
+public import EllipticBernoulli.Hodograph.Equation
+public import EllipticBernoulli.Hodograph.Field
+public import EllipticBernoulli.Hodograph.Flat
+public import EllipticBernoulli.Hodograph.Inverse
+public import EllipticBernoulli.Hodograph.Line
+public import EllipticBernoulli.Hodograph.Seeley
+public import EllipticBernoulli.Hodograph.Transform
 public import EllipticBernoulli.Lipschitz.Barrier
 public import EllipticBernoulli.Lipschitz.Estimate
 public import EllipticBernoulli.Lipschitz.LinearGrowth
@@ -71,6 +80,7 @@ public import EllipticBernoulli.Regularity.Cutoff
 public import EllipticBernoulli.Regularity.DeGiorgi
 public import EllipticBernoulli.Regularity.DeGiorgiSeq
 public import EllipticBernoulli.Regularity.InteriorCaccioppoli
+public import EllipticBernoulli.Regularity.InteriorFree
 public import EllipticBernoulli.Regularity.InteriorObstacle
 public import EllipticBernoulli.Regularity.InteriorOscillation
 public import EllipticBernoulli.Regularity.Isoperimetric
@@ -103,12 +113,14 @@ public import EllipticBernoulli.Sobolev.WeakCompactness
 public import EllipticBernoulli.Sobolev.ZeroExtension
 public import EllipticBernoulli.Statements.Classical
 public import EllipticBernoulli.Statements.Flatness
+public import EllipticBernoulli.Statements.Hodograph
 public import EllipticBernoulli.Statements.Harmonic
 public import EllipticBernoulli.Statements.Lipschitz
 public import EllipticBernoulli.Statements.Nondegeneracy
 public import EllipticBernoulli.Statements.Variational
 public import EllipticBernoulli.Statements.Viscosity
 public import EllipticBernoulli.Variational.Continuity
+public import EllipticBernoulli.Variational.EnergyMinimizer
 public import EllipticBernoulli.Variational.Existence
 public import EllipticBernoulli.Variational.OneSided
 public import EllipticBernoulli.Variational.Perturbation
@@ -141,6 +153,8 @@ Root module: publicly imports every public module of the library.
   energy-decreasing perturbations and one-sided minimizers.
 * `Lipschitz/*`, `Nondegeneracy/*`: the Lipschitz estimate and non-degeneracy.
 * `Flatness/*`: De Silva's flatness theory, up to classical regularity.
+* `Hodograph/*`: the partial hodograph transform and smooth one-sided charts at flat
+  free-boundary points.
 * `Classical/*`: classical solutions.
 * `Blowup/*`: the classification of planar 1-homogeneous inner variational solutions.
 * `Registry/*`: reserved for results assumed without proof (there are none).

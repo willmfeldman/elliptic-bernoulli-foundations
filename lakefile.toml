@@ -1,5 +1,5 @@
 name = "elliptic_bernoulli_foundations"
-version = "0.3.1"
+version = "0.4.0"
 description = "Foundations of the elliptic one-phase Bernoulli free boundary problem (variable coefficient)"
 keywords = ["math"]
 defaultTargets = ["EllipticBernoulli"]
@@ -21,6 +21,11 @@ rev = "v4.35.0-rc3"
 name = "viscosity_solns"
 git = "https://github.com/willmfeldman/viscosity-solution-theory"
 rev = "v0.4.0"
+
+[[require]]
+name = "basic_elliptic_theory"
+git = "https://github.com/willmfeldman/elliptic-schauder-theory"
+rev = "v0.1.0"
 
 [[lean_lib]]
 name = "EllipticBernoulli"

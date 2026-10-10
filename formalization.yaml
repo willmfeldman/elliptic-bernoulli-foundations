@@ -21,8 +21,10 @@ project:
     Bernoulli free boundary problem Δu = 0 in {u > 0}, |∇u| = Q on ∂{u > 0},
     with a variable coefficient 0 < Qmin ≤ Q ≤ Qmax: obstacle problems for the
     Alt–Caffarelli energy, energy perturbations, the Lipschitz estimate,
-    non-degeneracy, De Silva's flatness theory, classical solutions, and the
-    classification of planar 1-homogeneous inner variational solutions.
+    regularity of local energy minimizers, non-degeneracy, De Silva's
+    flatness theory, smooth charts at flat free-boundary points, classical
+    solutions, and the classification of planar 1-homogeneous inner
+    variational solutions.
 
 dependencies:
   - name: "mathlib"
@@ -34,6 +36,9 @@ dependencies:
   - name: "AleksandrovDifferentiability"
     url: "https://github.com/willmfeldman/aleksandrov-differentiability"
     rev: "5e5c2ec4cee4f8851387e9bb309eeb703cd72a25"
+  - name: "basic_elliptic_theory"
+    url: "https://github.com/willmfeldman/elliptic-schauder-theory"
+    rev: "7f27afc285ef78cd54b28e036827c3e8308f3f5f"
 
 build:
   package_file: "lakefile.toml"
@@ -132,6 +137,24 @@ targets:
       - EllipticBernoulli.challenge_isLocalEnergyMinimizer_isViscSolution
       - EllipticBernoulli.challenge_isObstacleMinimizer_isViscSuper_of_upper
       - EllipticBernoulli.challenge_isObstacleMinimizer_isViscSub_of_lower
+  - id: energy-minimizer-regularity
+    kind: headline-theorem
+    expected_axioms: [propext, Quot.sound, Classical.choice]
+    title: Regularity of local energy minimizers
+    source: "H. W. Alt, L. A. Caffarelli, Existence and regularity for a minimum problem with free boundary, J. Reine Angew. Math. 325 (1981), 105–144, §§2–3; B. Velichkov, Regularity of the One-phase Free Boundaries, Lecture Notes of the Unione Matematica Italiana 28, Springer, 2023, Ch. 3 and Proposition 7.1 (continuity here by De Giorgi's method, E. Giusti, Direct Methods in the Calculus of Variations, World Scientific, 2003, Ch. 7)"
+    module: EllipticBernoulli.Variational.EnergyMinimizer
+    declaration: EllipticBernoulli.IsLocalEnergyMinimizer.exists_regular_representative
+    related_declarations:
+      - EllipticBernoulli.exists_regular_representative_univ
+    informal: >
+      For Q continuous with 0 ≤ Q ≤ C on an open set U, a local minimizer
+      u ≥ 0 (a.e.) of the Alt–Caffarelli energy J_Q(v; B) = ∫_B |∇v|² + Q² 1_{v>0}
+      on balls compactly contained in U has an a.e.-equal representative v
+      which is again a local minimizer, is locally Lipschitz and non-negative
+      on U, has open positivity set {v > 0} ∩ U, and is C^∞ and harmonic there.
+    challenge: challenges/energy-minimizer-regularity
+    challenge_theorems:
+      - EllipticBernoulli.challenge_isLocalEnergyMinimizer_exists_regular_representative
   - id: lipschitz-estimate
     kind: headline-theorem
     expected_axioms: [propext, Quot.sound, Classical.choice]
@@ -207,6 +230,27 @@ targets:
     challenge_theorems:
       - EllipticBernoulli.challenge_isC1GammaHypersurfaceNear_of_flat
       - EllipticBernoulli.challenge_isClassicalNear_of_flat
+  - id: flat-chart
+    kind: headline-theorem
+    expected_axioms: [propext, Quot.sound, Classical.choice]
+    title: Smooth one-sided charts at flat free-boundary points
+    source: "D. Kinderlehrer, L. Nirenberg, Regularity in free boundary problems, Ann. Sc. Norm. Sup. Pisa Cl. Sci. (4) 4 (1977), no. 2, 373–391 (partial hodograph transform); D. De Silva, Free boundary regularity for a problem with right hand side, Interfaces Free Bound. 13 (2011), no. 2, 223–238; arXiv:0912.2057 (the C^{1,γ} step); R. T. Seeley, Extension of C^∞ functions defined in a half space, Proc. Amer. Math. Soc. 15 (1964), 625–626"
+    module: EllipticBernoulli.Hodograph.Chart
+    declaration: EllipticBernoulli.flat_chart
+    related_declarations:
+      - EllipticBernoulli.chart_of_flat_blowup_univ
+      - EllipticBernoulli.exists_contDiffOn_extension_halfSpace
+    informal: >
+      Let d ≥ 2 and let u ≥ 0 be continuous on an open set U and a local
+      minimizer of J(v; B) = ∫_B |∇v|² + 1_{v>0} (Q ≡ 1). At a free-boundary
+      point x₀ where the half-plane solution (y · e)₊ is a blow-up limit of u,
+      there are a ball B_ρ(x₀) ⊆ U and a C^∞ function F on it with
+      u = max(F, 0), ∇F ≠ 0, ΔF = 0 where F > 0, |∇F| = 1 on {F = 0}, and
+      {F > 0} ∩ B_ρ(x₀) preconnected; in particular the free boundary is a
+      C^∞ hypersurface near x₀.
+    challenge: challenges/flat-chart
+    challenge_theorems:
+      - EllipticBernoulli.challenge_flat_chart
   - id: classical-solutions
     kind: headline-theorem
     expected_axioms: [propext, Quot.sound, Classical.choice]

@@ -78,9 +78,11 @@ checks that the copy is current. Two cautions, both checked by `scripts/fingerpr
 | `obstacle-existence` | `ObstacleExistenceStatement`, `ObstacleContinuityStatement`: existence (direct method) and continuity on all of `U` of obstacle minimizers of `J_Q`, for `Q` Lipschitz with `0 < c ≤ Q ≤ C` and `u ≥ 0` locally Lipschitz (Abedin–Feldman–Stinson, proof of Lemma 6.3) | `exists_isObstacleMinimizer`, `IsObstacleMinimizer.exists_continuousOn` |
 | `energy-perturbation` | `EnergyDecreaseSuperStatement`, `EnergyDecreaseSubStatement`: energy-decreasing perturbations where the viscosity test fails, the key step of the proof of Feldman–Kim–Požár, Lemma 3.3, with their Lemma A.1 | `energy_decrease_of_not_super`, `energy_decrease_of_not_sub` |
 | `viscosity-minimizers` | `OneSidedViscStatement` (upward minimizers are supersolutions, downward minimizers subsolutions, local energy minimizers solutions; Feldman–Kim–Požár, Lemma 3.3; Velichkov, Prop 7.1) and `ObstacleViscStatement` (obstacle minimizers are super/subsolutions; Abedin–Feldman–Stinson, Lemma 6.3, Steps 1–2) | `IsUpwardMinimizer.isViscSuper`, `IsDownwardMinimizer.isViscSub`, `IsLocalEnergyMinimizer.isViscSolution`, `IsObstacleMinimizer.isViscSuper_of_upper`, `IsObstacleMinimizer.isViscSub_of_lower` |
+| `energy-minimizer-regularity` | `EnergyMinimizerRegularityStatement`: a local minimizer `u ≥ 0` of `J_Q`, for `Q` continuous with `0 ≤ Q ≤ C`, has an a.e.-equal representative which is a local minimizer, locally Lipschitz and non-negative, with open positivity set on which it is `C^∞` and harmonic (Alt–Caffarelli, §§2–3; Velichkov, Ch. 3 and Prop 7.1; continuity by De Giorgi's method) | `IsLocalEnergyMinimizer.exists_regular_representative` |
 | `lipschitz-estimate` | `LipschitzEstimateStatement`, `LocalLipschitzStatement` (Caffarelli–Salsa, Lemma 11.19; the constant `C = C(d)`) | `lipschitzOnWith_of_isViscSuper`, `locallyLipschitzOn_of_isViscSuper` |
 | `nondegeneracy` | `SmallestSuperNondegQuantStatement` (Caffarelli–Salsa, Lemma 6.9, `c = q₀/(8d)`), `ExteriorBallSameRadiusStatement` (Abedin–Feldman–Stinson, Lemma B.2, same radius), `NondegEquivStatement` (Lemma B.3 (i)⇔(ii)), `DownwardNondegQuantStatement` (Alt–Caffarelli, Lemma 3.4, `c = q₀/(8d e^{d/2})`), `LargestSubNondeg2DQuantStatement` (Abedin–Feldman–Stinson, Theorem B.1, after Orcan-Ekmekci, `d = 2`, `c = c(q₀, K)`, for `u` `K`-Lipschitz, `C²` and harmonic in `{u > 0}`; the statement asks for `r ≤ R/2` and a sup over the closed ball `B̄_r`, where Theorem B.1 has `0 < r ≤ R` and a sup over `∂B_r`, which is equivalent up to halving `c`) | `IsLocalSmallestSuper.exists_le_of_closedBall_subset`, `exists_le_of_exteriorBall_sameRadius`, `nondegenerate_sup_iff_average`, `IsDownwardMinimizer.exists_le_of_closedBall_subset`, `exists_pos_le_of_isLocalLargestSub` |
 | `flatness-regularity` | `FlatGraphStatement`, `FlatClassicalStatement` (De Silva (2011), Theorem 1.1, with `Q` Lipschitz instead of Hölder, and the `IsClassicalNear` conclusion; `γ`, the Hölder constant and the `IsClassicalNear` radius are chosen per solution, whereas De Silva's do not depend on the solution) | `isC1GammaHypersurfaceNear_of_flat`, `isClassicalNear_of_flat` |
+| `flat-chart` | `FlatChartStatement`: at a free-boundary point of a continuous local minimizer `u ≥ 0` of `J_1` (`d ≥ 2`) at which the half-plane solution `(y · e)₊` is a blow-up limit, `u = max(F, 0)` near the point for a `C^∞` function `F` with `∇F ≠ 0`, harmonic where positive, with `|∇F| = 1` on `{F = 0}` (Kinderlehrer–Nirenberg's partial hodograph transform; De Silva (2011) for the `C^{1,γ}` step; Seeley's extension) | `flat_chart` |
 | `classical-solutions` | `ClassicalViscStatement`, `ClassicalInnerVarStatement`, `ClassicalLipschitzBoundStatement` (classical ⇒ viscosity; the inner-variation identity, for `Q` Lipschitz with `Q ≥ c > 0`; the gradient bound of Alt–Caffarelli, Thm 6.3 / Remark 6.4, as cited in Kriventsov–Weiss, Proposition 9.1, with a modulus depending on the Lipschitz bound) | `IsClassicalSolution.isViscSolution`, `IsClassicalSolution.integral_innerVarIntegrand_eq_zero`, `classical_lipschitz_bound` |
 | `planar-classification` | `PlanarHomogeneousClassificationStatement` (after Jerison–Kamburov, §5: the case analysis in the proof of Proposition 5.3, which assumes in addition a Lipschitz, non-degenerate solution that is both viscosity and variational) | `classification_homogeneous_planar` |
 
@@ -105,11 +107,15 @@ The statements are spelled out in full in each `Challenge.lean`; they do not ref
   Result numbers are those of arXiv:2310.03656v2.
 - D. Jerison, N. Kamburov, *Structure of one-phase free boundaries in the plane*, Int. Math. Res.
   Not. IMRN 2016, no. 19, 5922–5987; arXiv:1412.4106.
+- D. Kinderlehrer, L. Nirenberg, *Regularity in free boundary problems*, Ann. Sc. Norm. Sup. Pisa
+  Cl. Sci. (4) 4 (1977), no. 2, 373–391.
 - D. Kriventsov, G. S. Weiss, *Rectifiability, finite Hausdorff measure, and compactness for
   non-minimizing Bernoulli free boundaries*, Comm. Pure Appl. Math. 78 (2025), no. 3, 545–591;
   arXiv:2306.10131. Result numbers are those of arXiv:2306.10131v2.
 - B. Orcan-Ekmekci, *On the geometry and regularity of largest subsolutions for a free boundary
   problem in ℝ²: elliptic case*, Calc. Var. Partial Differential Equations 49 (2014), no. 3–4, 937–962.
+- R. T. Seeley, *Extension of `C^∞` functions defined in a half space*, Proc. Amer. Math. Soc. 15
+  (1964), 625–626.
 - B. Velichkov, *Regularity of the One-phase Free Boundaries*, Lecture Notes of the Unione
   Matematica Italiana 28, Springer, 2023.
 
@@ -117,15 +123,15 @@ The statements are spelled out in full in each `Challenge.lean`; they do not ref
 
 - Lean: `leanprover/lean4:v4.35.0-rc3`
 - Mathlib: `v4.35.0-rc3` (`c55e6e7`)
-- viscosity_solns `v0.4.0` and AleksandrovDifferentiability `v0.4.0`: pinned through the parent
-  `lake-manifest.json`
+- viscosity_solns `v0.4.0`, AleksandrovDifferentiability `v0.4.0` and basic_elliptic_theory
+  `v0.1.0`: pinned through the parent `lake-manifest.json`
 - Comparator: `leanprover/comparator` at `fd5d5bcf14177b187f66d4502071268d877887c3`, with
   lean4export `66f1fb4bc256072069767fce52d39480e4524869` and landrun
   `811cfff51ceaf3d9843708aa6d22e9b84ccac8b4`, pinned in `scripts/release-comparator.sh` and
   recorded in `formalization.yaml`
 
 Every workspace sets `packagesDir = "../../.lake/packages"` in its `lakefile.toml` (and records
-the same folder in its `lake-manifest.json`), so all eight share the root workspace's dependency
+the same folder in its `lake-manifest.json`), so all ten share the root workspace's dependency
 checkouts and builds. The manifests lock the same revisions as the root manifest. Each workspace
 defaults to its `Vocabulary` and `Challenge` targets only, so a plain `lake build` never
 elaborates `Solution.lean`. The workspaces set `autoImplicit = false`.
