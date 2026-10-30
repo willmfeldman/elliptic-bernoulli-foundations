@@ -33,7 +33,13 @@ The challenges certify a selection of the library's headline statements
 - the exterior-ball lemma with domain `B_{4s}(x₀)` (`ExteriorBallNondegStatement`). The
   challenge certifies instead the same-radius form, which is the statement of
   Abedin–Feldman–Stinson, Lemma B.2; its constant `q₀/(128 d e^{3d})` is smaller than the `B_{4s}`
-  form's `q₀/(32 d e^{3d})`.
+  form's `q₀/(32 d e^{3d})`;
+- Weiss monotonicity (`WeissMonotoneStatement`) and the classification of `1`-homogeneous two-phase
+  functions (`HomogeneousTwoPhaseIn`), the intermediate steps of the two-phase classification; the
+  `two-phase-classification` challenge certifies only the final theorem, and the
+  `friedland-hayman` and `acf-monotonicity` challenges its two other inputs;
+- the classification of global two-phase minimizers in dimensions `d ≤ 4` with the explicit
+  low-dimensional Friedland–Hayman inequality, which the every-dimension challenge implies.
 
 `EllipticBernoulli/Comparator.lean` restates every headline statement, including these, as a
 library-side regression test.
@@ -51,6 +57,7 @@ and the library's declaration order, one part per library vocabulary file:
 | `Viscosity` | `Defs/Viscosity.lean` | viscosity super/sub/solutions (Abedin–Feldman–Stinson, Definition 2.1) and the related notions |
 | `Regularity` | `Defs/Regularity.lean` | `blowup`, `IsC1GammaHypersurfaceNear`, `IsClassicalNear`, non-degeneracy, `IsClassicalSolution` |
 | `Variational` | `Defs/Variational.lean` | `innerVarIntegrand`, `IsInnerVarSolution`, directional, obstacle and local energy minimizers |
+| `TwoPhase` | `Defs/TwoPhase.lean` | eigenvalues and characteristic exponents on the sphere (`sphEigenvalue`, `charExponent`, `sphExponent`) and on caps, the ACF functional (`acfIntegral`, `acfPhi`) and `IsACFPair`, the Weiss functional and defect, `twoPlane` |
 
 Each part drops the library file's theorems and imports the same Mathlib modules as the library
 file. `scripts/challenge-prep.py sync` copies `Vocabulary.lean` into a generated block at the top
@@ -84,6 +91,9 @@ checks that the copy is current. Two cautions, both checked by `scripts/fingerpr
 | `flatness-regularity` | `FlatGraphStatement`, `FlatClassicalStatement` (De Silva (2011), Theorem 1.1, with `Q` Lipschitz instead of Hölder, and the `IsClassicalNear` conclusion; `γ`, the Hölder constant and the `IsClassicalNear` radius are chosen per solution, whereas De Silva's do not depend on the solution) | `isC1GammaHypersurfaceNear_of_flat`, `isClassicalNear_of_flat` |
 | `flat-chart` | `FlatChartStatement`: at a free-boundary point of a continuous local minimizer `u ≥ 0` of `J_1` (`d ≥ 2`) at which the half-plane solution `(y · e)₊` is a blow-up limit, `u = max(F, 0)` near the point for a `C^∞` function `F` with `∇F ≠ 0`, harmonic where positive, with `|∇F| = 1` on `{F = 0}` (Kinderlehrer–Nirenberg's partial hodograph transform; De Silva (2011) for the `C^{1,γ}` step; Seeley's extension) | `flat_chart` |
 | `classical-solutions` | `ClassicalViscStatement`, `ClassicalInnerVarStatement`, `ClassicalLipschitzBoundStatement` (classical ⇒ viscosity; the inner-variation identity, for `Q` Lipschitz with `Q ≥ c > 0`; the gradient bound of Alt–Caffarelli, Thm 6.3 / Remark 6.4, as cited in Kriventsov–Weiss, Proposition 9.1, with a modulus depending on the Lipschitz bound) | `IsClassicalSolution.isViscSolution`, `IsClassicalSolution.integral_innerVarIntegrand_eq_zero`, `classical_lipschitz_bound` |
+| `friedland-hayman` | `FriedlandHaymanStatement`: for `d ≥ 2` and nonempty, relatively open, disjoint `Γ₁, Γ₂ ⊆ 𝕊^{d-1}`, `α_d(Γ₁) + α_d(Γ₂) ≥ 2`, with eigenvalues over chordally Lipschitz trial functions (Friedland–Hayman; Beck–Jerison, Theorem 1.1) | `friedlandHayman` |
+| `acf-monotonicity` | `ACFMonotoneIn d` for every `d ≥ 2`, with no Friedland–Hayman hypothesis: for `u₁, u₂ ≥ 0` `L`-Lipschitz, harmonic in their positivity sets, with `u₁ u₂ ≡ 0` and `u₁(x₀) = u₂(x₀) = 0`, `r ↦ r⁻⁴ I(u₁) I(u₂)` is nondecreasing on `(0, ∞)` (Alt–Caffarelli–Friedman; Salato, Theorem 1.1). The hypotheses are written out rather than bundled as `IsACFPair` | `acfMonotoneIn` |
+| `two-phase-classification` | `TwoPhaseClassificationStatement`: in every dimension, a Lipschitz local minimizer of `∫ \|∇v\|² + 1_{v>0}` on `ℝᵈ` that takes a positive and a negative value is `a (x·e + c)⁺ - b (x·e + c)⁻` with `‖e‖ = 1`, `a, b > 0`, `a² - b² = 1` (after Alt–Caffarelli–Friedman). The conclusion is written out rather than through `twoPlane` | `twoPhaseClassification` |
 | `planar-classification` | `PlanarHomogeneousClassificationStatement` (after Jerison–Kamburov, §5: the case analysis in the proof of Proposition 5.3, which assumes in addition a Lipschitz, non-degenerate solution that is both viscosity and variational) | `classification_homogeneous_planar` |
 
 In `nondegeneracy`, every constant depends only on the data (`d`, `q₀`, and `K` in the planar
@@ -96,8 +106,12 @@ The statements are spelled out in full in each `Challenge.lean`; they do not ref
 
 - F. Abedin, W. M. Feldman, K. Stinson, *Variational properties of Perron's extremal solutions in
   the Bernoulli one-phase problem*, arXiv:2609.14981.
+- H. W. Alt, L. A. Caffarelli, A. Friedman, *Variational problems with two phases and their free
+  boundaries*, Trans. Amer. Math. Soc. 282 (1984), 431–461.
 - H. W. Alt, L. A. Caffarelli, *Existence and regularity for a minimum problem with free boundary*,
   J. Reine Angew. Math. 325 (1981), 105–144.
+- T. Beck, D. Jerison, *The Friedland–Hayman inequality and Caffarelli's contraction theorem*,
+  arXiv:2102.00571.
 - L. A. Caffarelli, S. Salsa, *A Geometric Approach to Free Boundary Problems*, Grad. Stud. Math.
   68, Amer. Math. Soc., 2005.
 - D. De Silva, *Free boundary regularity for a problem with right hand side*, Interfaces Free Bound.
@@ -105,6 +119,8 @@ The statements are spelled out in full in each `Challenge.lean`; they do not ref
 - W. M. Feldman, I. C. Kim, N. Požár, *On the geometry of rate-independent droplet evolution*,
   Calc. Var. Partial Differential Equations 65 (2026), no. 10, Paper No. 265; arXiv:2310.03656.
   Result numbers are those of arXiv:2310.03656v2.
+- S. Friedland, W. K. Hayman, *Eigenvalue inequalities for the Dirichlet problem on spheres and the
+  growth of subharmonic functions*, Comment. Math. Helv. 51 (1976), 133–161.
 - D. Jerison, N. Kamburov, *Structure of one-phase free boundaries in the plane*, Int. Math. Res.
   Not. IMRN 2016, no. 19, 5922–5987; arXiv:1412.4106.
 - D. Kinderlehrer, L. Nirenberg, *Regularity in free boundary problems*, Ann. Sc. Norm. Sup. Pisa
@@ -114,10 +130,14 @@ The statements are spelled out in full in each `Challenge.lean`; they do not ref
   arXiv:2306.10131. Result numbers are those of arXiv:2306.10131v2.
 - B. Orcan-Ekmekci, *On the geometry and regularity of largest subsolutions for a free boundary
   problem in ℝ²: elliptic case*, Calc. Var. Partial Differential Equations 49 (2014), no. 3–4, 937–962.
+- E. Salato, *A self-contained proof of the Alt–Caffarelli–Friedman monotonicity formula*,
+  arXiv:2506.13473.
 - R. T. Seeley, *Extension of `C^∞` functions defined in a half space*, Proc. Amer. Math. Soc. 15
   (1964), 625–626.
 - B. Velichkov, *Regularity of the One-phase Free Boundaries*, Lecture Notes of the Unione
   Matematica Italiana 28, Springer, 2023.
+- G. S. Weiss, *Partial regularity for a minimum problem with free boundary*, J. Geom. Anal. 9
+  (1999), 317–326.
 
 ## Toolchain
 
@@ -131,7 +151,7 @@ The statements are spelled out in full in each `Challenge.lean`; they do not ref
   recorded in `formalization.yaml`
 
 Every workspace sets `packagesDir = "../../.lake/packages"` in its `lakefile.toml` (and records
-the same folder in its `lake-manifest.json`), so all ten share the root workspace's dependency
+the same folder in its `lake-manifest.json`), so all thirteen share the root workspace's dependency
 checkouts and builds. The manifests lock the same revisions as the root manifest. Each workspace
 defaults to its `Vocabulary` and `Challenge` targets only, so a plain `lake build` never
 elaborates `Solution.lean`. The workspaces set `autoImplicit = false`.

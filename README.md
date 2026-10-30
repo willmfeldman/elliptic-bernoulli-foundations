@@ -14,9 +14,11 @@ with a variable coefficient 0 < Qmin ≤ Q ≤ Qmax. It covers:
 - De Silva's flatness theory, up to classical regularity;
 - smooth one-sided charts at flat free-boundary points (partial hodograph transform);
 - classical solutions;
-- the classification of planar 1-homogeneous inner variational solutions.
+- the classification of planar 1-homogeneous inner variational solutions;
+- for the two-phase problem: the Friedland–Hayman inequality, the Alt–Caffarelli–Friedman monotonicity formula,
+  Weiss monotonicity, and the classification of global two-phase minimizers.
 
-The library has about 36,000 lines of Lean. Every file is a Lean module, and everything lives in the namespace
+The library has about 54,000 lines of Lean. Every file is a Lean module, and everything lives in the namespace
 `EllipticBernoulli`. It is sorry-free, and the headline theorems depend only on the axioms `propext`,
 `Classical.choice` and `Quot.sound`.
 
@@ -53,6 +55,11 @@ certified results in words.
 | Inner-variation identity for classical solutions | Kriventsov–Weiss, remark after Definition 9.1 | `IsClassicalSolution.integral_innerVarIntegrand_eq_zero` |
 | Alt–Caffarelli gradient bound (modulus depending on `L`) | Alt–Caffarelli, Thm 6.3 / Remark 6.4; Kriventsov–Weiss, Proposition 9.1 | `classical_lipschitz_bound` |
 | Planar 1-homogeneous inner variational solutions | after Jerison–Kamburov, §5 (case analysis in the proof of Prop 5.3) | `classification_homogeneous_planar` |
+| Friedland–Hayman inequality `α_d(Γ₁) + α_d(Γ₂) ≥ 2` for disjoint, nonempty, open `Γ₁, Γ₂ ⊆ 𝕊^{d-1}`, `d ≥ 2` | Friedland–Hayman; Beck–Jerison, Theorem 1.1 | `friedlandHayman` |
+| Alt–Caffarelli–Friedman monotonicity formula, `d ≥ 2` | Alt–Caffarelli–Friedman; Salato, Theorem 1.1 | `acfMonotoneIn` |
+| Weiss monotonicity (integrated form) for sign-changing local minimizers of `∫ \|∇u\|² + 1_{u>0}` | after Weiss | `weissMonotone` |
+| Lipschitz `1`-homogeneous functions, harmonic in both phases, are two-plane functions | after De Philippis–Spolaor–Velichkov, Lemma 2.2 | `homogeneousTwoPhaseIn` |
+| Global Lipschitz two-phase minimizers that change sign are two-plane functions `a (x·e + c)⁺ - b (x·e + c)⁻`, `a² - b² = 1`, in every dimension (and, for `d ≤ 4`, with the explicit low-dimensional Friedland–Hayman inequality) | after Alt–Caffarelli–Friedman | `twoPhaseClassification`, `twoPhaseClassificationIn_of_le_four` |
 | Harmonic and viscosity toolkits: Harnack, gradient estimates, Dirichlet problem on a ball, Weyl's lemma, harmonic limits, comparison, stability, lattice operations | standard | see `EllipticBernoulli/Statements/{Harmonic,Viscosity}.lean` |
 
 ## Deviations from the sources
@@ -76,6 +83,10 @@ Where a statement deviates from its source, its docstring says so. The main devi
   closed ball `B̄_r`, where Theorem B.1 has `0 < r ≤ R` and a sup over `∂B_r`; the two forms are equivalent up to
   halving the constant.
 - The smooth-chart theorem is stated for `Q ≡ 1`; with a variable `Q` the hodograph equation depends on the point.
+- In the two-phase results, the functions are Lipschitz, where Alt–Caffarelli–Friedman assume continuity; an ACF
+  pair is harmonic in its positivity sets, where Alt–Caffarelli–Friedman assume subharmonicity in the sense of
+  distributions. The first eigenvalue of `Γ ⊆ 𝕊^{d-1}` is an infimum over chordally Lipschitz trial functions vanishing
+  off `Γ`, where the sources use `H¹₀(Γ)`.
 - The qualitative non-degeneracy and flatness statements have constants that may depend on the solution. The
   quantitative non-degeneracy statements have constants depending only on the data.
 
@@ -101,7 +112,7 @@ Where a statement deviates from its source, its docstring says so. The main devi
 
 ## Comparator challenges
 
-`challenges/` holds ten standalone [Comparator](https://github.com/leanprover/comparator) workspaces. They restate
+`challenges/` holds thirteen standalone [Comparator](https://github.com/leanprover/comparator) workspaces. They restate
 a selection of the headline statements over Mathlib only, and `formalization.yaml` lists them. Every file is a Lean
 module. In each workspace, `Vocabulary.lean` (or `Vocabulary/*.lean`) restates the library's definitions over
 Mathlib, `Challenge.lean` states the theorems with `sorry`, and `Solution.lean` proves them from the library. See [`challenges/README.md`](challenges/README.md) for the
@@ -172,6 +183,8 @@ lake build
 | `EllipticBernoulli/Hodograph/` | Partial hodograph transform, Seeley extension, smooth charts at flat points |
 | `EllipticBernoulli/Classical/` | Classical solutions |
 | `EllipticBernoulli/Blowup/` | Planar classification |
+| `EllipticBernoulli/Sphere/` | Eigenvalues on the sphere, cap eigenvalues, the Friedland–Hayman inequality |
+| `EllipticBernoulli/TwoPhase/` | ACF and Weiss monotonicity, homogeneous two-phase functions, classification of global two-phase minimizers |
 | `EllipticBernoulli/Registry/` | Reserved for results assumed without proof (empty) |
 | `EllipticBernoulli/Comparator.lean` | Regression restatement of every headline statement |
 | `challenges/`, `formalization.yaml` | Comparator workspaces and the theorem manifest |
@@ -183,13 +196,20 @@ lake build
   one-phase problem*, arXiv:2609.14981.
 - H. W. Alt, L. A. Caffarelli, *Existence and regularity for a minimum problem with free boundary*, J. Reine Angew.
   Math. 325 (1981), 105–144.
+- H. W. Alt, L. A. Caffarelli, A. Friedman, *Variational problems with two phases and their free boundaries*, Trans.
+  Amer. Math. Soc. 282 (1984), 431–461.
+- T. Beck, D. Jerison, *The Friedland–Hayman inequality and Caffarelli's contraction theorem*, arXiv:2102.00571.
 - L. A. Caffarelli, S. Salsa, *A Geometric Approach to Free Boundary Problems*, Grad. Stud. Math. 68, Amer. Math.
   Soc., 2005.
+- G. De Philippis, L. Spolaor, B. Velichkov, *Regularity of the free boundary for the two-phase Bernoulli problem*,
+  Invent. Math. 225 (2021), 347–394; arXiv:1911.02165.
 - D. De Silva, *Free boundary regularity for a problem with right hand side*, Interfaces Free Bound. 13 (2011),
   no. 2, 223–238; arXiv:0912.2057.
 - W. M. Feldman, I. C. Kim, N. Požár, *On the geometry of rate-independent droplet evolution*, Calc. Var. Partial
   Differential Equations 65 (2026), no. 10, Paper No. 265; arXiv:2310.03656. Result numbers are those of
   arXiv:2310.03656v2.
+- S. Friedland, W. K. Hayman, *Eigenvalue inequalities for the Dirichlet problem on spheres and the growth of
+  subharmonic functions*, Comment. Math. Helv. 51 (1976), 133–161.
 - D. Jerison, N. Kamburov, *Structure of one-phase free boundaries in the plane*, Int. Math. Res. Not. IMRN 2016,
   no. 19, 5922–5987; arXiv:1412.4106.
 - D. Kinderlehrer, L. Nirenberg, *Regularity in free boundary problems*, Ann. Sc. Norm. Sup. Pisa Cl. Sci. (4) 4
@@ -199,9 +219,11 @@ lake build
   are those of arXiv:2306.10131v2.
 - B. Orcan-Ekmekci, *On the geometry and regularity of largest subsolutions for a free boundary problem in ℝ²:
   elliptic case*, Calc. Var. Partial Differential Equations 49 (2014), no. 3–4, 937–962.
+- E. Salato, *A self-contained proof of the Alt–Caffarelli–Friedman monotonicity formula*, arXiv:2506.13473.
 - R. T. Seeley, *Extension of `C^∞` functions defined in a half space*, Proc. Amer. Math. Soc. 15 (1964), 625–626.
 - B. Velichkov, *Regularity of the One-phase Free Boundaries*, Lecture Notes of the Unione Matematica Italiana 28,
   Springer, 2023.
+- G. S. Weiss, *Partial regularity for a minimum problem with free boundary*, J. Geom. Anal. 9 (1999), 317–326.
 
 Standard results in the toolkits are cited by short key in the docstrings:
 - H. Brezis, *Functional Analysis, Sobolev Spaces and Partial Differential Equations*, Universitext, Springer, New

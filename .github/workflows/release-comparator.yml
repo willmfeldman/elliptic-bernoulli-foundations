@@ -12,8 +12,10 @@ on:
 
 jobs:
   comparator:
+    # Automatic runs happen only in a public repository; a private copy runs this only when dispatched.
+    if: github.event_name == 'workflow_dispatch' || github.event.repository.visibility == 'public'
     runs-on: ubuntu-latest
-    timeout-minutes: 180   # PARAM: raise for large repos (IV uses 300)
+    timeout-minutes: 180   # PARAM: raise for large repos (up to 300)
     permissions:
       contents: read
     steps:

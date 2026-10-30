@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors, William M. Feldman
 module
 
 public import EllipticBernoulli.Flatness.Linearized
+public import EllipticBernoulli.Harmonic.Affine
 public import Mathlib.Analysis.InnerProductSpace.Harmonic.Basic
 public import Mathlib.Analysis.InnerProductSpace.Projection.Reflection
 import EllipticBernoulli.Flatness.Barriers
@@ -21,10 +22,9 @@ import EllipticBernoulli.Viscosity.Stability
 # Regularity of the linearized (Neumann) problem
 
 De Silva (2011), Lemma 2.6 (even reflection) and Lemma 4.1, Step 3 (the `C²` bound at the
-origin).
+origin). The invariance of the Laplacian under linear isometries,
+`laplacian_comp_linearIsometryEquiv`, is in `EllipticBernoulli.Harmonic.Affine`.
 
-* `laplacian_comp_linearIsometryEquiv`: `Δ (f ∘ l) = (Δ f) ∘ l` for a linear isometry equivalence
-  `l` (no differentiability hypothesis).
 * `planeReflection e`: the reflection `x ↦ x - 2⟪x, e⟫ e` across `e^⊥`; `fold e`: the fold
   `x ↦ x - 2 min(⟪x, e⟫, 0) e` onto the half-space `{⟪x, e⟫ ≥ 0}`. The even reflection of `w` is
   `w ∘ fold e`.
@@ -39,21 +39,6 @@ origin).
   `H⁺ ∩ B_r`, `r < 1/4`, with `⟪p, e⟫ = 0`, from the interior Hessian estimate
   `norm_hessian_le_of_harmonic` and the mean value inequality.
 
-## Provenance
-
-`iteratedFDeriv_comp_linearIsometryEquiv_apply` and `laplacian_comp_linearIsometryEquiv` are
-adapted (unchanged up to namespace and name) from viscosity-solution-theory v0.2.0 (commit 3a93109),
-`ViscositySolns/Applications/Laplace/Weyl/LaplacianInvariance.lean`
-(`iteratedFDeriv_comp_linearIsometryEquiv_apply`, `laplacian_comp_linearIsometryEquiv_right`),
-which ports TauCeti, https://github.com/TauCetiProject/TauCeti,
-`TauCeti/Analysis/InnerProductSpace/Laplacian/Basic.lean`, commit
-91f66a0514e6523efdccddb9e35fb82c96dd6405 (Apache-2.0;
-`Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.`). Changes: namespace
-`ViscositySolns.Analysis` → `EllipticBernoulli`, `laplacian_comp_linearIsometryEquiv_right` renamed
-`laplacian_comp_linearIsometryEquiv`, variable names `E, E', F` → `F, F', G`, module form.
-They are copied rather than imported so that `ViscositySolns.*` imports stay confined to
-`Harmonic/`.
-
 ## References
 
 * D. De Silva, *Free boundary regularity for a problem with right hand side*, Interfaces Free Bound.
@@ -66,45 +51,6 @@ open scoped ContDiff Gradient Laplacian RealInnerProductSpace
 public section
 
 namespace EllipticBernoulli
-
-/-! ### Invariance of the Laplacian under linear isometries -/
-
-section Invariance
-
-variable
-  {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
-  {F' : Type*} [NormedAddCommGroup F'] [InnerProductSpace ℝ F'] [FiniteDimensional ℝ F']
-  {G : Type*} [NormedAddCommGroup G] [NormedSpace ℝ G]
-
-omit [FiniteDimensional ℝ F] [FiniteDimensional ℝ F'] in
-/-- The iterated derivative transforms under a linear isometry equivalence on the right by
-pulling the directions through the isometry. (Adapted from viscosity-solution-theory / TauCeti.) -/
-theorem iteratedFDeriv_comp_linearIsometryEquiv_apply (l : F ≃ₗᵢ[ℝ] F') (f : F' → G)
-    (i : ℕ) (x : F) (m : Fin i → F) :
-    iteratedFDeriv ℝ i (f ∘ l) x m = iteratedFDeriv ℝ i f (l x) (fun j ↦ l (m j)) := by
-  have h := l.toContinuousLinearEquiv.iteratedFDerivWithin_comp_right f uniqueDiffOn_univ
-    (x := x) (Set.mem_univ _) i
-  rw [Set.preimage_univ, iteratedFDerivWithin_univ, iteratedFDerivWithin_univ] at h
-  rw [← LinearIsometryEquiv.coe_toContinuousLinearEquiv l]
-  rw [h, ContinuousMultilinearMap.compContinuousLinearMap_apply]
-  rfl
-
-/-- **Invariance of the Laplacian under isometries.** `Δ (f ∘ l) = (Δ f) ∘ l` for a linear
-isometry equivalence `l`; no differentiability hypothesis is needed. (Adapted from
-viscosity-solution-theory / TauCeti, `laplacian_comp_linearIsometryEquiv_right`.) -/
-theorem laplacian_comp_linearIsometryEquiv (l : F ≃ₗᵢ[ℝ] F') (f : F' → G) :
-    Δ (f ∘ l) = (Δ f) ∘ l := by
-  ext x
-  simp only [Function.comp_apply,
-    laplacian_eq_iteratedFDeriv_orthonormalBasis (f ∘ l) (stdOrthonormalBasis ℝ F),
-    laplacian_eq_iteratedFDeriv_orthonormalBasis f ((stdOrthonormalBasis ℝ F).map l)]
-  refine Finset.sum_congr rfl fun i _ ↦ ?_
-  rw [iteratedFDeriv_comp_linearIsometryEquiv_apply l f 2 x]
-  congr 1
-  funext j
-  fin_cases j <;> simp [OrthonormalBasis.map_apply]
-
-end Invariance
 
 variable {d : ℕ}
 

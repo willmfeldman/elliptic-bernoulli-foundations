@@ -24,7 +24,10 @@ project:
     regularity of local energy minimizers, non-degeneracy, De Silva's
     flatness theory, smooth charts at flat free-boundary points, classical
     solutions, and the classification of planar 1-homogeneous inner
-    variational solutions.
+    variational solutions; and, for the two-phase problem, the
+    Friedland–Hayman inequality, the Alt–Caffarelli–Friedman monotonicity
+    formula, Weiss monotonicity, and the classification of global two-phase
+    minimizers.
 
 dependencies:
   - name: "mathlib"
@@ -287,6 +290,71 @@ targets:
     challenge: challenges/planar-classification
     challenge_theorems:
       - EllipticBernoulli.challenge_classification_homogeneous_planar
+
+  - id: friedland-hayman
+    kind: headline-theorem
+    expected_axioms: [propext, Quot.sound, Classical.choice]
+    title: The Friedland–Hayman inequality
+    source: "S. Friedland, W. K. Hayman, Eigenvalue inequalities for the Dirichlet problem on spheres and the growth of subharmonic functions, Comment. Math. Helv. 51 (1976), 133–161; T. Beck, D. Jerison, The Friedland–Hayman inequality and Caffarelli's contraction theorem, arXiv:2102.00571, Theorem 1.1 (for homogeneous harmonic functions). The eigenvalues use Lipschitz trial functions instead of H¹₀"
+    module: EllipticBernoulli.Sphere.CapInequality
+    declaration: EllipticBernoulli.friedlandHayman
+    related_declarations:
+      - EllipticBernoulli.capInequality
+    informal: >
+      For every d ≥ 2 and all nonempty, relatively open, disjoint
+      Γ₁, Γ₂ ⊆ 𝕊^{d-1}, the characteristic exponents satisfy
+      α_d(Γ₁) + α_d(Γ₂) ≥ 2. Here α_d(Γ) is the nonnegative root α of
+      α (α + d - 2) = λ₁(Γ), and λ₁(Γ) is the infimum of the Rayleigh quotients
+      ∫_𝕊 |∇_𝕊 f|² / ∫_𝕊 f² over chordally Lipschitz f vanishing off Γ with
+      ∫_𝕊 f² > 0.
+    challenge: challenges/friedland-hayman
+    challenge_theorems:
+      - EllipticBernoulli.challenge_friedlandHayman
+  - id: acf-monotonicity
+    kind: headline-theorem
+    expected_axioms: [propext, Quot.sound, Classical.choice]
+    title: The Alt–Caffarelli–Friedman monotonicity formula
+    source: "H. W. Alt, L. A. Caffarelli, A. Friedman, Variational problems with two phases and their free boundaries, Trans. Amer. Math. Soc. 282 (1984), 431–461; E. Salato, A self-contained proof of the Alt–Caffarelli–Friedman monotonicity formula, arXiv:2506.13473, Theorem 1.1 (here the functions are Lipschitz and harmonic in their positivity sets, instead of continuous and subharmonic in the sense of distributions)"
+    module: EllipticBernoulli.TwoPhase.ClassificationMain
+    declaration: EllipticBernoulli.acfMonotoneIn
+    related_declarations:
+      - EllipticBernoulli.acfMonotoneIn_of_friedlandHayman
+    informal: >
+      Let d ≥ 2, and let u₁, u₂ ≥ 0 be L-Lipschitz on ℝᵈ and harmonic in
+      their positivity sets, with u₁ u₂ ≡ 0 and u₁(x₀) = u₂(x₀) = 0. Then
+      r ↦ r⁻⁴ I(u₁, x₀, r) I(u₂, x₀, r), where
+      I(w, x₀, r) = ∫_{B_r(x₀)} |∇w|² |x - x₀|^{2-d}, is nondecreasing on
+      (0, ∞). No Friedland–Hayman hypothesis is assumed: the proof uses the
+      friedland-hayman target.
+    challenge: challenges/acf-monotonicity
+    challenge_theorems:
+      - EllipticBernoulli.challenge_acfMonotoneIn
+  - id: two-phase-classification
+    kind: headline-theorem
+    expected_axioms: [propext, Quot.sound, Classical.choice]
+    title: Classification of global two-phase minimizers
+    source: "H. W. Alt, L. A. Caffarelli, A. Friedman, Variational problems with two phases and their free boundaries, Trans. Amer. Math. Soc. 282 (1984), 431–461 (for Lipschitz minimizers); with G. S. Weiss, Partial regularity for a minimum problem with free boundary, J. Geom. Anal. 9 (1999), 317–326 (Weiss monotonicity) and G. De Philippis, L. Spolaor, B. Velichkov, Regularity of the free boundary for the two-phase Bernoulli problem, Invent. Math. 225 (2021), 347–394; arXiv:1911.02165, Lemma 2.2 (1-homogeneous two-phase functions)"
+    module: EllipticBernoulli.TwoPhase.ClassificationMain
+    declaration: EllipticBernoulli.twoPhaseClassification
+    related_declarations:
+      - EllipticBernoulli.twoPhaseClassificationIn_of_le_four
+      - EllipticBernoulli.weissMonotone
+      - EllipticBernoulli.homogeneousTwoPhaseIn
+    informal: >
+      In every dimension d, a Lipschitz local minimizer u : ℝᵈ → ℝ of
+      J(v; B) = ∫_B |∇v|² + 1_{v>0} (no sign condition; only the positive
+      phase is penalized) that takes a positive and a negative value is a
+      two-plane function u(x) = a (x·e + c)⁺ - b (x·e + c)⁻ with |e| = 1,
+      a, b > 0 and a² - b² = 1. The proof uses the acf-monotonicity target,
+      Weiss monotonicity for sign-changing minimizers (weissMonotone) and the
+      classification of Lipschitz 1-homogeneous functions harmonic in both
+      phases (homogeneousTwoPhaseIn); these two intermediate steps are checked
+      in the library's comparator smoke test only. For d ≤ 4 the classification
+      is also proved with the explicit low-dimensional Friedland–Hayman
+      inequality (twoPhaseClassificationIn_of_le_four).
+    challenge: challenges/two-phase-classification
+    challenge_theorems:
+      - EllipticBernoulli.challenge_twoPhaseClassification
 
 comparator:
   smoke_test:

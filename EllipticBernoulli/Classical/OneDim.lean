@@ -14,6 +14,8 @@ import Mathlib.Analysis.Calculus.MeanValue
 /-!
 # Harmonic functions on a connected open subset of the line
 
+* `fderiv_fderiv_eq_zero_of_one`: in `E 1`, a function harmonic at `y` has vanishing second
+  derivative at `y`.
 * `norm_gradient_eq_of_ray_one`: in `E 1`, a function harmonic on a connected open set `S`
   has constant derivative there; if `S` contains the ray `x₀ + t e`, `0 < t < t₀`, and the
   one-sided difference quotient of `u` at `x₀` along `e` tends to `q`, then `‖∇u‖ = |q|` on `S`.
@@ -43,8 +45,10 @@ private theorem eq_inner_smul_of_one {e : E 1} (he : ‖e‖ = 1) (v : E 1) : v 
   rw [real_inner_smul_left, real_inner_self_eq_norm_sq, he]
   simp
 
+public section
+
 /-- In `E 1`, a harmonic function has vanishing second derivative. -/
-private theorem fderiv_fderiv_eq_zero_of_one {u : E 1 → ℝ} {y : E 1} (hu : HarmonicAt u y) :
+theorem fderiv_fderiv_eq_zero_of_one {u : E 1 → ℝ} {y : E 1} (hu : HarmonicAt u y) :
     fderiv ℝ (fderiv ℝ u) y = 0 := by
   -- a unit vector
   set e : E 1 := EuclideanSpace.single 0 1 with he_def
@@ -72,8 +76,6 @@ private theorem fderiv_fderiv_eq_zero_of_one {u : E 1 → ℝ} {y : E 1} (hu : H
     exact hΔ
   ext v w
   rw [zero_apply, zero_apply, hbil, hBee, mul_zero]
-
-public section
 
 /-- **Dimension one.** A function harmonic on a connected open set
 `S ⊆ E 1` which contains the ray `x₀ + t e` for small `t > 0`, and whose difference quotient at

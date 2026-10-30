@@ -34,6 +34,11 @@ public import EllipticBernoulli.Classical.Viscosity
 public import EllipticBernoulli.Classical.GradientBound
 public import EllipticBernoulli.Classical.InnerVariation
 public import EllipticBernoulli.Blowup.PlanarClassification
+public import EllipticBernoulli.Sphere.CapInequality
+public import EllipticBernoulli.TwoPhase.Weiss
+public import EllipticBernoulli.TwoPhase.Homogeneous
+public import EllipticBernoulli.TwoPhase.ClassificationLowDim
+public import EllipticBernoulli.TwoPhase.ClassificationMain
 
 /-!
 # Comparator challenges
@@ -59,6 +64,14 @@ over `Mathlib` only; this file guards the library side of that surface on every 
   boundary*, J. Reine Angew. Math. 325 (1981), 105–144.
 * D. Kinderlehrer, L. Nirenberg, *Regularity in free boundary problems*, Ann. Sc. Norm. Sup. Pisa
   Cl. Sci. (4) 4 (1977), no. 2, 373–391.
+* H. W. Alt, L. A. Caffarelli, A. Friedman, *Variational problems with two phases and their free
+  boundaries*, Trans. Amer. Math. Soc. 282 (1984), 431–461.
+* S. Friedland, W. K. Hayman, *Eigenvalue inequalities for the Dirichlet problem on spheres and the
+  growth of subharmonic functions*, Comment. Math. Helv. 51 (1976), 133–161.
+* G. S. Weiss, *Partial regularity for a minimum problem with free boundary*, J. Geom. Anal. 9
+  (1999), 317–326.
+* G. De Philippis, L. Spolaor, B. Velichkov, *Regularity of the free boundary for the two-phase
+  Bernoulli problem*, Invent. Math. 225 (2021), 347–394; arXiv:1911.02165.
 -/
 
 open Set Filter Topology MeasureTheory Metric
@@ -211,5 +224,32 @@ theorem challenge_classical_lipschitz_bound : ClassicalLipschitzBoundStatement :
 /-- Challenge: planar classification of 1-homogeneous inner variational solutions. -/
 theorem challenge_planar_classification : PlanarHomogeneousClassificationStatement :=
   classification_homogeneous_planar
+
+/-! ### The two-phase problem -/
+
+/-- Challenge: the Friedland–Hayman inequality in every dimension `d ≥ 2`. -/
+theorem challenge_friedland_hayman : FriedlandHaymanStatement := friedlandHayman
+
+/-- Challenge: the Alt–Caffarelli–Friedman monotonicity formula in every dimension `d ≥ 2`, with
+no Friedland–Hayman hypothesis. -/
+theorem challenge_acf_monotone : ∀ d : ℕ, 2 ≤ d → ACFMonotoneIn d := fun _ hd ↦ acfMonotoneIn hd
+
+/-- Challenge: Weiss monotonicity for sign-changing local minimizers. -/
+theorem challenge_weiss_monotone : WeissMonotoneStatement := weissMonotone
+
+/-- Challenge: `1`-homogeneous two-phase functions are two-plane functions (after De
+Philippis–Spolaor–Velichkov, Lemma 2.2). -/
+theorem challenge_homogeneous_two_phase : ∀ d : ℕ, HomogeneousTwoPhaseIn d :=
+  homogeneousTwoPhaseIn
+
+/-- Challenge: classification of global two-phase minimizers (after Alt–Caffarelli–Friedman). -/
+theorem challenge_two_phase_classification : TwoPhaseClassificationStatement :=
+  twoPhaseClassification
+
+/-- Challenge: classification of global two-phase minimizers in dimensions `d ≤ 4`, proved with
+the explicit low-dimensional Friedland–Hayman inequality. -/
+theorem challenge_two_phase_classification_le_four :
+    ∀ d : ℕ, d ≤ 4 → TwoPhaseClassificationIn d :=
+  fun _ hd ↦ twoPhaseClassificationIn_of_le_four hd
 
 end EllipticBernoulli.Comparator
