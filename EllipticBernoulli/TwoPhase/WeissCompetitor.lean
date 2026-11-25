@@ -14,6 +14,7 @@ import EllipticBernoulli.Sobolev.Lipschitz
 import EllipticBernoulli.Sobolev.Energy
 import EllipticBernoulli.TwoPhase.Regularity
 import EllipticBernoulli.TwoPhase.ACFCore
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
 # The homogeneous competitor for Weiss monotonicity

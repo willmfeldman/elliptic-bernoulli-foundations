@@ -12,6 +12,7 @@ import EllipticBernoulli.Sphere.Measure
 import EllipticBernoulli.TwoPhase.Defs
 import EllipticBernoulli.TwoPhase.EnergyIdentity
 import Mathlib.Analysis.Calculus.Rademacher
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
 /-!
 # The ACF integral: radial identities and the key inequality

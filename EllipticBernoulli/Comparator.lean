@@ -30,12 +30,15 @@ public import EllipticBernoulli.Flatness.Harnack
 public import EllipticBernoulli.Flatness.Improvement
 public import EllipticBernoulli.Flatness.Classical
 public import EllipticBernoulli.Hodograph.Chart
+public import EllipticBernoulli.QuantChart.Two
+public import EllipticBernoulli.QuantChart.Three
 public import EllipticBernoulli.Classical.Viscosity
 public import EllipticBernoulli.Classical.GradientBound
 public import EllipticBernoulli.Classical.InnerVariation
 public import EllipticBernoulli.Blowup.PlanarClassification
 public import EllipticBernoulli.Sphere.CapInequality
 public import EllipticBernoulli.TwoPhase.Weiss
+public import EllipticBernoulli.TwoPhase.WeissLocal
 public import EllipticBernoulli.TwoPhase.Homogeneous
 public import EllipticBernoulli.TwoPhase.ClassificationLowDim
 public import EllipticBernoulli.TwoPhase.ClassificationMain
@@ -207,6 +210,12 @@ theorem challenge_flat_regularity : FlatGraphStatement ∧ FlatClassicalStatemen
 (Kinderlehrer–Nirenberg). -/
 theorem challenge_flat_chart : FlatChartStatement := flat_chart
 
+/-- Challenge: the quantitative `C^{2,α}` chart at a flat free boundary. -/
+theorem challenge_quant_flat_chart : QuantFlatChartStatement := quantFlatChart
+
+/-- Challenge: the quantitative third-derivative bound at a flat free boundary. -/
+theorem challenge_quant_flat_chart_three : QuantFlatChartThreeStatement := quantFlatChartThree
+
 /-! ### Classical solutions and blow-up classification -/
 
 /-- Challenge: classical solutions are viscosity solutions. -/
@@ -236,6 +245,9 @@ theorem challenge_acf_monotone : ∀ d : ℕ, 2 ≤ d → ACFMonotoneIn d := fun
 
 /-- Challenge: Weiss monotonicity for sign-changing local minimizers. -/
 theorem challenge_weiss_monotone : WeissMonotoneStatement := weissMonotone
+
+/-- Challenge: Weiss monotonicity in a ball, with rigidity. -/
+theorem challenge_weiss_monotone_local : WeissMonotoneLocalStatement := weissMonotoneLocal
 
 /-- Challenge: `1`-homogeneous two-phase functions are two-plane functions (after De
 Philippis–Spolaor–Velichkov, Lemma 2.2). -/

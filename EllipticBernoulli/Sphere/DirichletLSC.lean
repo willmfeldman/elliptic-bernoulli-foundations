@@ -53,7 +53,8 @@ private theorem annulus_subset (d : ℕ) : annulus d ⊆ {0}ᶜ := fun x hx h0 �
   norm_num at this
 
 private theorem volume_annulus_lt_top (d : ℕ) : volume (annulus d) < ⊤ :=
-  (measure_mono fun _ hx ↦ mem_ball_zero_iff.2 hx.2).trans_lt measure_ball_lt_top
+  (measure_mono (show annulus d ⊆ ball 0 2 from fun _ hx ↦ mem_ball_zero_iff.2 hx.2)).trans_lt
+    measure_ball_lt_top
 
 /-- The radial constant `K_d = ∫_{1/2}^2 t^{d-1} t^{-2} dt`. -/
 private noncomputable def annulusConst (d : ℕ) : ℝ≥0∞ :=

@@ -10,6 +10,8 @@ public import EllipticBernoulli.Statements.TwoPhase
 public import EllipticBernoulli.TwoPhase.ACFCore
 import Mathlib.MeasureTheory.Group.Integral
 import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import Mathlib.Analysis.Calculus.Deriv.Inv
 
 /-!
 # Alt–Caffarelli–Friedman monotonicity modulo Friedland–Hayman

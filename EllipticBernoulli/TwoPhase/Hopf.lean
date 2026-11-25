@@ -112,7 +112,7 @@ theorem IsLocalEnergyMinimizer.exists_hopf_point {u : E d → ℝ} {L : ℝ≥0}
     rw [← closure_ball y hρ.ne']
     exact closure_mono hball
   have hnonpos : ∀ x ∈ closedBall y ρ, u x ≤ 0 := fun x hx ↦
-    closure_minimal (fun z (hz : u z < 0) ↦ (le_of_lt hz : u z ≤ 0))
+    closure_minimal (show {z | u z < 0} ⊆ {z | u z ≤ 0} from fun z (hz : u z < 0) ↦ hz.le)
       (isClosed_le hu.continuous continuous_const) (hclosure hx)
   have hx₀B : x₀ ∈ closedBall y ρ := by rw [mem_closedBall, hdist]
   have hu0 : u x₀ = 0 := le_antisymm (hnonpos x₀ hx₀B) hx₀S

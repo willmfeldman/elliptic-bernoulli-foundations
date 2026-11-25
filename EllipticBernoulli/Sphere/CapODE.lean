@@ -9,6 +9,7 @@ public import EllipticBernoulli.TwoPhase.Defs
 import EllipticBernoulli.Common.FTCLip
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.ArctanDeriv
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 
 /-!
 # Explicit cap eigenvalues in dimensions two and four

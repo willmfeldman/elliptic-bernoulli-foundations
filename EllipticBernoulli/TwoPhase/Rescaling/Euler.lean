@@ -17,6 +17,7 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.AbsolutelyContinuousFun
 import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 import Mathlib.MeasureTheory.Measure.Prod
 import Mathlib.MeasureTheory.Function.SpecialFunctions.Inner
+import Mathlib.Analysis.Calculus.Deriv.Inv
 
 /-!
 # Euler's relation, integrated
@@ -72,7 +73,7 @@ theorem homogeneous_of_ae_inner_gradient_eq {v : E d → ℝ} {L : ℝ≥0} (hv 
       (lt_min one_pos ht).trans_le (by simpa [uIcc] using hs.1)
     have hAC : AbsolutelyContinuousOnInterval ψ 1 t := by
       have hlin : LipschitzWith ‖x‖₊ fun s : ℝ ↦ s • x := LipschitzWith.of_dist_le_mul
-        fun s s' ↦ by rw [dist_eq_norm, dist_eq_norm, ← sub_smul, norm_smul, coe_nnnorm, mul_comm]
+        fun s s' ↦ by rw [dist_eq_norm, dist_eq_norm, ← sub_smul, norm_smul, coe_nnNorm, mul_comm]
       have hA : AbsolutelyContinuousOnInterval (fun s : ℝ ↦ v (s • x)) 1 t :=
         (hv.comp hlin).lipschitzOnWith.absolutelyContinuousOnInterval
       have hB : AbsolutelyContinuousOnInterval (fun s : ℝ ↦ s⁻¹) 1 t :=

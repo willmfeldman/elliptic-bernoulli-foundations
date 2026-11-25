@@ -205,15 +205,15 @@ theorem eLpNorm_convolution_le {p : ℝ} (hp : 1 ≤ p) {ρ : E d → ℝ}
   have hP0 : ENNReal.ofReal p ≠ 0 := (ENNReal.ofReal_pos.mpr hp0).ne'
   have hPtop : ENNReal.ofReal p ≠ ⊤ := ENNReal.ofReal_ne_top
   have hPreal : (ENNReal.ofReal p).toReal = p := ENNReal.toReal_ofReal hp0.le
-  have hhen : AEMeasurable (fun z ↦ ‖h z‖ₑ) volume := hh.aestronglyMeasurable.enorm
-  have hρen : AEMeasurable (fun z ↦ ‖ρ z‖ₑ) volume := hρm.enorm
+  have hhen : AEMeasurable (fun z ↦ ‖h z‖ₑ) volume := hh.aestronglyMeasurable.eNorm
+  have hρen : AEMeasurable (fun z ↦ ‖ρ z‖ₑ) volume := hρm.eNorm
   have hρint : Integrable ρ volume := by
     by_contra hcon
     rw [integral_undef hcon] at hρ1
     exact one_ne_zero hρ1.symm
   have hmass : ∫⁻ z, ‖ρ z‖ₑ ∂volume = 1 := by
     have h1 : ∫⁻ z, ‖ρ z‖ₑ ∂volume = ∫⁻ z, ENNReal.ofReal (ρ z) ∂volume :=
-      lintegral_congr fun z ↦ Real.enorm_of_nonneg (hρ0 z)
+      lintegral_congr fun z ↦ Real.eNorm_of_nonneg (hρ0 z)
     rw [h1, ← ofReal_integral_eq_lintegral_ofReal hρint (ae_of_all _ fun z ↦ hρ0 z), hρ1,
       ENNReal.ofReal_one]
   have hswapmeas : AEMeasurable
@@ -232,9 +232,9 @@ theorem eLpNorm_convolution_le {p : ℝ} (hp : 1 ≤ p) {ρ : E d → ℝ}
     have hbound : ‖(h ⋆[lsmul ℝ ℝ, volume] ρ) x‖ₑ
         ≤ ∫⁻ t, ‖h t‖ₑ * ‖ρ (x - t)‖ₑ ∂volume := by
       rw [convolution_def]
-      refine (enorm_integral_le_lintegral_enorm _).trans (le_of_eq ?_)
+      refine (eNorm_integral_le_lintegral_eNorm _).trans (le_of_eq ?_)
       refine lintegral_congr fun t ↦ ?_
-      rw [lsmul_apply, smul_eq_mul, enorm_mul]
+      rw [lsmul_apply, smul_eq_mul, eNorm_mul]
     refine le_trans (ENNReal.rpow_le_rpow hbound hp0.le) ?_
     rcases eq_or_lt_of_le hp with hp1 | hp1
     · rw [← hp1, ENNReal.rpow_one]
@@ -269,9 +269,9 @@ theorem eLpNorm_convolution_le {p : ℝ} (hp : 1 ≤ p) {ρ : E d → ℝ}
             ENNReal.rpow_le_rpow hol hp0.le
         _ = ∫⁻ t, ‖h t‖ₑ ^ p * ‖ρ (x - t)‖ₑ ∂volume := by
             rw [← ENNReal.rpow_mul, one_div, inv_mul_cancel₀ hp0.ne', ENNReal.rpow_one]
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hP0 hPtop
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hP0 hPtop
       (hh.aestronglyMeasurable.convolution (L := lsmul ℝ ℝ) hρm),
-    eLpNorm_eq_lintegral_rpow_enorm_toReal hP0 hPtop hh.aestronglyMeasurable, hPreal]
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal hP0 hPtop hh.aestronglyMeasurable, hPreal]
   refine ENNReal.rpow_le_rpow ?_ (one_div_nonneg.mpr hp0.le)
   calc ∫⁻ x, ‖(h ⋆[lsmul ℝ ℝ, volume] ρ) x‖ₑ ^ p ∂volume
       ≤ ∫⁻ x, ∫⁻ t, ‖h t‖ₑ ^ p * ‖ρ (x - t)‖ₑ ∂volume ∂volume := lintegral_mono key

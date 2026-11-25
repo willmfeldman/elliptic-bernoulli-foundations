@@ -108,7 +108,7 @@ theorem charExponent_sub_one : charExponent d ((d : ℝ) - 1) = 1 := by
 private theorem lipschitzWith_twoPlaneProfile (a b : ℝ) :
     LipschitzWith (‖a‖₊ + ‖b‖₊) fun t : ℝ ↦ a * max t 0 - b * max (-t) 0 := by
   refine LipschitzWith.of_dist_le_mul fun s t ↦ ?_
-  simp only [Real.dist_eq, NNReal.coe_add, coe_nnnorm, Real.norm_eq_abs]
+  simp only [Real.dist_eq, NNReal.coe_add, coe_nnNorm, Real.norm_eq_abs]
   have h1 : |max s 0 - max t 0| ≤ |s - t| := abs_max_sub_max_le_abs s t 0
   have h2 : |max (-s) 0 - max (-t) 0| ≤ |s - t| := by
     have := abs_max_sub_max_le_abs (-s) (-t) 0
@@ -126,7 +126,7 @@ theorem twoPlane_lipschitzWith (a b : ℝ) (e : E d) (c : ℝ) :
     LipschitzWith ((‖a‖₊ + ‖b‖₊) * ‖e‖₊) (twoPlane a b e c) := by
   have hl : LipschitzWith ‖e‖₊ fun x : E d ↦ inner ℝ x e + c := by
     refine LipschitzWith.of_dist_le_mul fun x y ↦ ?_
-    rw [Real.dist_eq, add_sub_add_right_eq_sub, ← inner_sub_left, coe_nnnorm, dist_eq_norm,
+    rw [Real.dist_eq, add_sub_add_right_eq_sub, ← inner_sub_left, coe_nnNorm, dist_eq_norm,
       mul_comm]
     exact abs_real_inner_le_norm _ _
   exact (lipschitzWith_twoPlaneProfile a b).comp hl

@@ -68,7 +68,7 @@ variable {X F : Type*} [MeasurableSpace X] [NormedAddCommGroup F]
 private theorem eLpNorm_two_le_of_lintegral_le {μ : Measure X} {f : X → F} {M : ℝ≥0∞}
     (hf : AEStronglyMeasurable f μ) (h : ∫⁻ x, ENNReal.ofReal (‖f x‖ ^ 2) ∂μ ≤ M) :
     eLpNorm f 2 μ ≤ M ^ (1 / 2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top hf]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top hf]
   simp only [ENNReal.toReal_ofNat]
   refine ENNReal.rpow_le_rpow (le_trans (le_of_eq ?_) h) (by norm_num)
   refine lintegral_congr fun x ↦ ?_
@@ -184,7 +184,7 @@ private theorem bdd_of_admissible (hd : 1 ≤ d) {U : Set (E d)} (hU : IsOpen U)
       (ENNReal.ofReal_le_ofReal (le_max_left _ _)))
     refine add_le_add ?_ le_rfl
     refine (eLpNorm_mono_measure _ Measure.restrict_le_self).trans ?_
-    rw [eLpNorm_indicator_eq_eLpNorm_restrict hBm]
+    rw [eLpNorm_indicator_eq_eLpNorm_restrict hBm.nullMeasurableSet]
     exact hvB n
   · rw [eLpNorm_congr_ae (hdecG n)]
     have hvK := (hv n).2 K hKU hK
@@ -193,9 +193,9 @@ private theorem bdd_of_admissible (hd : 1 ≤ d) {U : Set (E d)} (hU : IsOpen U)
       (ENNReal.ofReal_le_ofReal (le_max_right _ _)))
     refine add_le_add ?_ ?_
     · refine (eLpNorm_mono_measure _ Measure.restrict_le_self).trans ?_
-      rw [eLpNorm_indicator_eq_eLpNorm_restrict hBm]
+      rw [eLpNorm_indicator_eq_eLpNorm_restrict hBm.nullMeasurableSet]
       exact hGB n
-    · exact eLpNorm_indicator_le _ hBm.compl
+    · exact eLpNorm_indicator_le _ hBm.compl.nullMeasurableSet
 
 /-- **The direct method** (`1 ≤ d`). -/
 private theorem exists_isObstacleMinimizer_of_one_le (hd : 1 ≤ d) {U : Set (E d)}
@@ -285,7 +285,7 @@ private theorem exists_isObstacleMinimizer_of_one_le (hd : 1 ≤ d) {U : Set (E 
     · simp only [hwdef, ite_eq_right h]; exact huK y hy
   have hwm : AEStronglyMeasurable w (volume.restrict U) := by
     have hpw : AEStronglyMeasurable (B.piecewise w₀ u) (volume.restrict U) :=
-      AEStronglyMeasurable.piecewise hBm hw₀m.aestronglyMeasurable.restrict
+      AEStronglyMeasurable.piecewise hBm.nullMeasurableSet hw₀m.aestronglyMeasurable.restrict
         hu.1.1.aestronglyMeasurable.restrict
     refine hpw.congr ?_
     filter_upwards [ae_restrict_of_ae hwB] with y hy

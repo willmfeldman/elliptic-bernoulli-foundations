@@ -47,7 +47,7 @@ def exhaust (U : Set (E d)) (m : ℕ) : Set (E d) :=
 theorem isClosed_exhaust (U : Set (E d)) (m : ℕ) : IsClosed (exhaust U m) := by
   refine isClosed_closedBall.inter ?_
   simp only [ofPred_forall]
-  exact isClosed_biInter fun y _ ↦
+  exact isClosed_iInter fun y ↦ isClosed_iInter fun _ ↦
     isClosed_le continuous_const (continuous_id.dist continuous_const)
 
 theorem isCompact_exhaust (U : Set (E d)) (m : ℕ) : IsCompact (exhaust U m) :=

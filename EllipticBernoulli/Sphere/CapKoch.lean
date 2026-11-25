@@ -10,6 +10,8 @@ import EllipticBernoulli.Sphere.CapODE
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Analysis.Calculus.Deriv.Pow
 
 /-!
 # Koch convexity of `Λ_d` for `d ≥ 5`

@@ -78,7 +78,7 @@ theorem rpow_lintegral_enorm_le_measure_univ_rpow_mul {q : ℝ} (hq : 1 ≤ q)
     (∫⁻ y, ‖f y‖ₑ ∂mu) ^ q ≤ mu Set.univ ^ (q - 1) * ∫⁻ y, ‖f y‖ₑ ^ q ∂mu := by
   have hq0 : (0 : ℝ) < q := one_pos.trans_le hq
   have h := eLpNorm'_le_eLpNorm'_mul_rpow_measure_univ one_pos hq hf
-  simp only [eLpNorm'_eq_lintegral_enorm, ENNReal.rpow_one, div_one] at h
+  simp only [eLpNorm'_eq_lintegral_eNorm, ENNReal.rpow_one, div_one] at h
   have h2 := ENNReal.rpow_le_rpow h hq0.le
   rw [ENNReal.mul_rpow_of_nonneg _ _ hq0.le, ← ENNReal.rpow_mul, ← ENNReal.rpow_mul,
     one_div_mul_cancel hq0.ne', ENNReal.rpow_one, sub_mul, one_mul, one_div_mul_cancel hq0.ne',
@@ -99,12 +99,12 @@ theorem enorm_setAverage_rpow_le {q : ℝ} (hq : 1 ≤ q) (hf : AEStronglyMeasur
     ‖⨍ y in s, f y ∂mu‖ₑ ^ q ≤ (mu s)⁻¹ * ∫⁻ y in s, ‖f y‖ₑ ^ q ∂mu := by
   have hq0 : (0 : ℝ) < q := one_pos.trans_le hq
   have h0 : ‖⨍ y in s, f y ∂mu‖ₑ ≤ (mu s)⁻¹ * ∫⁻ y in s, ‖f y‖ₑ ∂mu := by
-    rw [setAverage_eq, enorm_smul]
+    rw [setAverage_eq, eNorm_smul]
     have hinv : ‖(mu.real s)⁻¹‖ₑ = (mu s)⁻¹ := by
-      rw [Real.enorm_eq_ofReal (by positivity), measureReal_def, ← ENNReal.toReal_inv,
+      rw [Real.eNorm_eq_ofReal (by positivity), measureReal_def, ← ENNReal.toReal_inv,
         ENNReal.ofReal_toReal (by simp [hs0])]
     rw [hinv]
-    exact mul_le_mul' le_rfl (enorm_integral_le_lintegral_enorm _)
+    exact mul_le_mul' le_rfl (eNorm_integral_le_lintegral_eNorm _)
   have hholder : (∫⁻ y in s, ‖f y‖ₑ ∂mu) ^ q ≤ mu s ^ (q - 1) * ∫⁻ y in s, ‖f y‖ₑ ^ q ∂mu := by
     have := rpow_lintegral_enorm_le_measure_univ_rpow_mul (mu := mu.restrict s) hq hf.restrict
     rwa [Measure.restrict_apply_univ] at this
@@ -132,7 +132,7 @@ theorem enorm_setAverage_le (hp : 1 ≤ p) (hp' : p ≠ ∞) (hf : AEStronglyMea
   rw [← ENNReal.rpow_mul, mul_inv_cancel₀ hq0.ne', ENNReal.rpow_one] at hroot
   refine hroot.trans_eq ?_
   rw [ENNReal.mul_rpow_of_nonneg _ _ (by positivity), ENNReal.inv_rpow, ← ENNReal.rpow_neg,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hp' hf.restrict, one_div]
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hp' hf.restrict, one_div]
 
 end SetAverage
 
@@ -295,7 +295,7 @@ private theorem lintegral_enorm_setAverage_rpow_le {q : ℝ} (hq : 1 ≤ q) {G :
       (mu (ball (0 : E) r))⁻¹ * ∫⁻ e in ball (0 : E) r, ∫⁻ x, ‖G x e‖ₑ ^ q ∂mu ∂mu := by
   have hV0 : mu (ball (0 : E) r) ≠ 0 := (measure_ball_pos mu 0 hr).ne'
   have hjoint : Measurable fun z : E × E => ‖G z.1 z.2‖ₑ ^ q :=
-    ENNReal.continuous_rpow_const.measurable.comp hG.enorm
+    ENNReal.continuous_rpow_const.measurable.comp hG.eNorm
   calc ∫⁻ x, ‖⨍ e in ball (0 : E) r, G x e ∂mu‖ₑ ^ q ∂mu
       ≤ ∫⁻ x, (mu (ball (0 : E) r))⁻¹ * ∫⁻ e in ball (0 : E) r, ‖G x e‖ₑ ^ q ∂mu ∂mu :=
         lintegral_mono fun x => enorm_setAverage_rpow_le hq
@@ -330,7 +330,7 @@ private theorem eLpNorm_ballAverage_sub_le_of_stronglyMeasurable (hp : 1 ≤ p) 
     have h := ENNReal.rpow_le_rpow (hC e he) hq0.le
     have hm : AEStronglyMeasurable (fun y => f (y + e) - f y) mu :=
       ((hfm.comp_measurable (measurable_add_const e)).sub hfm).aestronglyMeasurable
-    rwa [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hp' hm,
+    rwa [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hp' hm,
       ← ENNReal.rpow_mul,
       one_div_mul_cancel hq0.ne', ENNReal.rpow_one] at h
   have hmain : ∫⁻ x, ‖ballAverage mu r f x - f x‖ₑ ^ p.toReal ∂mu ≤ C ^ p.toReal := by
@@ -351,7 +351,7 @@ private theorem eLpNorm_ballAverage_sub_le_of_stronglyMeasurable (hp : 1 ≤ p) 
     exact (hG.integral_prod_right (ν := mu.restrict (ball (0 : E) r))).const_smul _
   have hm : AEStronglyMeasurable (fun x => ballAverage mu r f x - f x) mu :=
     (hbm.sub hfm).aestronglyMeasurable
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hp' hm]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hp' hm]
   calc (∫⁻ x, ‖ballAverage mu r f x - f x‖ₑ ^ p.toReal ∂mu) ^ (1 / p.toReal)
       ≤ (C ^ p.toReal) ^ (1 / p.toReal) := ENNReal.rpow_le_rpow hmain (by positivity)
     _ = C := by rw [← ENNReal.rpow_mul, mul_one_div_cancel hq0.ne', ENNReal.rpow_one]

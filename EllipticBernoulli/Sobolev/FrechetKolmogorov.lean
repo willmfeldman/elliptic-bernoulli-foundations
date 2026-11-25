@@ -135,11 +135,11 @@ theorem eLpNorm_sub_le_of_approx_of_dist_bdd_on {K : Set α}
   rw [hdecomp]
   refine (eLpNorm_add_le hp).trans ?_
   refine add_le_add ?_ ((eLpNorm_add_le hp).trans (add_le_add ?_ ?_))
-  · refine (eLpNorm_indicator_le _ hK).trans ?_
+  · refine (eLpNorm_indicator_le _ hK.nullMeasurableSet).trans ?_
     rw [← neg_sub A f, eLpNorm_neg]
   · exact eLpNorm_indicator_sub_le_of_dist_bdd mu hp' hK.nullMeasurableSet hη
       ((hA.sub hA').indicator hK) hmid
-  · exact eLpNorm_indicator_le _ hK
+  · exact eLpNorm_indicator_le _ hK.nullMeasurableSet
 
 end LpApproximation
 
@@ -310,8 +310,8 @@ theorem frechetKolmogorov_exists_subseq (μ : Measure V) [μ.IsAddHaarMeasure] (
   -- `eLpNorm g 1 = ofReal (∫ |g|)` for integrable `g`
   have key : ∀ g : V → ℝ, Integrable g μ → eLpNorm g 1 μ = ENNReal.ofReal (∫ x, |g x| ∂μ) :=
     fun g hg ↦ by
-      rw [eLpNorm_one_eq_lintegral_enorm hg.aestronglyMeasurable,
-        ← ofReal_integral_norm_eq_lintegral_enorm hg]
+      rw [eLpNorm_one_eq_lintegral_eNorm hg.aestronglyMeasurable,
+        ← ofReal_integral_norm_eq_lintegral_eNorm hg]
       rfl
   have htrans' : ∀ ε : ℝ≥0∞, 0 < ε → ∃ ρ > 0, ∀ n, ∀ h : V, ‖h‖ < ρ →
       eLpNorm (fun x => f n (x + h) - f n x) 1 μ ≤ ε := by

@@ -7,6 +7,7 @@ module
 
 public import EllipticBernoulli.Sphere.CapPicone
 import EllipticBernoulli.Sphere.CapODE
+import Mathlib.Analysis.Calculus.LocalExtr.Basic
 
 /-!
 # The first eigenfunction of the cap, and continuity of `Λ_d`

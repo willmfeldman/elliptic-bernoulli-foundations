@@ -262,8 +262,8 @@ theorem toSphere_sphCap_pi (hd : 2 ≤ d) (hN : ‖N‖ = 1) :
   refine measure_congr ?_
   filter_upwards [h] with ω hω
   simp only [mem_singleton_iff] at hω
-  change (colatitude N ω < π) = True
-  simp only [eq_iff_iff, iff_true]
+  change colatitude N ω < π ↔ True
+  simp only [iff_true]
   exact lt_of_le_of_ne (colatitude_le_pi N ω) hω
 
 /-- **Existence of a cap with prescribed measure.** For `m ≤ σ(𝕊)` there is `θ ∈ [0, π]` with

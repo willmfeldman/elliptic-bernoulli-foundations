@@ -18,8 +18,8 @@ usage() {
   cat <<'EOF'
 Usage: scripts/build-challenges.sh --challenge-only|--trusted-all
 
-  --challenge-only  Build only the trusted Vocabulary and Challenge targets in every workspace.
-  --trusted-all     Also build Solution explicitly in every workspace.
+  --challenge-only  Build only the trusted Vocabulary and Challenge targets in each listed workspace.
+  --trusted-all     Also build Solution explicitly in each listed workspace.
 
 Use --challenge-only before an adversarial Comparator run.  --trusted-all is
 only for a reviewed, trusted checkout.
@@ -52,16 +52,7 @@ repo_root=$(CDPATH= cd -- "$script_dir/.." && pwd)
 # Deliberately enumerate release workspaces instead of discovering arbitrary
 # directories: this driver is part of the reviewed release configuration.
 workspaces='
-classical-solutions
-energy-minimizer-regularity
-energy-perturbation
-flat-chart
-flatness-regularity
-lipschitz-estimate
-nondegeneracy
-obstacle-existence
-planar-classification
-viscosity-minimizers'
+main-results'
 
 # Fail closed if a new configured workspace has not been added to the reviewed
 # allowlist above.  This catches coverage drift without executing arbitrary

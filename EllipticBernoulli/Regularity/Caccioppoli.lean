@@ -142,7 +142,7 @@ theorem caccioppoli_of_step {F : E d → ℝ} {GF : E d → E d} {z : E d} {R₀
     hF.mono_set (ball_subset_ball hσ)
   have hΦmono : ∀ σ₁ σ₂, σ₁ ≤ σ₂ → σ₂ ≤ R₀ → Φ σ₁ ≤ Φ σ₂ := fun σ₁ σ₂ h h2 ↦
     setIntegral_mono_set (hGFσ σ₂ h2) (ae_of_all _ fun x ↦ sq_nonneg _)
-      (ball_subset_ball h).eventuallyLE
+      (ball_subset_ball h).eventuallySubset
   have hS0 : 0 ≤ S := setIntegral_nonneg measurableSet_ball fun x _ ↦ sq_nonneg _
   have hV0 : 0 ≤ V := ENNReal.toReal_nonneg
   have hVt : ∀ t ≤ R, (volume ({x | 0 < F x} ∩ ball z t)).toReal ≤ V := fun t ht ↦
@@ -199,7 +199,7 @@ theorem caccioppoli_of_step {F : E d → ℝ} {GF : E d → E d} {z : E d} {R₀
       exact ⟨hx.1, fun h ↦ hx.2 (ball_subset_closedBall h)⟩
     have h5 : ∫ x in ball z t, F x ^ 2 ≤ S :=
       setIntegral_mono_set (hFσ R hR) (ae_of_all _ fun _ ↦ sq_nonneg _)
-        (ball_subset_ball htR.le).eventuallyLE
+        (ball_subset_ball htR.le).eventuallySubset
     have h6 := hVt t htR.le
     have hct : 0 ≤ (C / (t - s)) ^ 2 := sq_nonneg _
     have hmain : Φ t ≤ 2 * (Φ t - Φ s) + 2 * (C / (t - s)) ^ 2 * S + Er * V := by

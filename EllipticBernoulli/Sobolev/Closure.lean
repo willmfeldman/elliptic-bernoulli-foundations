@@ -53,7 +53,7 @@ theorem TendstoWeakL2.mono_set {Ω K : Set X} (hK : MeasurableSet K) (hKΩ : K �
   have hmono : μ.restrict K ≤ μ.restrict Ω := Measure.restrict_mono hKΩ le_rfl
   refine ⟨fun i ↦ (h.1 i).mono_measure hmono, h.2.1.mono_measure hmono, fun φ hφ ↦ ?_⟩
   have hφ' : MemLp (K.indicator φ) 2 (μ.restrict Ω) :=
-    ((memLp_indicator_iff_restrict hK).2 hφ).restrict Ω
+    ((memLp_indicator_iff_restrict hK.nullMeasurableSet).2 hφ).restrict Ω
   have e : ∀ g : X → F, ∫ x in Ω, inner ℝ (g x) (K.indicator φ x) ∂μ =
       ∫ x in K, inner ℝ (g x) (φ x) ∂μ := by
     intro g

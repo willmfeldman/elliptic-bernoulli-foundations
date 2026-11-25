@@ -371,11 +371,11 @@ theorem _root_.EllipticBernoulli.HasWeakGradient.comp (hU : IsOpen U)
   classical
   set L := (lsmul ℝ ℝ : ℝ →L[ℝ] ℝ →L[ℝ] ℝ) with hL
   have hfd : Differentiable ℝ f := hf.differentiable one_ne_zero
-  have hfl : LipschitzWith M f := lipschitzWith_of_nnnorm_deriv_le hfd hM
+  have hfl : LipschitzWith M f := lipschitzWith_of_nnNorm_deriv_le hfd hM
   have hf'c : Continuous (deriv f) := hf.continuous_deriv_one
   have hMr : ∀ t, ‖deriv f t‖ ≤ (M : ℝ) := fun t ↦ by
     have := hM t
-    rwa [← NNReal.coe_le_coe, coe_nnnorm] at this
+    rwa [← NNReal.coe_le_coe, coe_nnNorm] at this
   have hum : AEStronglyMeasurable u (volume.restrict U) := hw.1.aestronglyMeasurable
   have hGm : AEStronglyMeasurable G (volume.restrict U) := hw.2.1.aestronglyMeasurable
   have hloc1 : LocallyIntegrableOn (fun x ↦ f (u x)) U := by
@@ -533,8 +533,8 @@ theorem _root_.EllipticBernoulli.HasWeakGradient.comp (hU : IsOpen U)
         _ = (M : ℝ) * Cp * ‖vn n x - Uf x‖ := by ring
     · have hm : AEStronglyMeasurable (vn n - Uf) volume :=
         (hvc n).aestronglyMeasurable.sub hUint.1
-      rw [integral_const_mul, integral_norm_eq_lintegral_enorm hm,
-        eLpNorm_one_eq_lintegral_enorm hm]
+      rw [integral_const_mul, integral_norm_eq_lintegral_eNorm hm,
+        eLpNorm_one_eq_lintegral_eNorm hm]
   have hintG : Integrable (fun x ↦ deriv f (Uf x) * Gf x * φ x) :=
     integrable_bdd_mul_mul_bdd (hf'c.comp_aestronglyMeasurable hUint.1) (fun x ↦ hMr _)
       hGint hφcont.aestronglyMeasurable hCφ
@@ -569,8 +569,8 @@ theorem _root_.EllipticBernoulli.HasWeakGradient.comp (hU : IsOpen U)
           _ = (M : ℝ) * Cφ * ‖wn (ns i) x - Gf x‖ := by ring
       · have hm : AEStronglyMeasurable (wn (ns i) - Gf) volume :=
           (hwc _).aestronglyMeasurable.sub hGint.1
-        rw [integral_const_mul, integral_norm_eq_lintegral_enorm hm,
-          eLpNorm_one_eq_lintegral_enorm hm]
+        rw [integral_const_mul, integral_norm_eq_lintegral_eNorm hm,
+          eLpNorm_one_eq_lintegral_eNorm hm]
     have hpiece2 : Tendsto (fun i ↦ ∫ x, deriv f (vn (ns i) x) * Gf x * φ x) atTop
         (𝓝 (∫ x, deriv f (Uf x) * Gf x * φ x)) := by
       refine tendsto_integral_of_dominated_convergence (fun x ↦ (M : ℝ) * Cφ * ‖Gf x‖)
@@ -681,7 +681,7 @@ theorem deriv_posPartApprox_mem {ε : ℝ} (hε : ε ≠ 0) (t : ℝ) :
 theorem nnnorm_deriv_posPartApprox_le {ε : ℝ} (hε : ε ≠ 0) (t : ℝ) :
     ‖deriv (posPartApprox ε) t‖₊ ≤ 1 := by
   obtain ⟨h0, h1⟩ := deriv_posPartApprox_mem hε t
-  rw [← NNReal.coe_le_coe, coe_nnnorm, Real.norm_eq_abs, abs_of_nonneg h0, NNReal.coe_one]
+  rw [← NNReal.coe_le_coe, coe_nnNorm, Real.norm_eq_abs, abs_of_nonneg h0, NNReal.coe_one]
   exact h1
 
 theorem posPartApprox_mem {ε : ℝ} (hε : 0 ≤ ε) (t : ℝ) :

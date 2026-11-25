@@ -96,9 +96,11 @@ theorem integral_sq_le_of_ae_eq_zero_off_ball (hd : 1 ≤ d) :
     · simp only [hΓ, ite_eq_right hgx]
   have hwΓ : HasWeakGradient univ g Γ :=
     hwg.congr_ae (by rw [Measure.restrict_univ]; exact hΓU.symm)
-  have hgL : MemLp g 2 volume := (memLp_indicator_iff_restrict hKm).2 (hv.2 K hKU hKc).1
+  have hgL : MemLp g 2 volume :=
+    (memLp_indicator_iff_restrict hKm.nullMeasurableSet).2 (hv.2 K hKU hKc).1
   have hΓL : MemLp Γ 2 volume :=
-    ((memLp_indicator_iff_restrict hKm).2 (hv.2 K hKU hKc).2).ae_eq (hΓU.trans hGU).symm
+    ((memLp_indicator_iff_restrict hKm.nullMeasurableSet).2 (hv.2 K hKU hKc).2).ae_eq
+      (hΓU.trans hGU).symm
   have hgc : HasCompactSupport g :=
     HasCompactSupport.intro hKc fun x hx ↦ by rw [hg, indicator_of_notMem hx]
   have hGz : ∀ x, g x = 0 → Γ x = 0 := fun x hx ↦ by simp only [hΓ, ite_eq_left hx]

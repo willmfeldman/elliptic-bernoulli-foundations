@@ -9,6 +9,7 @@ public import EllipticBernoulli.Sphere.CapEigenfunction
 import EllipticBernoulli.Sphere.CapODE
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Calculus.Deriv.Slope
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
 # The Wronskian identity and the Hadamard formula for `Λ_d`

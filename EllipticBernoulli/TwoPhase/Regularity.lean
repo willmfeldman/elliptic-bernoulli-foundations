@@ -445,7 +445,8 @@ theorem IsLocalEnergyMinimizer.apply_eq_zero_and_mem_closure_of_mem_frontier {u 
   rw [hopen.frontier_eq] at hx₀
   obtain ⟨hcl, hnot⟩ := hx₀
   have hle : u x₀ ≤ 0 :=
-    closure_minimal (fun x (hx : u x < 0) ↦ (le_of_lt hx : u x ≤ 0))
+    closure_minimal
+      (show {x | u x < 0} ⊆ {x | u x ≤ 0} from fun x (hx : u x < 0) ↦ hx.le)
       (isClosed_le hu.continuous continuous_const) hcl
   have h0 : u x₀ = 0 := le_antisymm hle (not_lt.1 hnot)
   refine ⟨h0, ?_⟩

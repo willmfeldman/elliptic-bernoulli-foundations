@@ -8,6 +8,7 @@ module
 public import EllipticBernoulli.Sphere.HomogeneousExt
 public import EllipticBernoulli.Sphere.Radial
 import Mathlib.Analysis.SpecialFunctions.Sqrt
+import Mathlib.Analysis.Calculus.Deriv.Inv
 
 /-!
 # The tangential gradient of a restriction

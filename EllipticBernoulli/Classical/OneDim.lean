@@ -40,7 +40,7 @@ namespace EllipticBernoulli
 /-- In `E 1`, every vector is a multiple of a unit vector `e`. -/
 private theorem eq_inner_smul_of_one {e : E 1} (he : ‖e‖ = 1) (v : E 1) : v = ⟪v, e⟫ • e := by
   have he0 : e ≠ 0 := by rintro rfl; simp at he
-  obtain ⟨c, rfl⟩ := (finrank_eq_one_iff_of_nonzero' (K := ℝ) e he0).1
+  obtain ⟨c, rfl⟩ := (finrank_eq_one_iff_of_ne_zero' (K := ℝ) e he0).1
     finrank_euclideanSpace_fin v
   rw [real_inner_smul_left, real_inner_self_eq_norm_sq, he]
   simp

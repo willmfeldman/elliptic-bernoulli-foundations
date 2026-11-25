@@ -218,7 +218,6 @@ theorem isViscSuper_of_tendstoLocallyUniformlyOn : ViscSuperStabilityStatement.{
       have h2 := abs_lt.1 (hcl y hyB)
       have h3 := hlow y hyB
       rw [dist_eq_quartic hy] at h3
-      try dsimp only
       linarith)
   have hzB : z ∈ closedBall x ρ := ball_subset_closedBall hzρ
   set c := uk k z - ψ z with hc_def
@@ -360,7 +359,6 @@ theorem isRelaxedSub_of_tendstoLocallyUniformlyOn : RelaxedSubStabilityStatement
       have h1 := abs_lt.1 (hcl z₀ hz₀B)
       have h2 := abs_lt.1 (hcl y hyB)
       have h3 := abs_lt.1 (show |ψ z₀ - u z₀| < ρ ^ 4 / 8 from hz₀N.2)
-      try dsimp only
       linarith)
   have hzB : z ∈ closedBall x ρ := ball_subset_closedBall hzρ
   set c := ψ z - uk k z with hc_def

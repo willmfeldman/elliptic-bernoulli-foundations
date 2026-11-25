@@ -45,7 +45,7 @@ theorem exists_weakly_convergent_subseq {α : Type*} [MeasurableSpace α] {μ : 
       ∀ h : α → E, MemLp h 2 μ →
         Tendsto (fun k => ∫ x, ⟪g (φ k) x, h x⟫ ∂μ) atTop (𝓝 (∫ x, ⟪G x, h x⟫ ∂μ)) := by
   classical
-  have : CompleteSpace E := FiniteDimensional.complete ℝ E
+  have : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
   -- `∫ ⟪f, g⟫` is the `L²` inner product.
   have hinner : ∀ {f₁ f₂ : α → E} (h₁ : MemLp f₁ 2 μ) (h₂ : MemLp f₂ 2 μ),
       ∫ x, ⟪f₁ x, f₂ x⟫ ∂μ = ⟪h₁.toLp f₁, h₂.toLp f₂⟫ := by

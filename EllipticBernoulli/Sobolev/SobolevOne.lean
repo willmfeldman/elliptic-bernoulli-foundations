@@ -50,7 +50,7 @@ theorem enorm_le_lintegral_fderiv_one {φ : E 1 → ℝ} (hφ : ContDiff ℝ 1 �
     simpa using (hasDerivAt_id t).smul_const e₀
   have hψs : ContDiff ℝ 1 ψ := hφ.comp (contDiff_id.smul contDiff_const)
   have hψc : HasCompactSupport ψ := hc.comp_isClosedEmbedding (isClosedEmbedding_smul_left he₀0)
-  have h1 := hψc.enorm_le_lintegral_Ici_deriv hψs (x 0)
+  have h1 := hψc.eNorm_le_lintegral_Ici_deriv hψs (x 0)
   simp only [hψ, hx] at h1
   refine h1.trans ?_
   have hderiv : ∀ t, deriv ψ t = fderiv ℝ φ (L t) e₀ := fun t ↦
@@ -63,7 +63,7 @@ theorem enorm_le_lintegral_fderiv_one {φ : E 1 → ℝ} (hφ : ContDiff ℝ 1 �
         refine (ContinuousLinearMap.le_opENorm _ _).trans ?_
         rw [← ofReal_norm e₀, he₀n, ENNReal.ofReal_one, mul_one]
     _ = ∫⁻ y, ‖fderiv ℝ φ y‖ₑ :=
-        hLmp.lintegral_comp (hφ.continuous_fderiv one_ne_zero).enorm.measurable
+        hLmp.lintegral_comp (hφ.continuous_fderiv one_ne_zero).eNorm.measurable
 
 /-- Hölder on the support: `‖h‖₁ ≤ ‖h‖₂ |S|^{1/2}` if `h = 0` off `S`. -/
 theorem eLpNorm_one_le_of_support {F : Type*} [NormedAddCommGroup F] {h : E 1 → F}
@@ -112,7 +112,7 @@ theorem sobolevSupport_one : SobolevSupport 1 1 := by
   have hsup : ∀ n x, ‖gn n x‖ₑ ≤ A := by
     intro n x
     refine (enorm_le_lintegral_fderiv_one ((hsmooth n).of_le (by simp)) (hcs n) x).trans ?_
-    rw [← eLpNorm_one_eq_lintegral_enorm
+    rw [← eLpNorm_one_eq_lintegral_eNorm
       ((hsmooth n).continuous_fderiv (by simp)).aestronglyMeasurable]
     have := eLpNorm_fderiv_convolution_le hw hgint (p := 1) le_rfl hG1 (φb n)
     simpa using this
@@ -126,7 +126,7 @@ theorem sobolevSupport_one : SobolevSupport 1 1 := by
   -- the `L²` bound of the mollifications
   have hL2 : ∀ n, eLpNorm (gn n) 2 volume ≤ (A * Bg) ^ (1 / 2 : ℝ) := by
     intro n
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       (hsmooth n).continuous.aestronglyMeasurable]
     simp only [ENNReal.toReal_ofNat]
     gcongr
@@ -137,7 +137,7 @@ theorem sobolevSupport_one : SobolevSupport 1 1 := by
           exact hsup n x
       _ = A * ∫⁻ x, ‖gn n x‖ₑ := lintegral_const_mul' _ _ hAtop
       _ ≤ A * Bg := by
-          rw [← eLpNorm_one_eq_lintegral_enorm (hsmooth n).continuous.aestronglyMeasurable]
+          rw [← eLpNorm_one_eq_lintegral_eNorm (hsmooth n).continuous.aestronglyMeasurable]
           gcongr
           exact hYoung n
   -- the limit

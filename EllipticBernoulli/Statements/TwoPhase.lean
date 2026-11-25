@@ -17,6 +17,8 @@ public import EllipticBernoulli.Defs.TwoPhase
   hypothesis.
 * `WeissMonotoneStatement`: Weiss monotonicity, in integrated form, for sign-changing local
   minimizers of `J(u, B) = ∫_B |∇u|² + 1_{u > 0}`.
+* `WeissMonotoneLocalStatement`: the same in a ball `B_R(x₀)` inside the domain of minimality, with
+  rigidity: equality `W(r) = W(s)` forces `1`-homogeneity on the annulus.
 * `HomogeneousTwoPhaseIn d`: a Lipschitz, `1`-homogeneous function, harmonic in both phases, with
   both phases nonempty, is a two-plane function.
 * `TwoPhaseClassificationStatement`: global Lipschitz local minimizers of `J` that change sign are
@@ -88,6 +90,28 @@ def WeissMonotoneStatement : Prop :=
     ∀ r : ℝ, 0 < r →
       |weissW u x₀ r| ≤ ((L : ℝ) ^ 2 + 1) * volume.real (ball (0 : E d) 1) +
         (L : ℝ) ^ 2 * (volume : Measure (E d)).toSphere.real univ
+
+/-- **Weiss monotonicity in a ball**, integrated form, with rigidity (after Weiss 1999). Let
+`d ≥ 2`, let `U` be open with `B_R(x₀) ⊆ U`, and let `u` be a local minimizer of
+`J(v, B) = ∫_B |∇v|² + 1_{v > 0}` in `U` (no sign condition) that is `L`-Lipschitz on `B_R(x₀)`,
+with `u(x₀) = 0`. Then:
+* for `0 < r < s < R`, `W(u, x₀, s) - W(u, x₀, r) ≥ D(u, x₀; r, s) ≥ 0`;
+* for `0 < r < R`, `|W(u, x₀, r)| ≤ (L² + 1) |B₁| + L² σ(𝕊)`;
+* for `0 < r < s < R`, if `W(u, x₀, r) = W(u, x₀, s)`, then `u` is `1`-homogeneous about `x₀` on
+  the annulus `r < |x - x₀| < s`: `u(x₀ + τ (x - x₀)) = τ u(x)` whenever `x` and
+  `x₀ + τ (x - x₀)` (`τ > 0`) both lie in the annulus. -/
+def WeissMonotoneLocalStatement : Prop :=
+  ∀ {d : ℕ}, 2 ≤ d → ∀ {U : Set (E d)} {u : E d → ℝ} {L : ℝ≥0} {x₀ : E d} {R : ℝ}, IsOpen U →
+    ball x₀ R ⊆ U → IsLocalEnergyMinimizer U (fun _ ↦ 1) u → LipschitzOnWith L u (ball x₀ R) →
+    u x₀ = 0 →
+    (∀ r s : ℝ, 0 < r → r < s → s < R →
+      weissDefect u x₀ r s ≤ weissW u x₀ s - weissW u x₀ r ∧ 0 ≤ weissDefect u x₀ r s) ∧
+    (∀ r : ℝ, 0 < r → r < R →
+      |weissW u x₀ r| ≤ ((L : ℝ) ^ 2 + 1) * volume.real (ball (0 : E d) 1) +
+        (L : ℝ) ^ 2 * (volume : Measure (E d)).toSphere.real univ) ∧
+    ∀ r s : ℝ, 0 < r → r < s → s < R → weissW u x₀ r = weissW u x₀ s →
+      ∀ x : E d, r < ‖x - x₀‖ → ‖x - x₀‖ < s → ∀ τ : ℝ, 0 < τ → r < τ * ‖x - x₀‖ →
+        τ * ‖x - x₀‖ < s → u (x₀ + τ • (x - x₀)) = τ * u x
 
 /-! ### Homogeneous classification -/
 

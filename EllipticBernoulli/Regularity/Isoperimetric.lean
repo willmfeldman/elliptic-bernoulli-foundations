@@ -60,8 +60,8 @@ theorem enorm_sub_le_lintegral_segment {φ : E d → ℝ} (hφ : ContDiff ℝ 1 
     (hcont.intervalIntegrable 0 1)
   have e : γ 1 - γ 0 = φ y - φ x := by simp [hγ]
   rw [← e, ← hFTC, intervalIntegral.integral_of_le zero_le_one]
-  refine (enorm_integral_le_lintegral_enorm _).trans ?_
-  rw [← lintegral_const_mul' _ _ enorm_ne_top]
+  refine (eNorm_integral_le_lintegral_eNorm _).trans ?_
+  rw [← lintegral_const_mul' _ _ eNorm_ne_top]
   refine lintegral_mono fun t ↦ ?_
   rw [mul_comm]
   exact ContinuousLinearMap.le_opENorm _ _
@@ -125,7 +125,7 @@ theorem lintegral_lintegral_enorm_sub_le_of_contDiff {φ : E d → ℝ} (hφ : C
   set B := ball z ρ with hBdef
   set g : E d → ℝ≥0∞ := B.indicator fun p ↦ ‖fderiv ℝ φ p‖ₑ with hgdef
   have hg : Measurable g :=
-    ((hφ.continuous_fderiv one_ne_zero).measurable.enorm).indicator measurableSet_ball
+    ((hφ.continuous_fderiv one_ne_zero).measurable.eNorm).indicator measurableSet_ball
   set F : E d → E d → ℝ → ℝ≥0∞ := fun x y t ↦ g ((1 - t) • x + t • y) with hFdef
   have hFm : Measurable fun p : (E d × E d) × ℝ ↦ F p.1.1 p.1.2 p.2 := by
     change Measurable fun p : (E d × E d) × ℝ ↦ g ((1 - p.2) • p.1.1 + p.2 • p.1.2)
@@ -137,7 +137,7 @@ theorem lintegral_lintegral_enorm_sub_le_of_contDiff {φ : E d → ℝ} (hφ : C
   have hpt : ∀ x ∈ B, ∀ y ∈ B,
       ‖φ x - φ y‖ₑ ≤ ENNReal.ofReal (2 * ρ) * ∫⁻ t in Ioc (0 : ℝ) 1, F x y t := by
     intro x hx y hy
-    rw [enorm_sub_rev]
+    rw [eNorm_sub_rev]
     refine (enorm_sub_le_lintegral_segment hφ x y).trans ?_
     gcongr ?_ * ?_
     · rw [← ofReal_norm]
@@ -227,7 +227,7 @@ theorem norm_fderiv_convolution_le {h : E d → ℝ} {H : E d → E d}
 /-- Pointwise: `ofReal a ≤ ofReal b + ‖a - b‖ₑ`. -/
 theorem ofReal_le_add_enorm_sub (a b : ℝ) (hb : 0 ≤ b) :
     ENNReal.ofReal a ≤ ENNReal.ofReal b + ‖a - b‖ₑ := by
-  rw [Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_add hb (abs_nonneg _)]
+  rw [Real.eNorm_eq_ofReal_abs, ← ENNReal.ofReal_add hb (abs_nonneg _)]
   exact ENNReal.ofReal_le_ofReal (by linarith [le_abs_self (a - b)])
 
 /-- **The double-integral Poincaré inequality on a ball** for a function with a weak gradient
@@ -302,20 +302,20 @@ theorem lintegral_lintegral_enorm_sub_le {U : Set (E d)} (hU : IsOpen U) {g : E 
   set X : ℝ≥0∞ := ∫⁻ x in B, ‖G x‖ₑ with hX
   have hGm : AEMeasurable (fun x ↦ ‖G x‖ₑ) (volume.restrict B) :=
     ((hw.2.1.integrableOn_compact_subset hzU (isCompact_closedBall z ρ)).1.mono_measure
-      (Measure.restrict_mono ball_subset_closedBall le_rfl)).enorm
+      (Measure.restrict_mono ball_subset_closedBall le_rfl)).eNorm
   -- the estimate for each `n`
   have hstep : ∀ n, ∫⁻ x in B, ∫⁻ y in B, ‖g x - g y‖ₑ ≤
       c * (X + ε₂ n) + 2 * volume B * ε₁ n := by
     intro n
     set e : E d → ℝ := fun x ↦ h x - hn n x with hedef
     have hem : AEMeasurable (fun x ↦ ‖e x‖ₑ) volume :=
-      (hhi.aestronglyMeasurable.sub (hsmooth n).continuous.aestronglyMeasurable).enorm
+      (hhi.aestronglyMeasurable.sub (hsmooth n).continuous.aestronglyMeasurable).eNorm
     have heB : ∫⁻ x in B, ‖e x‖ₑ ≤ ε₁ n := by
       rw [hε₁]; dsimp only
-      rw [eLpNorm_one_eq_lintegral_enorm
+      rw [eLpNorm_one_eq_lintegral_eNorm
         ((hsmooth n).continuous.aestronglyMeasurable.sub hhi.aestronglyMeasurable)]
       refine (setLIntegral_le_lintegral _ _).trans (le_of_eq (lintegral_congr fun x ↦ ?_))
-      simp only [hedef, Pi.sub_apply]; rw [enorm_sub_rev]
+      simp only [hedef, Pi.sub_apply]; rw [eNorm_sub_rev]
     -- the double integral
     have hA : ∫⁻ x in B, ∫⁻ y in B, ‖g x - g y‖ₑ ≤
         (∫⁻ x in B, ∫⁻ y in B, ‖hn n x - hn n y‖ₑ) + 2 * volume B * ε₁ n := by
@@ -325,7 +325,7 @@ theorem lintegral_lintegral_enorm_sub_le {U : Set (E d)} (hU : IsOpen U) {g : E 
         rw [← hhB x hx, ← hhB y hy]
         have : h x - h y = (hn n x - hn n y) + (e x - e y) := by simp only [hedef]; ring
         rw [this]
-        exact (enorm_add_le _ _).trans (add_le_add le_rfl enorm_sub_le)
+        exact (eNorm_add_le _ _).trans (add_le_add le_rfl eNorm_sub_le)
       have hmeas2 : ∀ x, AEMeasurable (fun y ↦ ‖e x‖ₑ + ‖e y‖ₑ) (volume.restrict B) :=
         fun x ↦ (aemeasurable_const.add hem).restrict
       calc ∫⁻ x in B, ∫⁻ y in B, ‖g x - g y‖ₑ
@@ -370,7 +370,7 @@ theorem lintegral_lintegral_enorm_sub_le {U : Set (E d)} (hU : IsOpen U) {g : E 
             exact add_le_add le_rfl (setLIntegral_le_lintegral _ _)
         _ = X + ε₂ n := by
             rw [hε₂]; dsimp only
-            rw [eLpNorm_one_eq_lintegral_enorm ((hHi.norm.aestronglyMeasurable.convolution
+            rw [eLpNorm_one_eq_lintegral_eNorm ((hHi.norm.aestronglyMeasurable.convolution
               (L := lsmul ℝ ℝ) (ψ n).continuous_normed.aestronglyMeasurable).sub
               hHi.norm.aestronglyMeasurable)]
     calc ∫⁻ x in B, ∫⁻ y in B, ‖g x - g y‖ₑ
@@ -427,8 +427,8 @@ theorem measure_zero_mul_integral_le {U : Set (E d)} (hU : IsOpen U) {g : E d �
   have hGi : IntegrableOn G (ball z ρ) :=
     (hw.2.1.integrableOn_compact_subset hzU hc).mono_set ball_subset_closedBall
   have h := measure_zero_mul_lintegral_le hU hw hρ hzU
-  rw [← ofReal_integral_norm_eq_lintegral_enorm hgi,
-    ← ofReal_integral_norm_eq_lintegral_enorm hGi] at h
+  rw [← ofReal_integral_norm_eq_lintegral_eNorm hgi,
+    ← ofReal_integral_norm_eq_lintegral_eNorm hGi] at h
   have hfin : ENNReal.ofReal (2 * ρ) * (2 ^ d * volume (ball z ρ)) *
       ENNReal.ofReal (∫ x in ball z ρ, ‖G x‖) ≠ ⊤ :=
     ENNReal.mul_ne_top (ENNReal.mul_ne_top ENNReal.ofReal_ne_top

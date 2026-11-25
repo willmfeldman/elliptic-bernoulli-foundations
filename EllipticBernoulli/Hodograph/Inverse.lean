@@ -88,7 +88,7 @@ theorem Hodograph.gradient_eq_gradientWithin {e : E d} (he : ‖e‖ = 1) {W w :
   have h3 : fderivWithin ℝ w (BasicElliptic.halfBall e 0 r) z = fderivWithin ℝ w K z := by
     refine fderivWithin_congr_set ?_
     filter_upwards [isOpen_ball.mem_nhds hz.1] with y hy
-    exact propext ⟨fun h ↦ ⟨hy, h.2⟩,
+    exact ⟨fun h ↦ ⟨hy, h.2⟩,
       fun h ↦ ⟨ball_subset_closedBall (ball_subset_ball hRr hy), h.2⟩⟩
   rw [gradient, gradientWithin, h3, ← h2, h1]
 
@@ -254,7 +254,7 @@ theorem exists_chart_of_smooth (H : IsFlatChartData U u x₀ e ρ G) {r : ℝ} (
   have hΨ' : ∀ z (hz : z ∈ ball (0 : E d) R₂),
       HasFDerivAt Ψ ((hodoEquiv he (hpne z hz) : E d ≃L[ℝ] E d) : E d →L[ℝ] E d) z :=
     fun z hz ↦ hΨd z (hzR z hz)
-  have hstrict := (hΨc 0 (mem_ball_self hR)).hasStrictFDerivAt' (hΨ' 0 (mem_ball_self hR₂))
+  have hstrict := (hΨc 0 (mem_ball_self hR)).hasStrictFDerivAt (hΨ' 0 (mem_ball_self hR₂))
     (by simp)
   set Φ := hstrict.toOpenPartialHomeomorph Ψ with hΦdef
   have hΦΨ : ∀ z, Φ z = Ψ z := fun z ↦ rfl

@@ -215,7 +215,7 @@ theorem eq_on_halfPlane {y₀ : E 2} (hy₀ : 0 < v y₀) {y : E 2}
       exact hy₀
     · rintro z ⟨hzc, hzp⟩
       have hclosed : IsClosed {w : E 2 | v w = p w} := isClosed_eq h.cont p.continuous
-      have hvz : v z = p z := closure_minimal hvu hclosed hzc
+      have hvz : v z = p z := closure_minimal (show u ⊆ {w : E 2 | v w = p w} from hvu) hclosed hzc
       have hz : 0 < v z := hvz ▸ hzp
       refine ⟨hz, ?_⟩
       have hcont : ContinuousAt (fderiv ℝ v) z :=

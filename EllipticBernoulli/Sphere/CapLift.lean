@@ -57,7 +57,7 @@ theorem sphCap_ne_univ {N : E n} (hN : ‖N‖ = 1) {θ : ℝ} (hθ : θ < π) :
   have hN0 : N ≠ 0 := by rw [← norm_ne_zero_iff, hN]; exact one_ne_zero
   have hmem : -N ∈ sphere (0 : E n) 1 := by rw [mem_sphere_zero_iff_norm, norm_neg, hN]
   have : (⟨-N, hmem⟩ : sphere (0 : E n) 1) ∈ sphCap N θ := h ▸ mem_univ _
-  simp only [sphCap, mem_ofPred_eq, colatitude, angle_neg_self_of_nonzero hN0] at this
+  simp only [sphCap, mem_ofPred_eq, colatitude, angle_neg_self_of_ne_zero hN0] at this
   exact lt_irrefl _ (this.trans hθ)
 
 theorem isOpen_sphCap {N : E n} (hN : ‖N‖ = 1) (θ : ℝ) : IsOpen (sphCap N θ) :=

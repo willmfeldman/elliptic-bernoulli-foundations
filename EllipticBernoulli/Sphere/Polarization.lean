@@ -577,7 +577,7 @@ theorem toSphere_inner_eq_zero (hd : 2 ≤ d) (he : ‖e‖ = 1) :
     (volume : Measure (E d)).toSphere {ω : sphere (0 : E d) 1 | inner ℝ (ω : E d) e = 0} = 0 := by
   have h := ae_colatitude_notMem hd he (Z := {π / 2}) (measure_singleton _)
   refine measure_mono_null (fun ω (hω : inner ℝ (ω : E d) e = 0) ↦ ?_)
-    (measure_eq_zero_iff_ae_notMem.2 h)
+    (measure_eq_zero_iff_ae_notMem (s := colatitude e ⁻¹' {π / 2}) |>.2 h)
   change colatitude e ω ∈ ({π / 2} : Set ℝ)
   rw [colatitude_eq_arccos he, real_inner_comm, hω, Real.arccos_zero, mem_singleton_iff]
 

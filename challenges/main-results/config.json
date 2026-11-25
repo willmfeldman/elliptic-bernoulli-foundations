@@ -1,0 +1,42 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "EllipticBernoulli.challenge_exists_isObstacleMinimizer",
+    "EllipticBernoulli.challenge_isObstacleMinimizer_exists_continuousOn",
+    "EllipticBernoulli.challenge_energy_decrease_of_not_super",
+    "EllipticBernoulli.challenge_energy_decrease_of_not_sub",
+    "EllipticBernoulli.challenge_isUpwardMinimizer_isViscSuper",
+    "EllipticBernoulli.challenge_isDownwardMinimizer_isViscSub",
+    "EllipticBernoulli.challenge_isLocalEnergyMinimizer_isViscSolution",
+    "EllipticBernoulli.challenge_isObstacleMinimizer_isViscSuper_of_upper",
+    "EllipticBernoulli.challenge_isObstacleMinimizer_isViscSub_of_lower",
+    "EllipticBernoulli.challenge_isLocalEnergyMinimizer_exists_regular_representative",
+    "EllipticBernoulli.challenge_lipschitzOnWith_of_isViscSuper",
+    "EllipticBernoulli.challenge_locallyLipschitzOn_of_isViscSuper",
+    "EllipticBernoulli.challenge_isLocalSmallestSuper_exists_le_of_closedBall_subset",
+    "EllipticBernoulli.challenge_exists_le_of_exteriorBall_sameRadius",
+    "EllipticBernoulli.challenge_nondegenerate_sup_iff_average",
+    "EllipticBernoulli.challenge_isDownwardMinimizer_exists_le_of_closedBall_subset",
+    "EllipticBernoulli.challenge_exists_pos_le_of_isLocalLargestSub",
+    "EllipticBernoulli.challenge_isC1GammaHypersurfaceNear_of_flat",
+    "EllipticBernoulli.challenge_isClassicalNear_of_flat",
+    "EllipticBernoulli.challenge_flat_chart",
+    "EllipticBernoulli.challenge_isClassicalSolution_isViscSolution",
+    "EllipticBernoulli.challenge_isClassicalSolution_integral_innerVarIntegrand_eq_zero",
+    "EllipticBernoulli.challenge_classical_lipschitz_bound",
+    "EllipticBernoulli.challenge_classification_homogeneous_planar",
+    "EllipticBernoulli.challenge_friedlandHayman",
+    "EllipticBernoulli.challenge_acfMonotoneIn",
+    "EllipticBernoulli.challenge_twoPhaseClassification",
+    "EllipticBernoulli.challenge_weissMonotoneLocal",
+    "EllipticBernoulli.challenge_quantFlatChart",
+    "EllipticBernoulli.challenge_quantFlatChartThree"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

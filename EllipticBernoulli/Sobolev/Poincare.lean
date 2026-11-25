@@ -85,7 +85,7 @@ theorem lintegral_ofReal_sq_eq {X : Type*} [MeasurableSpace X] (μ : Measure X) 
   simp only [NNReal.coe_ofNat, ENNReal.coe_ofNat] at h
   rw [← ENNReal.rpow_natCast, Nat.cast_ofNat, h]
   refine lintegral_congr fun y ↦ ?_
-  rw [Real.enorm_eq_ofReal_abs]
+  rw [Real.eNorm_eq_ofReal_abs]
   rw [ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) (by norm_num), Real.rpow_two, sq_abs]
 
 /-- `L²` convergence implies convergence of the `L²` norms. -/
@@ -206,10 +206,10 @@ theorem lintegral_sq_annulus_le {U : Set (E d)} {w : E d → ℝ} {G : E d → E
     isFiniteMeasure_restrict.2 (measure_closedBall_lt_top (x := x) (r := R₁)).ne
   have hRcl : ball x R ⊆ closedBall x R₁ := hRB.trans ball_subset_closedBall
   have hu2 : MemLp u 2 volume :=
-    (memLp_indicator_iff_restrict measurableSet_ball).2
+    (memLp_indicator_iff_restrict measurableSet_ball.nullMeasurableSet).2
       (hwL2.mono_measure (Measure.restrict_mono hRcl le_rfl))
   have hH2 : ∀ i, MemLp (H i) 2 volume := fun i ↦
-    (memLp_indicator_iff_restrict measurableSet_ball).2
+    (memLp_indicator_iff_restrict measurableSet_ball.nullMeasurableSet).2
       ((hGL2.inner_const (e i)).mono_measure (Measure.restrict_mono hRcl le_rfl))
   have hwB : IntegrableOn w B :=
     IntegrableOn.mono_set (hwL2.integrable one_le_two) ball_subset_closedBall
@@ -311,7 +311,7 @@ theorem lintegral_sq_annulus_le {U : Set (E d)} {w : E d → ℝ} {G : E d → E
       (Or.inr ENNReal.ofReal_ne_top)) hineq
   -- identify the limits
   have hA : ball x R \ ball x r = ball x R ∩ C := by
-    rw [hCdef, sdiff_eq]
+    rw [hCdef, Set.sdiff_eq]
   have hl : ∫⁻ y in C, ENNReal.ofReal (u y ^ 2) =
       ∫⁻ y in ball x R \ ball x r, ENNReal.ofReal (w y ^ 2) := by
     rw [hA, ← Measure.restrict_restrict measurableSet_ball,

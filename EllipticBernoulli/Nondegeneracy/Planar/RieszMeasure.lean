@@ -255,7 +255,7 @@ theorem lintegral_inv_Ioo {b R : ℝ} (hb : 0 < b) (hbR : b ≤ R) :
   rw [setLIntegral_congr_fun measurableSet_Ioo (g := fun s ↦ ENNReal.ofReal s⁻¹)
     fun s hs ↦ (ENNReal.ofReal_inv_of_pos (hb.trans hs.1)).symm]
   have hint : IntegrableOn (fun s : ℝ ↦ s⁻¹) (Ioo b R) :=
-    ((continuousOn_inv₀.mono fun s hs ↦ (hb.trans_le hs.1).ne').integrableOn_compact
+    ((continuousOn_inv₀.mono fun s (hs : s ∈ Icc b R) ↦ (hb.trans_le hs.1).ne').integrableOn_compact
       isCompact_Icc).mono_set Ioo_subset_Icc_self
   rw [← ofReal_integral_eq_lintegral_ofReal hint
     ((ae_restrict_iff' measurableSet_Ioo).2 (Eventually.of_forall fun s hs ↦

@@ -14,34 +14,34 @@ project:
   license: "Apache-2.0"
   language: "Lean"
   theorem_prover: "Lean 4"
-  lean_toolchain: "leanprover/lean4:v4.35.0-rc3"
-  mathlib: "v4.35.0-rc3"
+  lean_toolchain: "leanprover/lean4:v4.36.0"
+  mathlib: "v4.36.0"
   description: >-
     Lean 4 formalization of foundational results for the elliptic one-phase
     Bernoulli free boundary problem Δu = 0 in {u > 0}, |∇u| = Q on ∂{u > 0},
     with a variable coefficient 0 < Qmin ≤ Q ≤ Qmax: obstacle problems for the
     Alt–Caffarelli energy, energy perturbations, the Lipschitz estimate,
     regularity of local energy minimizers, non-degeneracy, De Silva's
-    flatness theory, smooth charts at flat free-boundary points, classical
-    solutions, and the classification of planar 1-homogeneous inner
+    flatness theory, smooth charts at flat free-boundary points with
+    quantitative second- and third-derivative bounds, classical solutions, and the classification of planar 1-homogeneous inner
     variational solutions; and, for the two-phase problem, the
     Friedland–Hayman inequality, the Alt–Caffarelli–Friedman monotonicity
-    formula, Weiss monotonicity, and the classification of global two-phase
-    minimizers.
+    formula, Weiss monotonicity (globally, and in a ball with rigidity), and
+    the classification of global two-phase minimizers.
 
 dependencies:
   - name: "mathlib"
     url: "https://github.com/leanprover-community/mathlib4"
-    rev: "c55e6e786f49471c72fbddbec5415808896aec1e"
+    rev: "fc4f59e577feb1a4956671bc04ac18aaaf8cd842"
   - name: "viscosity_solns"
     url: "https://github.com/willmfeldman/viscosity-solution-theory"
-    rev: "b9dc82d59e19c5689b6669b41e0c59168c1cdc84"
+    rev: "e34fe7ee502d572c7d2933209c46212e4652af89"
   - name: "AleksandrovDifferentiability"
     url: "https://github.com/willmfeldman/aleksandrov-differentiability"
-    rev: "5e5c2ec4cee4f8851387e9bb309eeb703cd72a25"
+    rev: "058378f1033dfd842b52b611497996fc92b28a2f"
   - name: "basic_elliptic_theory"
     url: "https://github.com/willmfeldman/elliptic-schauder-theory"
-    rev: "7f27afc285ef78cd54b28e036827c3e8308f3f5f"
+    rev: "6a30b0e18bd91fc2546e7594da18a9a1a997d0b7"
 
 build:
   package_file: "lakefile.toml"
@@ -87,7 +87,7 @@ targets:
       constraints 0 ≤ v ≤ u and u ≤ v, with Q Lipschitz and bounded between
       positive constants and u ≥ 0 locally Lipschitz, every minimizer has a
       representative continuous on the whole domain.
-    challenge: challenges/obstacle-existence
+    challenge: challenges/main-results
     challenge_theorems:
       - EllipticBernoulli.challenge_exists_isObstacleMinimizer
       - EllipticBernoulli.challenge_isObstacleMinimizer_exists_continuousOn
@@ -108,7 +108,7 @@ targets:
       This is the key step of the proof of Feldman–Kim–Požár Lemma 3.3; the
       lemma itself (minimizers are viscosity solutions) is the target
       viscosity-minimizers.
-    challenge: challenges/energy-perturbation
+    challenge: challenges/main-results
     challenge_theorems:
       - EllipticBernoulli.challenge_energy_decrease_of_not_super
       - EllipticBernoulli.challenge_energy_decrease_of_not_sub
@@ -133,7 +133,7 @@ targets:
       under the constraint 0 ≤ w ≤ u below a viscosity supersolution u is a
       supersolution, and a continuous minimizer under u ≤ w above a viscosity
       subsolution u is a subsolution.
-    challenge: challenges/viscosity-minimizers
+    challenge: challenges/main-results
     challenge_theorems:
       - EllipticBernoulli.challenge_isUpwardMinimizer_isViscSuper
       - EllipticBernoulli.challenge_isDownwardMinimizer_isViscSub
@@ -155,7 +155,7 @@ targets:
       on balls compactly contained in U has an a.e.-equal representative v
       which is again a local minimizer, is locally Lipschitz and non-negative
       on U, has open positivity set {v > 0} ∩ U, and is C^∞ and harmonic there.
-    challenge: challenges/energy-minimizer-regularity
+    challenge: challenges/main-results
     challenge_theorems:
       - EllipticBernoulli.challenge_isLocalEnergyMinimizer_exists_regular_representative
   - id: lipschitz-estimate
@@ -172,7 +172,7 @@ targets:
       Lipschitz on B_r(x₀) with constant C (Qmax + M / r), where Q ≤ Qmax and
       u ≤ M on B_{2r}(x₀), and C = C(d) depends only on the dimension; hence
       locally Lipschitz for continuous Q.
-    challenge: challenges/lipschitz-estimate
+    challenge: challenges/main-results
     challenge_theorems:
       - EllipticBernoulli.challenge_lipschitzOnWith_of_isViscSuper
       - EllipticBernoulli.challenge_locallyLipschitzOn_of_isViscSuper
@@ -208,7 +208,7 @@ targets:
       C² and harmonic in {u > 0} (hypotheses Abedin–Feldman–Stinson do not state)
       satisfies sup_{B̄_r(x₀)} u ≥ c r for r ≤ R/2 at a free boundary point
       x₀, with c depending only on q₀ and K (Theorem B.1, after Orcan-Ekmekci).
-    challenge: challenges/nondegeneracy
+    challenge: challenges/main-results
     challenge_theorems:
       - EllipticBernoulli.challenge_isLocalSmallestSuper_exists_le_of_closedBall_subset
       - EllipticBernoulli.challenge_exists_le_of_exteriorBall_sameRadius
@@ -229,7 +229,7 @@ targets:
       ε̄r-flat with slope Q(x₀) in B_r(x₀) at a free boundary point has a
       C^{1,γ} free boundary in B_{r/2}(x₀), and is classical near x₀: the
       gradient extends continuously to the free boundary with |∇u| = Q there.
-    challenge: challenges/flatness-regularity
+    challenge: challenges/main-results
     challenge_theorems:
       - EllipticBernoulli.challenge_isC1GammaHypersurfaceNear_of_flat
       - EllipticBernoulli.challenge_isClassicalNear_of_flat
@@ -251,7 +251,7 @@ targets:
       u = max(F, 0), ∇F ≠ 0, ΔF = 0 where F > 0, |∇F| = 1 on {F = 0}, and
       {F > 0} ∩ B_ρ(x₀) preconnected; in particular the free boundary is a
       C^∞ hypersurface near x₀.
-    challenge: challenges/flat-chart
+    challenge: challenges/main-results
     challenge_theorems:
       - EllipticBernoulli.challenge_flat_chart
   - id: classical-solutions
@@ -271,7 +271,7 @@ targets:
       compactly supported Lipschitz test fields; for Q ≡ 1 their gradient satisfies
       the Alt–Caffarelli bound sup_{B_r} |∇u| ≤ 1 + ω(r), with ω depending on
       the Lipschitz bound.
-    challenge: challenges/classical-solutions
+    challenge: challenges/main-results
     challenge_theorems:
       - EllipticBernoulli.challenge_isClassicalSolution_isViscSolution
       - EllipticBernoulli.challenge_isClassicalSolution_integral_innerVarIntegrand_eq_zero
@@ -287,7 +287,7 @@ targets:
       A 1-homogeneous inner variational solution of the one-phase problem with
       constant coefficient q > 0 on the plane is a half-plane solution, a
       two-plane solution with χ = 1 a.e., or trivial with χ = 0 a.e.
-    challenge: challenges/planar-classification
+    challenge: challenges/main-results
     challenge_theorems:
       - EllipticBernoulli.challenge_classification_homogeneous_planar
 
@@ -307,7 +307,7 @@ targets:
       α (α + d - 2) = λ₁(Γ), and λ₁(Γ) is the infimum of the Rayleigh quotients
       ∫_𝕊 |∇_𝕊 f|² / ∫_𝕊 f² over chordally Lipschitz f vanishing off Γ with
       ∫_𝕊 f² > 0.
-    challenge: challenges/friedland-hayman
+    challenge: challenges/main-results
     challenge_theorems:
       - EllipticBernoulli.challenge_friedlandHayman
   - id: acf-monotonicity
@@ -326,7 +326,7 @@ targets:
       I(w, x₀, r) = ∫_{B_r(x₀)} |∇w|² |x - x₀|^{2-d}, is nondecreasing on
       (0, ∞). No Friedland–Hayman hypothesis is assumed: the proof uses the
       friedland-hayman target.
-    challenge: challenges/acf-monotonicity
+    challenge: challenges/main-results
     challenge_theorems:
       - EllipticBernoulli.challenge_acfMonotoneIn
   - id: two-phase-classification
@@ -352,9 +352,66 @@ targets:
       in the library's comparator smoke test only. For d ≤ 4 the classification
       is also proved with the explicit low-dimensional Friedland–Hayman
       inequality (twoPhaseClassificationIn_of_le_four).
-    challenge: challenges/two-phase-classification
+    challenge: challenges/main-results
     challenge_theorems:
       - EllipticBernoulli.challenge_twoPhaseClassification
+  - id: weiss-local
+    kind: headline-theorem
+    expected_axioms: [propext, Quot.sound, Classical.choice]
+    title: Weiss monotonicity in a ball, with rigidity
+    source: "G. S. Weiss, Partial regularity for a minimum problem with free boundary, J. Geom. Anal. 9 (1999), 317–326 (monotonicity formula and the homogeneity of the equality case), localized to a ball inside the domain of minimality"
+    module: EllipticBernoulli.TwoPhase.WeissLocal
+    declaration: EllipticBernoulli.weissMonotoneLocal
+    related_declarations:
+      - EllipticBernoulli.weissMonotone
+    informal: >
+      Let d ≥ 2, U open with B_R(x₀) ⊆ U, and u a local minimizer of
+      J(v; B) = ∫_B |∇v|² + 1_{v>0} in U (no sign condition) that is
+      L-Lipschitz on B_R(x₀) with u(x₀) = 0. For 0 < r < s < R the Weiss
+      energy satisfies W(s) - W(r) ≥ D(r, s) ≥ 0, where D is the integrated
+      homogeneity defect; |W(r)| ≤ (L² + 1)|B₁| + L² σ(𝕊) for 0 < r < R; and
+      W(r) = W(s) forces u to be 1-homogeneous about x₀ on the annulus
+      r < |x - x₀| < s.
+    challenge: challenges/main-results
+    challenge_theorems:
+      - EllipticBernoulli.challenge_weissMonotoneLocal
+  - id: quant-flat-chart
+    kind: headline-theorem
+    expected_axioms: [propext, Quot.sound, Classical.choice]
+    title: Quantitative C^{2,α} charts at flat free boundaries
+    source: "D. Kinderlehrer, L. Nirenberg, Regularity in free boundary problems, Ann. Sc. Norm. Sup. Pisa Cl. Sci. (4) 4 (1977), no. 2, 373–391 (partial hodograph transform); D. De Silva, Free boundary regularity for a problem with right hand side, Interfaces Free Bound. 13 (2011), no. 2, 223–238; arXiv:0912.2057 (improvement of flatness); the uniform estimates are assembled here"
+    module: EllipticBernoulli.QuantChart.Two
+    declaration: EllipticBernoulli.quantFlatChart
+    related_declarations:
+      - EllipticBernoulli.quantFlatChartThree
+    informal: >
+      For d ≥ 2 there are ε₀, α, C > 0 such that: if u ≥ 0 is continuous on
+      B₁ and a local minimizer of J(v; B) = ∫_B |∇v|² + 1_{v>0} (Q ≡ 1) in
+      B₁, and |u - (x · e)₊| ≤ ε ≤ ε₀ on B₁ for a unit vector e, then on
+      B_{1/2} u = max(F, 0) for a C^∞ function F with |∇F| = 1 on {F = 0} and
+      ΔF = 0 on {F > 0}, and on {F ≥ 0} ∩ B_{1/2}: ∇F · e ≥ 1/2, |∇F| ≤ C,
+      |D²F| ≤ C, and D²F is α-Hölder with constant C.
+    challenge: challenges/main-results
+    challenge_theorems:
+      - EllipticBernoulli.challenge_quantFlatChart
+  - id: quant-flat-chart-three
+    kind: headline-theorem
+    expected_axioms: [propext, Quot.sound, Classical.choice]
+    title: Quantitative third-derivative bounds at flat free boundaries
+    source: "D. Kinderlehrer, L. Nirenberg, Regularity in free boundary problems, Ann. Sc. Norm. Sup. Pisa Cl. Sci. (4) 4 (1977), no. 2, 373–391 (partial hodograph transform); D. De Silva, Free boundary regularity for a problem with right hand side, Interfaces Free Bound. 13 (2011), no. 2, 223–238; arXiv:0912.2057 (improvement of flatness); the uniform estimates are assembled here"
+    module: EllipticBernoulli.QuantChart.Three
+    declaration: EllipticBernoulli.quantFlatChartThree
+    related_declarations:
+      - EllipticBernoulli.quantFlatChart
+    informal: >
+      For d ≥ 2 there are ε₀, C₀ > 0 such that: if u ≥ 0 is continuous on B₁
+      and a local minimizer of J(v; B) = ∫_B |∇v|² + 1_{v>0} (Q ≡ 1) in B₁,
+      and |u - (x · e)₊| ≤ ε ≤ ε₀ on B₁ for a unit vector e, then on B_{1/4}
+      u = max(F, 0) for a C^∞ function F with |∇F| = 1 on {F = 0} and ΔF = 0
+      on {F > 0}, and on {F ≥ 0} ∩ B_{1/4}: ∇F · e ≥ 1/2 and |D³F| ≤ C₀.
+    challenge: challenges/main-results
+    challenge_theorems:
+      - EllipticBernoulli.challenge_quantFlatChartThree
 
 comparator:
   smoke_test:
@@ -368,19 +425,17 @@ comparator:
   external_challenges:
     directory: "challenges"
     purpose: >-
-      Standalone comparator challenge workspaces, one per target above (its challenge and
-      challenge_theorems fields). In each, Vocabulary.lean (split into Vocabulary/*.lean, one
-      module per library file, where a merged file would not match the library's auxiliary proof
-      names) restates the library vocabulary over Mathlib only, Challenge.lean states the claims
-      with `sorry` (self-contained, with the vocabulary copied into a generated block, or
-      importing the split Vocabulary modules), and Solution.lean imports EllipticBernoulli and
-      proves the same statements.
+      A single standalone comparator workspace, challenges/main-results, for the library's main
+      results: every target above (its challenge and challenge_theorems fields) is stated there,
+      and its config.json lists the targets' theorems in target order. Vocabulary.lean re-exports
+      Vocabulary/*.lean, one module per library file, which restate the library vocabulary over
+      Mathlib only; Challenge.lean imports those modules and states the claims with `sorry`, one
+      section per target; and Solution.lean imports EllipticBernoulli and proves the same
+      statements.
     release_workflow: ".github/workflows/release-comparator.yml"
-    comparator_revision: "fd5d5bcf14177b187f66d4502071268d877887c3"
-    lean4export_revision: "66f1fb4bc256072069767fce52d39480e4524869"
-    landrun_revision: "811cfff51ceaf3d9843708aa6d22e9b84ccac8b4"
-    toolchain: "leanprover/lean4:v4.35.0-rc3"
-    mathlib: "v4.35.0-rc3"
+    engine: "lake comparator"
+    toolchain: "leanprover/lean4:v4.36.0"
+    mathlib: "v4.36.0"
     permitted_axioms:
       - "propext"
       - "Classical.choice"

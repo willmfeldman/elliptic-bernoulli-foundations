@@ -207,7 +207,7 @@ theorem hodographPt_local {z₀ : E d} (hz₀ : z₀ ∈ Adm e ρ) (ht₀ : 0 < 
   have hT' : HasFDerivAt (hodoMap u x₀ e) ((hodoEquiv he hp : E d ≃L[ℝ] E d) : E d →L[ℝ] E d) y₀ :=
     H.hasFDerivAt_hodoMap hy₀P
   have hn : (2 : WithTop ℕ∞) ≠ 0 := by norm_num
-  have hstrict := hTc.hasStrictFDerivAt' hT' hn
+  have hstrict := hTc.hasStrictFDerivAt hT' hn
   have hTy₀ : hodoMap u x₀ e y₀ = z₀ := H.hodoMap_hodographPt hz₀
   have hleft : ∀ᶠ y in 𝓝 y₀, hodographPt u x₀ e ρ (hodoMap u x₀ e y) = y := by
     have hw := H.hodograph_mem hz₀

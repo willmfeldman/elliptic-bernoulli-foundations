@@ -10,6 +10,8 @@ public import EllipticBernoulli.Harmonic.Polar
 public import EllipticBernoulli.Common.FTCLip
 public import Mathlib.MeasureTheory.Function.SpecialFunctions.Inner
 import EllipticBernoulli.Sobolev.Lipschitz
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.LebesgueDifferentiationThm
+import Mathlib.Analysis.SpecialFunctions.Integrability.Basic
 
 /-!
 # Radial calculus about a point

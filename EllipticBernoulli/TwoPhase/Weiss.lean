@@ -12,6 +12,8 @@ import EllipticBernoulli.TwoPhase.ACF
 import EllipticBernoulli.TwoPhase.ACFCore
 import EllipticBernoulli.Sobolev.Lipschitz
 import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
 
 /-!
 # Weiss monotonicity for sign-changing minimizers
@@ -339,7 +341,9 @@ theorem weissDefect_nonneg (u : E d → ℝ) (x₀ : E d) (r s : ℝ) : 0 ≤ we
 
 /-! ### The integrated inequality -/
 
-private theorem intervalIntegrable_weissRate (hu : LipschitzWith L u) (hx₀ : u x₀ = 0)
+/-- `weissRate u x₀` is interval integrable on `[r, s]` for `0 < r ≤ s`, when `u` is Lipschitz with
+`u(x₀) = 0`. -/
+theorem intervalIntegrable_weissRate (hu : LipschitzWith L u) (hx₀ : u x₀ = 0)
     {r s : ℝ} (hr : 0 < r) (hrs : r ≤ s) : IntervalIntegrable (weissRate u x₀) volume r s := by
   set σ := (volume : Measure (E d)).toSphere.real univ
   have hσ : 0 ≤ σ := measureReal_nonneg

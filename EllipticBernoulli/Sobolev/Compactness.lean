@@ -45,9 +45,9 @@ theorem memLp_two_and_eLpNorm_le_of_restrict {F F' : Type*} [NormedAddCommGroup 
   have hind : T.indicator f = f := indicator_eq_self.2 fun x hx ↦ by
     by_contra h; exact hx (hf0 x h)
   constructor
-  · rw [← hind, memLp_indicator_iff_restrict hT]
+  · rw [← hind, memLp_indicator_iff_restrict hT.nullMeasurableSet]
     exact hg.of_le_mul hf (Eventually.of_forall hfg)
-  · rw [← hind, eLpNorm_indicator_eq_eLpNorm_restrict hT]
+  · rw [← hind, eLpNorm_indicator_eq_eLpNorm_restrict hT.nullMeasurableSet]
     exact eLpNorm_le_mul_eLpNorm_of_ae_le_mul hf (Eventually.of_forall hfg) 2
 
 /-- **Product rule with a cut-off.** If `G` is a weak gradient of `u` in `U`, `u, G` are locally

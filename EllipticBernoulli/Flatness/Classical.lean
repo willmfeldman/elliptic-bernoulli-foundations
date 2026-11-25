@@ -7,6 +7,7 @@ module
 
 public import EllipticBernoulli.Statements.Flatness
 public import EllipticBernoulli.Defs.Regularity
+public import EllipticBernoulli.Flatness.Iteration
 import EllipticBernoulli.Flatness.Graph
 import EllipticBernoulli.Flatness.OneStep
 import EllipticBernoulli.Harmonic.GradientEstimate
@@ -240,7 +241,7 @@ theorem isC1GammaHypersurfaceNear_of_flat : FlatGraphStatement := by
 
 /-- The gradient and the derivative differ by the Riesz isometry:
 `‖∇v y - a‖ = ‖fderiv v y - toDual a‖`. -/
-private theorem norm_gradient_sub_eq (v : E d → ℝ) (y a : E d) :
+theorem norm_gradient_sub_eq (v : E d → ℝ) (y a : E d) :
     ‖∇ v y - a‖ = ‖fderiv ℝ v y - toDual ℝ (E d) a‖ := by
   rw [← (toDual ℝ (E d)).norm_map, LinearIsometryEquiv.map_sub, gradient,
     LinearIsometryEquiv.apply_symm_apply]
@@ -253,7 +254,7 @@ where `C_d` is the constant of the interior gradient estimate.
 Proof: on `B_s(y) ⊆ B_{2s}(x₁)`, `v > 0` and the flatness give
 `|v - q(x₁) ⟪· - x₁, ν₁⟫| ≤ q(x₁) M (2s)^{1+α}`; the difference is harmonic, and the interior
 gradient estimate on `B̄_{s/2}(y)` gives the bound. -/
-private theorem norm_gradient_sub_le_of_flat {U : Set (E d)} {q v : E d → ℝ} {x₁ ν₁ y : E d}
+theorem norm_gradient_sub_le_of_flat {U : Set (E d)} {q v : E d → ℝ} {x₁ ν₁ y : E d}
     {M α ρ s Cd : ℝ} (hCd0 : 0 ≤ Cd)
     (hCd : ∀ (u : E d → ℝ) (x₀ : E d) (r M : ℝ), 0 < r →
       HarmonicOnNhd u (closedBall x₀ r) → (∀ y ∈ closedBall x₀ r, |u y| ≤ M) →
@@ -512,7 +513,7 @@ theorem gradient_extends_to_fb (hd : 2 ≤ d) : ∃ ε₁ > 0,
 
 /-- The gradient under the rescaling `v z = u (x₀ + r z) / (r c)`:
 `∇v(z) = c⁻¹ ∇u(x₀ + r z)`. -/
-private theorem gradient_rescale {u : E d → ℝ} {x₀ z : E d} {r c : ℝ} (hr : r ≠ 0)
+theorem gradient_rescale {u : E d → ℝ} {x₀ z : E d} {r c : ℝ} (hr : r ≠ 0)
     (hu : DifferentiableAt ℝ u (x₀ + r • z)) :
     ∇ (fun z ↦ u (x₀ + r • z) / (r * c)) z = c⁻¹ • ∇ u (x₀ + r • z) := by
   have hA : HasFDerivAt (fun z : E d ↦ x₀ + r • z) (r • ContinuousLinearMap.id ℝ (E d)) z :=

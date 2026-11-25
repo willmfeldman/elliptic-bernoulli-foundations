@@ -125,7 +125,7 @@ public theorem exists_eq_inner_add_of_le_gaussVariance (hL : LipschitzWith L F)
   have hneE : (ae (volume : Measure (E d))).NeBot := ae_neBot.2 (NeZero.ne _)
   obtain ⟨x₀, hx₀⟩ := hx.exists
   -- `∇F = ∇F(x₀)` a.e.
-  have hqmp : Measure.QuasiMeasurePreserving (fun z : E d ↦ (sin t)⁻¹ • (z - cos t • x₀))
+  have hqmp : QuasiMeasurePreserving (fun z : E d ↦ (sin t)⁻¹ • (z - cos t • x₀))
       volume volume :=
     (Measure.quasiMeasurePreserving_smul volume (inv_ne_zero hs.ne')).comp
       (measurePreserving_sub_right volume (cos t • x₀)).quasiMeasurePreserving

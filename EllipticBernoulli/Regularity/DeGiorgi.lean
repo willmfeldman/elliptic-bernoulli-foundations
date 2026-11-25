@@ -87,7 +87,7 @@ theorem memLp_of_vanish {F : Type*} [NormedAddCommGroup F] {h : E d → F} {z : 
     by_cases hx : x ∈ closedBall z t
     · rw [indicator_of_mem hx]
     · rw [indicator_of_notMem hx, h0 x hx]
-  rw [← this, memLp_indicator_iff_restrict measurableSet_closedBall]
+  rw [← this, memLp_indicator_iff_restrict measurableSet_closedBall.nullMeasurableSet]
   exact hh
 
 theorem gradient_eq_zero_of_eq_zero {η : E d → ℝ} (hη0 : ∀ x, 0 ≤ η x)
@@ -227,7 +227,7 @@ theorem degiorgi_step {U : Set (E d)} (hU : IsOpen U) {f : E d → ℝ} {G : E d
   have hFσr : ∫ x in ball z σ, F x ^ 2 ≤ ∫ x in ball z r, F x ^ 2 :=
     setIntegral_mono_set ((integrableOn_sq_of_memH1Loc hF hzr hc).mono_set
       ball_subset_closedBall) (ae_of_all _ fun x ↦ sq_nonneg _)
-      (ball_subset_ball h2.le).eventuallyLE
+      (ball_subset_ball h2.le).eventuallySubset
   have hm' : ((volume {x | g x ≠ 0}).toReal ^ (1 / (d : ℝ))) ^ 2 ≤
       ((volume ({x | k < f x} ∩ ball z r)).toReal ^ (1 / (d : ℝ))) ^ 2 :=
     pow_le_pow_left₀ (by positivity) (Real.rpow_le_rpow ENNReal.toReal_nonneg hm (by positivity)) 2
@@ -376,7 +376,7 @@ theorem degiorgi_linfty (hd : 1 ≤ d) {U : Set (E d)} (hU : IsOpen U) {f : E d 
             linarith
           exact pow_le_pow_left₀ h0 (max_le_max (by linarith) le_rfl) 2
       _ ≤ Y j := setIntegral_mono_set (hint j _) (ae_of_all _ fun x ↦ sq_nonneg _)
-          hsub.eventuallyLE
+          hsub.eventuallySubset
   have hZ0 : Z ≤ 0 := ge_of_tendsto' hlim hZle
   have hZ0' : Z = 0 := le_antisymm hZ0 (setIntegral_nonneg measurableSet_ball fun x _ ↦
     sq_nonneg _)

@@ -263,7 +263,7 @@ private theorem lintegral_halfPlane {K : ℝ × ℝ → ℝ≥0∞} (hK : Measur
       · have hsin : ¬ 0 < p.1 * Real.sin p.2 := by
           have := Real.sin_nonpos_of_nonpos_of_neg_pi_le (not_lt.1 hφ0) hφ.1.le
           nlinarith
-        rw [indicator_of_notMem (fun h ↦ hφ0 h.2.1)]
+        rw [indicator_of_notMem (fun (h : p ∈ Ioi (0 : ℝ) ×ˢ Ioo 0 π) ↦ hφ0 h.2.1)]
         simp [hf, hsin]
     · rw [indicator_of_notMem hp, indicator_of_notMem (fun h ↦ hp (hsub h))]
   rw [h1, ← lintegral_comp_polarCoord_symm, h2, Measure.volume_eq_prod, ← Measure.prod_restrict,

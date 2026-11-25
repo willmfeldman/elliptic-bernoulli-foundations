@@ -196,7 +196,8 @@ theorem ae_differentiableAt_homogExt0 (hd : 1 ≤ d) {f : sphere (0 : E d) 1 →
       DifferentiableAt ℝ (homogExt0 f) (ω : E d) := by
   have := nontrivial_E hd
   have hU : IsOpen {x : E d | 1 / 2 < ‖x‖} := isOpen_lt continuous_const continuous_norm
-  have hlip := (lipschitzOnWith_homogExt0 hf).mono (fun x (hx : 1 / 2 < ‖x‖) ↦ hx.le)
+  have hlip := (lipschitzOnWith_homogExt0 hf).mono
+    (show {x : E d | 1 / 2 < ‖x‖} ⊆ {x | 1 / 2 ≤ ‖x‖} from fun x (hx : 1 / 2 < ‖x‖) ↦ hx.le)
   have hae : ∀ᵐ x ∂(volume : Measure (E d)), 1 / 2 < ‖x‖ →
       DifferentiableAt ℝ (homogExt0 f) x := by
     filter_upwards [hlip.ae_differentiableWithinAt_of_mem] with x hx hxU

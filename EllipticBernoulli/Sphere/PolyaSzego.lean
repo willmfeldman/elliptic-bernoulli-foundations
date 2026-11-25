@@ -7,6 +7,7 @@ module
 
 public import EllipticBernoulli.Sphere.PolarMinimizer
 import EllipticBernoulli.Sphere.DirichletLSC
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 
 /-!
 # The Pólya–Szegő inequality on the sphere

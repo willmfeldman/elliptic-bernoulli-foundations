@@ -197,7 +197,7 @@ private theorem ae_gradient_homogExt0_eq_zero (hd : 1 ≤ d) {f : sphere (0 : E 
       ∇ (homogExt0 f) (ω : E d) = 0) :
     ∀ᵐ x ∂(volume : Measure (E d)), ∇ (homogExt0 f) x = 0 := by
   have := nontrivial_E hd
-  have hm : Measurable fun x : E d ↦ ‖∇ (homogExt0 f) x‖ₑ := (measurable_gradient _).enorm
+  have hm : Measurable fun x : E d ↦ ‖∇ (homogExt0 f) x‖ₑ := (measurable_gradient _).eNorm
   have hzero : ∫⁻ x, ‖∇ (homogExt0 f) x‖ₑ ∂(volume : Measure (E d)) = 0 := by
     rw [lintegral_add_eq_lintegral_Ioi_lintegral_toSphere hm 0]
     refine (setLIntegral_congr_fun measurableSet_Ioi fun t ht ↦ ?_).trans lintegral_zero

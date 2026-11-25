@@ -129,7 +129,7 @@ public theorem exists_nhds_isPreconnected_sides {F : E d → ℝ} {x : E d} (hF 
     (hn : ∇ F x ≠ 0) {V : Set (E d)} (hV : IsOpen V) (hxV : x ∈ V) :
     ∃ N, IsOpen N ∧ x ∈ N ∧ N ⊆ V ∧ ∀ s : ℝ, IsPreconnected (N ∩ {y | 0 < s * F y}) := by
   have hf : HasStrictFDerivAt F (fderiv ℝ F x) x :=
-    hF.contDiffAt.hasStrictFDerivAt (by simp)
+    hF.contDiffAt.hasStrictFDerivAt_fderiv (by simp)
   have hf'n : fderiv ℝ F x (∇ F x) = ‖∇ F x‖ ^ 2 := by
     rw [fderiv_apply_eq_inner_gradient, real_inner_self_eq_norm_sq]
   have hnorm : ‖∇ F x‖ ≠ 0 := norm_ne_zero_iff.2 hn
@@ -364,7 +364,8 @@ theorem IsClassicalSolution.isViscSuper (hu : IsClassicalSolution U Q u) : IsVis
     linarith
   have hextr : IsLocalExtrOn φ {y | F y = F x} x := Or.inr hmax
   obtain ⟨a, b, hab, hlag⟩ := hextr.exists_multipliers_of_hasStrictFDerivAt_1d
-    (hF.contDiffAt.hasStrictFDerivAt (by simp)) (hφ.contDiffAt.hasStrictFDerivAt (by simp))
+    (hF.contDiffAt.hasStrictFDerivAt_fderiv (by simp))
+    (hφ.contDiffAt.hasStrictFDerivAt_fderiv (by simp))
   have hlagv : ∀ v, a * ⟪∇ F x, v⟫ + b * ⟪∇ φ x, v⟫ = 0 := fun v ↦ by
     have := congrArg (fun L : StrongDual ℝ (E d) ↦ L v) hlag
     simp only [add_apply, smul_apply, zero_apply, smul_eq_mul] at this

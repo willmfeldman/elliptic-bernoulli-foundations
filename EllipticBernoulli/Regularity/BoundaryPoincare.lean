@@ -198,7 +198,7 @@ theorem integral_le_boundary_poincare {U : Set (E d)} {g : E d → ℝ} {G : E d
           setIntegral_congr_fun measurableSet_ball fun x hx ↦ by
             simp [hF, hψ1 x (ball_subset_closedBall hx)]
       _ ≤ ∫ x in K, F 0 x := by
-          refine setIntegral_mono_set (hintF 0) ?_ hsub.eventuallyLE
+          refine setIntegral_mono_set (hintF 0) ?_ hsub.eventuallySubset
           refine (ae_restrict_iff' measurableSet_closedBall).2 (Eventually.of_forall fun x hx ↦ ?_)
           exact mul_nonneg (hgnn x hx) (hψ01 _).1
   -- mean value inequality

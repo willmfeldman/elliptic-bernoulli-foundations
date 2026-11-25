@@ -9,6 +9,7 @@ public import EllipticBernoulli.Harmonic.MeanValue
 public import EllipticBernoulli.Harmonic.Comparison
 public import EllipticBernoulli.Harmonic.ViscosityHarmonic
 import ViscositySolns.Applications.Laplace.Weyl.PolarCoord
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
 # Sphere mean values up to the boundary; the sub-mean-value property

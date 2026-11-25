@@ -16,9 +16,9 @@
 #   own Vocabulary modules; Challenge.lean imports only Mathlib (its generated block), or in split
 #   mode also the workspace's Vocabulary modules; Solution.lean imports only EllipticBernoulli
 #   modules (`scripts/challenge-prep.py check` checks the generated block itself); config theorem
-#   names equal the target's challenge_theorems, and config permitted axioms equal
-#   axioms.expected;
-# * the pinned Comparator tool revisions agree with scripts/release-comparator.sh.
+#   names equal the challenge_theorems of the targets sharing the workspace, in target order, and
+#   config permitted axioms equal axioms.expected;
+# * the comparator engine is the toolchain's `lake comparator` (no pinned tool revisions).
 #
 # Lean checks (after `lake build`): every declaration and related declaration resolves, and each
 # depends on exactly axioms.expected.
@@ -109,8 +109,8 @@ failures << 'external_challenges.toolchain differs from lean-toolchain' unless e
 end
 directory = external.fetch('directory')
 
-listed = targets.map { |t| t['challenge'] }
-failures << 'two targets share a challenge workspace' unless listed.uniq.length == listed.length
+# Several targets may share one workspace; its config lists their theorems in target order.
+listed = targets.map { |t| t['challenge'] }.uniq
 on_disk = Dir.glob("#{directory}/*/config.json").map { |c| File.dirname(c) }.sort
 unless listed.sort == on_disk
   failures << "challenge inventory differs from formalization.yaml: " \
@@ -121,7 +121,7 @@ imports = lambda do |f|
   File.file?(f) ? File.read(f).scan(/^\s*(?:public\s+)?(?:meta\s+)?import\s+(\S+)/).flatten : []
 end
 
-targets.each do |t|
+targets.uniq { |t| t['challenge'] }.each do |t|
   path = t['challenge'].to_s
   next unless File.directory?(path)
   %w[Vocabulary.lean Challenge.lean Solution.lean config.json lakefile.toml lake-manifest.json lean-toolchain].each do |f|
@@ -166,22 +166,23 @@ targets.each do |t|
   config_path = File.join(path, 'config.json')
   next unless File.file?(config_path)
   config = JSON.parse(File.read(config_path))
-  failures << "#{path}: theorem_names differ from the target's challenge_theorems" \
-    unless config.fetch('theorem_names') == t['challenge_theorems']
+  expected_names = targets.select { |x| x['challenge'] == t['challenge'] }.flat_map { |x| x['challenge_theorems'] }
+  failures << "#{path}: theorem_names differ from the targets' challenge_theorems (in target order)" \
+    unless config.fetch('theorem_names') == expected_names
   failures << "#{path}: permitted_axioms differ from formalization.yaml" \
     unless config.fetch('permitted_axioms').sort == allowed.sort
   failures << "#{path}: unexpected challenge module" unless config.fetch('challenge_module') == 'Challenge'
   failures << "#{path}: unexpected solution module" unless config.fetch('solution_module') == 'Solution'
 end
 
-driver = File.read('scripts/release-comparator.sh')
-{ 'comparator_revision' => 'COMPARATOR_REV',
-  'lean4export_revision' => 'LEAN4EXPORT_REV',
-  'landrun_revision' => 'LANDRUN_REV' }.each do |key, var|
-  pinned = driver[/^#{var}=(\h+)$/, 1]
-  failures << "#{key} #{external[key].inspect} differs from #{var} in scripts/release-comparator.sh" \
-    unless pinned && external[key] == pinned
+# The comparator ships with the toolchain, so the toolchain pin is the tool pin.
+failures << "comparator engine #{external['engine'].inspect} is not \"lake comparator\"" \
+  unless external['engine'] == 'lake comparator'
+%w[comparator_revision lean4export_revision landrun_revision].each do |key|
+  failures << "#{key} is obsolete (the engine is lake comparator); remove it" if external.key?(key)
 end
+failures << 'scripts/release-comparator.sh is not the lake comparator driver' \
+  unless File.read('scripts/release-comparator.sh').include?('lake comparator')
 
 abort failures.join("\n") unless failures.empty?
 if metadata_only

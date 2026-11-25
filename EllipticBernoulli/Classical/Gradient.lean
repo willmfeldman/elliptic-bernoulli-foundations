@@ -60,7 +60,7 @@ theorem gradient_eq_smul_of_zero_set {F G : E d → ℝ} {y : E d} (hF : ContDif
     exact (hz hzF).ge
   have hextr : IsLocalExtrOn G {z | F z = F y} y := Or.inl hmin
   obtain ⟨a, b, hab, hlag⟩ := hextr.exists_multipliers_of_hasStrictFDerivAt_1d
-    (hF.hasStrictFDerivAt one_ne_zero) (hG.hasStrictFDerivAt one_ne_zero)
+    (hF.hasStrictFDerivAt_fderiv one_ne_zero) (hG.hasStrictFDerivAt_fderiv one_ne_zero)
   have hlagv : ∀ v, a * ⟪∇ F y, v⟫ + b * ⟪∇ G y, v⟫ = 0 := fun v ↦ by
     have := congrArg (fun L : StrongDual ℝ (E d) ↦ L v) hlag
     simp only [add_apply, smul_apply, zero_apply, smul_eq_mul] at this

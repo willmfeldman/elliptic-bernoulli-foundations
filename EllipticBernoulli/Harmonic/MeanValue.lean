@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors, William M. Feldman
 module
 
 public import EllipticBernoulli.Harmonic.Basic
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
 # Mean-value property of harmonic functions
@@ -154,7 +155,7 @@ theorem HarmonicOnNhd.le_div_pow_mul_of_nonneg
       ball_subset_closedBall
   have hle : ∫ z in ball x r, u z ∂μ ≤ ∫ z in ball y s, u z ∂μ :=
     setIntegral_mono_set hint ((ae_restrict_iff' measurableSet_ball).2 (ae_of_all _ hnonneg))
-      (ball_subset_ball' hxy).eventuallyLE
+      (ball_subset_ball' hxy).eventuallySubset
   rw [HarmonicOnNhd.setIntegral_ball_eq (hu.mono (closedBall_subset_closedBall' hxy)),
     HarmonicOnNhd.setIntegral_ball_eq hu] at hle
   simp only [measureReal_def, μ.addHaar_ball_of_pos x hr,

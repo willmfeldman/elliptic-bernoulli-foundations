@@ -109,7 +109,7 @@ private theorem prof_eventuallyEq {a b σ : ℝ} (hσ : σ ≠ 0) :
 
 private theorem lipschitzWith_prof (a b : ℝ) : LipschitzWith (‖a‖₊ + ‖b‖₊) (prof a b) := by
   refine LipschitzWith.of_dist_le_mul fun s t ↦ ?_
-  simp only [Real.dist_eq, NNReal.coe_add, coe_nnnorm, Real.norm_eq_abs, prof]
+  simp only [Real.dist_eq, NNReal.coe_add, coe_nnNorm, Real.norm_eq_abs, prof]
   have h1 : |max s 0 - max t 0| ≤ |s - t| := abs_max_sub_max_le_abs s t 0
   have h2 : |max (-s) 0 - max (-t) 0| ≤ |s - t| := by
     have := abs_max_sub_max_le_abs (-s) (-t) 0
@@ -346,7 +346,7 @@ private theorem posSet_indicator_eq {f : E d → ℝ} {V : Set (E d)} {x : E d} 
     (posSet f V).indicator 1 x = ind (f x) := by
   by_cases h : 0 < f x
   · rw [indicator_of_mem (show x ∈ posSet f V from ⟨hx, h⟩), ind_of_pos h, Pi.one_apply]
-  · rw [indicator_of_notMem (fun h' ↦ h h'.2), ind_of_nonpos (not_lt.1 h)]
+  · rw [indicator_of_notMem (fun (h' : x ∈ posSet f V) ↦ h h'.2), ind_of_nonpos (not_lt.1 h)]
 
 private theorem integrableOn_energy_density {f : E d → ℝ} {K : ℝ≥0} (hf : LipschitzWith K f)
     (R : ℝ) : IntegrableOn (fun x ↦ ‖∇ f x‖ ^ 2 + ind (f x)) (ball (0 : E d) R) :=
@@ -632,7 +632,7 @@ private theorem sq_sub_sq_eq_one_aux {e : E (n + 1)} (he : ‖e‖ = 1) {a b c :
       have h2 : |η x - η y| ≤ Kη * ‖x - y‖ := by
         have := hKη.dist_le_mul x y
         rwa [Real.dist_eq, dist_eq_norm] at this
-      simp only [NNReal.coe_add, NNReal.coe_mul, NNReal.coe_one, coe_nnnorm,
+      simp only [NNReal.coe_add, NNReal.coe_mul, NNReal.coe_one, coe_nnNorm,
         Real.norm_eq_abs, dist_eq_norm, hσdef]
       calc |inner ℝ x e + c - t * η x - (inner ℝ y e + c - t * η y)|
           = |(inner ℝ x e - inner ℝ y e) - t * (η x - η y)| := by ring_nf

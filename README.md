@@ -12,13 +12,15 @@ with a variable coefficient 0 < Qmin ≤ Q ≤ Qmax. It covers:
 - the Lipschitz estimate;
 - non-degeneracy;
 - De Silva's flatness theory, up to classical regularity;
-- smooth one-sided charts at flat free-boundary points (partial hodograph transform);
+- smooth one-sided charts at flat free-boundary points (partial hodograph transform), with quantitative `C^{2,1}`
+  and third-derivative bounds at flat free boundaries;
 - classical solutions;
 - the classification of planar 1-homogeneous inner variational solutions;
 - for the two-phase problem: the Friedland–Hayman inequality, the Alt–Caffarelli–Friedman monotonicity formula,
-  Weiss monotonicity, and the classification of global two-phase minimizers.
+  Weiss monotonicity (globally, and in a ball with rigidity), and the classification of global two-phase
+  minimizers.
 
-The library has about 54,000 lines of Lean. Every file is a Lean module, and everything lives in the namespace
+The library has about 58,000 lines of Lean. Every file is a Lean module, and everything lives in the namespace
 `EllipticBernoulli`. It is sorry-free, and the headline theorems depend only on the axioms `propext`,
 `Classical.choice` and `Quot.sound`.
 
@@ -51,6 +53,7 @@ certified results in words.
 | Flatness ⇒ `C^{1,γ}` free boundary, and classical near the point | De Silva (2011), Theorem 1.1 | `isC1GammaHypersurfaceNear_of_flat`, `isClassicalNear_of_flat` |
 | Smooth one-sided chart `u = max(F, 0)`, `F ∈ C^∞`, at a free-boundary point of a local minimizer (`Q ≡ 1`) with a half-plane blow-up | Kinderlehrer–Nirenberg; De Silva (2011); Seeley | `flat_chart`, `chart_of_flat_blowup_univ` |
 | Extension of `C^∞` functions from a closed half ball | Seeley | `exists_contDiffOn_extension_halfSpace` |
+| Quantitative chart at a flat free boundary: for `u` `ε`-close to `(x·e)₊` in `B_1` (`ε ≤ ε₀(d)`), `u = max(F, 0)` on `B_{1/2}` with `\|∇F\|, \|D²F\| ≤ C(d)` and `D²F` `C(d)`-Lipschitz on `{F ≥ 0}`; and `\|D³F\| ≤ C₀(d)` on `{F ≥ 0} ∩ B_{1/4}` | Kinderlehrer–Nirenberg; De Silva (2011); the uniform estimates are assembled here | `quantFlatChart`, `quantFlatChartThree` |
 | Classical solutions are viscosity solutions | — | `IsClassicalSolution.isViscSolution` |
 | Inner-variation identity for classical solutions | Kriventsov–Weiss, remark after Definition 9.1 | `IsClassicalSolution.integral_innerVarIntegrand_eq_zero` |
 | Alt–Caffarelli gradient bound (modulus depending on `L`) | Alt–Caffarelli, Thm 6.3 / Remark 6.4; Kriventsov–Weiss, Proposition 9.1 | `classical_lipschitz_bound` |
@@ -58,6 +61,7 @@ certified results in words.
 | Friedland–Hayman inequality `α_d(Γ₁) + α_d(Γ₂) ≥ 2` for disjoint, nonempty, open `Γ₁, Γ₂ ⊆ 𝕊^{d-1}`, `d ≥ 2` | Friedland–Hayman; Beck–Jerison, Theorem 1.1 | `friedlandHayman` |
 | Alt–Caffarelli–Friedman monotonicity formula, `d ≥ 2` | Alt–Caffarelli–Friedman; Salato, Theorem 1.1 | `acfMonotoneIn` |
 | Weiss monotonicity (integrated form) for sign-changing local minimizers of `∫ \|∇u\|² + 1_{u>0}` | after Weiss | `weissMonotone` |
+| Weiss monotonicity in a ball `B_R(x₀) ⊆ U` for local minimizers in `U`, Lipschitz on the ball, with rigidity: equality forces `1`-homogeneity on the annulus | after Weiss | `weissMonotoneLocal` |
 | Lipschitz `1`-homogeneous functions, harmonic in both phases, are two-plane functions | after De Philippis–Spolaor–Velichkov, Lemma 2.2 | `homogeneousTwoPhaseIn` |
 | Global Lipschitz two-phase minimizers that change sign are two-plane functions `a (x·e + c)⁺ - b (x·e + c)⁻`, `a² - b² = 1`, in every dimension (and, for `d ≤ 4`, with the explicit low-dimensional Friedland–Hayman inequality) | after Alt–Caffarelli–Friedman | `twoPhaseClassification`, `twoPhaseClassificationIn_of_le_four` |
 | Harmonic and viscosity toolkits: Harnack, gradient estimates, Dirichlet problem on a ball, Weyl's lemma, harmonic limits, comparison, stability, lattice operations | standard | see `EllipticBernoulli/Statements/{Harmonic,Viscosity}.lean` |
@@ -107,41 +111,43 @@ Where a statement deviates from its source, its docstring says so. The main devi
   - validates `formalization.yaml`: every Lean name resolves, each target depends on exactly the three axioms above,
     and the challenge inventory matches `challenges/*/config.json` (`scripts/check-formalization-manifest.rb`);
   - checks the challenge vocabulary files and solutions for `sorry`, `axiom`, `admit` and `native_decide`;
-  - elaborates every challenge workspace and checks the axioms of every solution theorem
+  - elaborates the challenge workspace and checks the axioms of every solution theorem
     (`scripts/check-challenges.sh`).
 
 ## Comparator challenges
 
-`challenges/` holds thirteen standalone [Comparator](https://github.com/leanprover/comparator) workspaces. They restate
-a selection of the headline statements over Mathlib only, and `formalization.yaml` lists them. Every file is a Lean
-module. In each workspace, `Vocabulary.lean` (or `Vocabulary/*.lean`) restates the library's definitions over
-Mathlib, `Challenge.lean` states the theorems with `sorry`, and `Solution.lean` proves them from the library. See [`challenges/README.md`](challenges/README.md) for the
-challenge set, what is left out, and the acceptance procedure.
+`challenges/main-results` is a single standalone comparator workspace for the library's main results, checked
+with the toolchain's `lake comparator`. It restates a selection of the headline statements over Mathlib only (30
+theorems, in one section per result), and `formalization.yaml` lists them. Every file is a Lean module.
+`Vocabulary/*.lean` restates the library's definitions over Mathlib, `Challenge.lean` states the theorems with
+`sorry`, and `Solution.lean` proves them from the library. See [`challenges/README.md`](challenges/README.md) for
+the challenge set, what is left out, and the acceptance procedure.
 - Ordinary CI only elaborates these files. Exact statement and definition equality, and the permitted-axiom check,
   are established by the release workflow `.github/workflows/release-comparator.yml`
-  (`scripts/release-comparator.sh`). It runs Comparator with pinned tool revisions and uploads an attestation.
-- `scripts/build-challenges.sh --trusted-all` builds the workspaces locally (`--challenge-only` never elaborates the
-  untrusted `Solution.lean` files).
+  (`scripts/release-comparator.sh`). It runs the toolchain's `lake comparator --paranoid` in its bubblewrap
+  sandbox and uploads an attestation.
+- `scripts/build-challenges.sh --trusted-all` builds the workspace locally (`--challenge-only` never elaborates the
+  untrusted `Solution.lean`).
 - `scripts/fingerprint-challenges.sh` emulates Comparator's statement and definition-equality check locally. It
-  reports every workspace identical.
+  reports the workspace identical.
 - Each release is checked by a Comparator run on the public commit, and the attestation is attached to the
   GitHub release.
 
 ## Building
 
 The toolchain and dependencies are pinned in `lean-toolchain`, `lakefile.toml` and `lake-manifest.json`:
-- Lean `v4.35.0-rc3`;
-- Mathlib `v4.35.0-rc3` (commit `c55e6e7`),
+- Lean `v4.36.0`;
+- Mathlib `v4.36.0` (commit `fc4f59e`),
   [leanprover-community/mathlib4](https://github.com/leanprover-community/mathlib4);
-- viscosity-solution-theory `v0.4.0` (Lake package `viscosity_solns`, commit `b9dc82d`),
+- viscosity-solution-theory `v0.5.0` (Lake package `viscosity_solns`, commit `e34fe7e`),
   [willmfeldman/viscosity-solution-theory](https://github.com/willmfeldman/viscosity-solution-theory). It is used
-  only in `EllipticBernoulli/Harmonic/`. It pulls in aleksandrov-differentiability `v0.4.0` (commit `5e5c2ec`),
+  only in `EllipticBernoulli/Harmonic/`. It pulls in aleksandrov-differentiability `v0.5.0` (commit `058378f`),
   [willmfeldman/aleksandrov-differentiability](https://github.com/willmfeldman/aleksandrov-differentiability),
   which this library does not import directly.
-- elliptic-schauder-theory `v0.1.0` (Lake package `basic_elliptic_theory`, commit `7f27afc`),
+- elliptic-schauder-theory `v0.2.1` (Lake package `basic_elliptic_theory`, commit `6a30b0e`),
   [willmfeldman/elliptic-schauder-theory](https://github.com/willmfeldman/elliptic-schauder-theory). It supplies
   regularity up to the flat boundary for the quasilinear conormal problem, and is used only in
-  `EllipticBernoulli/Hodograph/`.
+  `EllipticBernoulli/Hodograph/` and `EllipticBernoulli/QuantChart/`.
 
 Lake fetches these from their public Git repositories at the release tags and downloads each release's prebuilt build
 archive when one is available for your platform; otherwise it builds them from source. Releases of this library
@@ -181,13 +187,14 @@ lake build
 | `EllipticBernoulli/Lipschitz/`, `Nondegeneracy/` | Lipschitz estimate, non-degeneracy |
 | `EllipticBernoulli/Flatness/` | De Silva's theory |
 | `EllipticBernoulli/Hodograph/` | Partial hodograph transform, Seeley extension, smooth charts at flat points |
+| `EllipticBernoulli/QuantChart/` | Quantitative charts at flat free boundaries: uniform second- and third-derivative bounds |
 | `EllipticBernoulli/Classical/` | Classical solutions |
 | `EllipticBernoulli/Blowup/` | Planar classification |
 | `EllipticBernoulli/Sphere/` | Eigenvalues on the sphere, cap eigenvalues, the Friedland–Hayman inequality |
 | `EllipticBernoulli/TwoPhase/` | ACF and Weiss monotonicity, homogeneous two-phase functions, classification of global two-phase minimizers |
 | `EllipticBernoulli/Registry/` | Reserved for results assumed without proof (empty) |
 | `EllipticBernoulli/Comparator.lean` | Regression restatement of every headline statement |
-| `challenges/`, `formalization.yaml` | Comparator workspaces and the theorem manifest |
+| `challenges/`, `formalization.yaml` | The comparator workspace and the theorem manifest |
 | `scripts/` | Integrity, manifest, challenge, fingerprint and release-comparator checks used by CI and the release workflow |
 
 ## References

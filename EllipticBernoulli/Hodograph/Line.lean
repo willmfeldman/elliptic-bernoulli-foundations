@@ -153,7 +153,7 @@ theorem apply_levelInf (hg : IsGrowing φ a b) (hc : ContinuousOn φ (Icc a b)) 
     · have : (𝓝[Ioo ℓ b] ℓ).NeBot := by
         rw [nhdsWithin_Ioo_eq_nhdsGT hℓb]; infer_instance
       have hT : Tendsto φ (𝓝[Ioo ℓ b] ℓ) (𝓝 (φ ℓ)) :=
-        (hcℓ.mono fun x hx ↦ ⟨hℓI.1.trans hx.1.le, hx.2.le⟩).tendsto
+        (hcℓ.mono fun x (hx : x ∈ Ioo ℓ b) ↦ ⟨hℓI.1.trans hx.1.le, hx.2.le⟩).tendsto
       refine ge_of_tendsto hT ?_
       filter_upwards [self_mem_nhdsWithin] with σ hσ
       exact (lt_apply_of_levelInf_lt hab ht htb hg hσ.2.le hσ.1).le

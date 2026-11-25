@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this Lean formalization, please cite it using this metadata."
 title: "elliptic-bernoulli-foundations: the elliptic one-phase Bernoulli free boundary problem in Lean"
-version: "0.5.0"
+version: "0.6.0"
 license: "Apache-2.0"
 repository-code: "https://github.com/willmfeldman/elliptic-bernoulli-foundations"
 authors:
@@ -12,8 +12,11 @@ abstract: >-
   free boundary problem with a variable coefficient: existence and continuity for obstacle
   problems for the Alt–Caffarelli energy, energy-decreasing perturbations and one-sided
   minimizers as viscosity solutions, the Lipschitz estimate, non-degeneracy, De Silva's
-  flatness theory up to classical regularity, classical solutions, and the classification of
-  planar 1-homogeneous inner variational solutions.
+  flatness theory up to classical regularity, smooth charts at flat free-boundary points with
+  quantitative second- and third-derivative bounds, classical solutions, and the classification of
+  planar 1-homogeneous inner variational solutions; and, for the two-phase problem, the
+  Friedland–Hayman inequality, the Alt–Caffarelli–Friedman and Weiss monotonicity formulas, and
+  the classification of global two-phase minimizers.
 keywords:
   - Lean
   - Mathlib

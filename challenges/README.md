@@ -1,22 +1,20 @@
 # Comparator Challenges
 
-This directory contains release comparator workspaces for the headline theorems of
-`EllipticBernoulli`, following the convention of
-[viscosity-solution-theory](https://github.com/willmfeldman/viscosity-solution-theory) v0.2.0.
-Each subdirectory is a standalone Lake workspace with:
+This directory contains a single release comparator workspace, `main-results`, for the library's
+main results. It is a standalone Lake workspace with:
 
-- `Vocabulary.lean`, or `Vocabulary/*.lean` re-exported by `Vocabulary.lean`: the library's
-  vocabulary restated over Mathlib (see below);
-- `Challenge.lean`: the trusted statement surface. It imports Mathlib modules only, or, in a
-  workspace with split vocabulary, Mathlib and its own `Vocabulary/*.lean`;
+- `Vocabulary/*.lean`, re-exported by `Vocabulary.lean`: the library's vocabulary restated over
+  Mathlib (see below);
+- `Challenge.lean`: the trusted statement surface, one section per result (see the table below).
+  It imports Mathlib modules and its own `Vocabulary/*.lean` only;
 - `Solution.lean`: the solution, importing the library modules that prove the statements;
-- `config.json`: comparator module names, theorem names and permitted axioms;
+- `config.json`: comparator module names, the 30 theorem names and the permitted axioms;
 - `lakefile.toml`, `lake-manifest.json` and `lean-toolchain`: workspace metadata pinned through the
   parent project.
 
 Every `.lean` file is a Lean module.
 
-The challenges certify a selection of the library's headline statements
+The workspace certifies a selection of the library's headline statements
 (`EllipticBernoulli/Statements/*`), not all of them. Left out:
 
 - the harmonic toolkit (`Statements/Harmonic.lean`: Harnack's inequality, gradient estimates,
@@ -26,20 +24,21 @@ The challenges certify a selection of the library's headline statements
   stability under locally uniform limits, `min`/`max`);
 - De Silva's Harnack inequality for flat solutions and improvement of flatness
   (`FlatHarnackStatement`, `ImprovementStatement`), the intermediate steps of the flatness
-  theorem; the flatness challenge certifies only the final theorem;
+  theorem; the challenge certifies only the final theorem;
 - the qualitative non-degeneracy statements (`SmallestSuperNondegStatement`,
   `DownwardNondegStatement`, `LargestSubNondeg2DStatement`), whose constants may depend on the
-  solution. The quantitative forms in the `nondegeneracy` challenge imply them;
+  solution. The quantitative forms in the `Nondegeneracy` section imply them;
 - the exterior-ball lemma with domain `B_{4s}(x₀)` (`ExteriorBallNondegStatement`). The
   challenge certifies instead the same-radius form, which is the statement of
   Abedin–Feldman–Stinson, Lemma B.2; its constant `q₀/(128 d e^{3d})` is smaller than the `B_{4s}`
   form's `q₀/(32 d e^{3d})`;
-- Weiss monotonicity (`WeissMonotoneStatement`) and the classification of `1`-homogeneous two-phase
-  functions (`HomogeneousTwoPhaseIn`), the intermediate steps of the two-phase classification; the
-  `two-phase-classification` challenge certifies only the final theorem, and the
-  `friedland-hayman` and `acf-monotonicity` challenges its two other inputs;
+- global Weiss monotonicity (`WeissMonotoneStatement`) and the classification of `1`-homogeneous
+  two-phase functions (`HomogeneousTwoPhaseIn`), the intermediate steps of the two-phase
+  classification; the challenge certifies the final theorem, its two other inputs (the
+  `FriedlandHayman` and `AcfMonotonicity` sections), and Weiss monotonicity in a ball
+  (`WeissLocal`);
 - the classification of global two-phase minimizers in dimensions `d ≤ 4` with the explicit
-  low-dimensional Friedland–Hayman inequality, which the every-dimension challenge implies.
+  low-dimensional Friedland–Hayman inequality, which the every-dimension statement implies.
 
 `EllipticBernoulli/Comparator.lean` restates every headline statement, including these, as a
 library-side regression test.
@@ -60,46 +59,47 @@ and the library's declaration order, one part per library vocabulary file:
 | `TwoPhase` | `Defs/TwoPhase.lean` | eigenvalues and characteristic exponents on the sphere (`sphEigenvalue`, `charExponent`, `sphExponent`) and on caps, the ACF functional (`acfIntegral`, `acfPhi`) and `IsACFPair`, the Weiss functional and defect, `twoPlane` |
 
 Each part drops the library file's theorems and imports the same Mathlib modules as the library
-file. `scripts/challenge-prep.py sync` copies `Vocabulary.lean` into a generated block at the top
-of `Challenge.lean`, so that `Challenge.lean` is self-contained; `scripts/challenge-prep.py check`
-checks that the copy is current. Two cautions, both checked by `scripts/fingerprint-challenges.sh`:
+file. `Challenge.lean` imports the vocabulary modules (it is marked
+`challenge-prep: split vocabulary`, so `scripts/challenge-prep.py sync` leaves it alone and
+`scripts/challenge-prep.py check` checks its imports). Two cautions, both checked by
+`scripts/fingerprint-challenges.sh`:
 
 - Comparator checks that every restated definition is exactly the library's. That includes the
   names of the auxiliary proofs Lean creates inside definitions (for example
   `HasWeakGradient._proof_1`), and Lean shares those within a module. Merged into one file, later
-  definitions reuse earlier auxiliary proofs where the library has its own. So every workspace
-  except `energy-perturbation` keeps its vocabulary split along the library's module boundaries,
-  as `Vocabulary/*.lean` (marked `challenge-prep: split vocabulary` in `Challenge.lean`, which
-  imports those modules). `energy-perturbation` uses only `Setting` and `Sobolev`, which do not
-  interact this way, and has a single `Vocabulary.lean`.
+  definitions reuse earlier auxiliary proofs where the library has its own. So the workspace
+  keeps its vocabulary split along the library's module boundaries, as `Vocabulary/*.lean`.
 - The challenge statements do **not** import all of `Mathlib`. With the whole library in scope,
   instance search can elaborate a statement differently from the library. For example,
   `Fintype (Fin 2)` inside `E 2` resolves through a `SimplexCategory` instance, and Comparator
-  would reject the statement. Each workspace imports the vocabulary's Mathlib modules, plus those
-  of the corresponding `Statements/*` file.
+  would reject the statement. The workspace imports the vocabulary's Mathlib modules, plus those
+  of the `Statements/*` files it restates.
 
 ## Challenge set
 
-| Directory | Statements (library `Statements/*`) | Library theorems used by the solution |
+| Section of `Challenge.lean` | Statements (library `Statements/*`) | Library theorems used by the solution |
 |---|---|---|
-| `obstacle-existence` | `ObstacleExistenceStatement`, `ObstacleContinuityStatement`: existence (direct method) and continuity on all of `U` of obstacle minimizers of `J_Q`, for `Q` Lipschitz with `0 < c ≤ Q ≤ C` and `u ≥ 0` locally Lipschitz (Abedin–Feldman–Stinson, proof of Lemma 6.3) | `exists_isObstacleMinimizer`, `IsObstacleMinimizer.exists_continuousOn` |
-| `energy-perturbation` | `EnergyDecreaseSuperStatement`, `EnergyDecreaseSubStatement`: energy-decreasing perturbations where the viscosity test fails, the key step of the proof of Feldman–Kim–Požár, Lemma 3.3, with their Lemma A.1 | `energy_decrease_of_not_super`, `energy_decrease_of_not_sub` |
-| `viscosity-minimizers` | `OneSidedViscStatement` (upward minimizers are supersolutions, downward minimizers subsolutions, local energy minimizers solutions; Feldman–Kim–Požár, Lemma 3.3; Velichkov, Prop 7.1) and `ObstacleViscStatement` (obstacle minimizers are super/subsolutions; Abedin–Feldman–Stinson, Lemma 6.3, Steps 1–2) | `IsUpwardMinimizer.isViscSuper`, `IsDownwardMinimizer.isViscSub`, `IsLocalEnergyMinimizer.isViscSolution`, `IsObstacleMinimizer.isViscSuper_of_upper`, `IsObstacleMinimizer.isViscSub_of_lower` |
-| `energy-minimizer-regularity` | `EnergyMinimizerRegularityStatement`: a local minimizer `u ≥ 0` of `J_Q`, for `Q` continuous with `0 ≤ Q ≤ C`, has an a.e.-equal representative which is a local minimizer, locally Lipschitz and non-negative, with open positivity set on which it is `C^∞` and harmonic (Alt–Caffarelli, §§2–3; Velichkov, Ch. 3 and Prop 7.1; continuity by De Giorgi's method) | `IsLocalEnergyMinimizer.exists_regular_representative` |
-| `lipschitz-estimate` | `LipschitzEstimateStatement`, `LocalLipschitzStatement` (Caffarelli–Salsa, Lemma 11.19; the constant `C = C(d)`) | `lipschitzOnWith_of_isViscSuper`, `locallyLipschitzOn_of_isViscSuper` |
-| `nondegeneracy` | `SmallestSuperNondegQuantStatement` (Caffarelli–Salsa, Lemma 6.9, `c = q₀/(8d)`), `ExteriorBallSameRadiusStatement` (Abedin–Feldman–Stinson, Lemma B.2, same radius), `NondegEquivStatement` (Lemma B.3 (i)⇔(ii)), `DownwardNondegQuantStatement` (Alt–Caffarelli, Lemma 3.4, `c = q₀/(8d e^{d/2})`), `LargestSubNondeg2DQuantStatement` (Abedin–Feldman–Stinson, Theorem B.1, after Orcan-Ekmekci, `d = 2`, `c = c(q₀, K)`, for `u` `K`-Lipschitz, `C²` and harmonic in `{u > 0}`; the statement asks for `r ≤ R/2` and a sup over the closed ball `B̄_r`, where Theorem B.1 has `0 < r ≤ R` and a sup over `∂B_r`, which is equivalent up to halving `c`) | `IsLocalSmallestSuper.exists_le_of_closedBall_subset`, `exists_le_of_exteriorBall_sameRadius`, `nondegenerate_sup_iff_average`, `IsDownwardMinimizer.exists_le_of_closedBall_subset`, `exists_pos_le_of_isLocalLargestSub` |
-| `flatness-regularity` | `FlatGraphStatement`, `FlatClassicalStatement` (De Silva (2011), Theorem 1.1, with `Q` Lipschitz instead of Hölder, and the `IsClassicalNear` conclusion; `γ`, the Hölder constant and the `IsClassicalNear` radius are chosen per solution, whereas De Silva's do not depend on the solution) | `isC1GammaHypersurfaceNear_of_flat`, `isClassicalNear_of_flat` |
-| `flat-chart` | `FlatChartStatement`: at a free-boundary point of a continuous local minimizer `u ≥ 0` of `J_1` (`d ≥ 2`) at which the half-plane solution `(y · e)₊` is a blow-up limit, `u = max(F, 0)` near the point for a `C^∞` function `F` with `∇F ≠ 0`, harmonic where positive, with `|∇F| = 1` on `{F = 0}` (Kinderlehrer–Nirenberg's partial hodograph transform; De Silva (2011) for the `C^{1,γ}` step; Seeley's extension) | `flat_chart` |
-| `classical-solutions` | `ClassicalViscStatement`, `ClassicalInnerVarStatement`, `ClassicalLipschitzBoundStatement` (classical ⇒ viscosity; the inner-variation identity, for `Q` Lipschitz with `Q ≥ c > 0`; the gradient bound of Alt–Caffarelli, Thm 6.3 / Remark 6.4, as cited in Kriventsov–Weiss, Proposition 9.1, with a modulus depending on the Lipschitz bound) | `IsClassicalSolution.isViscSolution`, `IsClassicalSolution.integral_innerVarIntegrand_eq_zero`, `classical_lipschitz_bound` |
-| `friedland-hayman` | `FriedlandHaymanStatement`: for `d ≥ 2` and nonempty, relatively open, disjoint `Γ₁, Γ₂ ⊆ 𝕊^{d-1}`, `α_d(Γ₁) + α_d(Γ₂) ≥ 2`, with eigenvalues over chordally Lipschitz trial functions (Friedland–Hayman; Beck–Jerison, Theorem 1.1) | `friedlandHayman` |
-| `acf-monotonicity` | `ACFMonotoneIn d` for every `d ≥ 2`, with no Friedland–Hayman hypothesis: for `u₁, u₂ ≥ 0` `L`-Lipschitz, harmonic in their positivity sets, with `u₁ u₂ ≡ 0` and `u₁(x₀) = u₂(x₀) = 0`, `r ↦ r⁻⁴ I(u₁) I(u₂)` is nondecreasing on `(0, ∞)` (Alt–Caffarelli–Friedman; Salato, Theorem 1.1). The hypotheses are written out rather than bundled as `IsACFPair` | `acfMonotoneIn` |
-| `two-phase-classification` | `TwoPhaseClassificationStatement`: in every dimension, a Lipschitz local minimizer of `∫ \|∇v\|² + 1_{v>0}` on `ℝᵈ` that takes a positive and a negative value is `a (x·e + c)⁺ - b (x·e + c)⁻` with `‖e‖ = 1`, `a, b > 0`, `a² - b² = 1` (after Alt–Caffarelli–Friedman). The conclusion is written out rather than through `twoPlane` | `twoPhaseClassification` |
-| `planar-classification` | `PlanarHomogeneousClassificationStatement` (after Jerison–Kamburov, §5: the case analysis in the proof of Proposition 5.3, which assumes in addition a Lipschitz, non-degenerate solution that is both viscosity and variational) | `classification_homogeneous_planar` |
+| `ObstacleExistence` | `ObstacleExistenceStatement`, `ObstacleContinuityStatement`: existence (direct method) and continuity on all of `U` of obstacle minimizers of `J_Q`, for `Q` Lipschitz with `0 < c ≤ Q ≤ C` and `u ≥ 0` locally Lipschitz (Abedin–Feldman–Stinson, proof of Lemma 6.3) | `exists_isObstacleMinimizer`, `IsObstacleMinimizer.exists_continuousOn` |
+| `EnergyPerturbation` | `EnergyDecreaseSuperStatement`, `EnergyDecreaseSubStatement`: energy-decreasing perturbations where the viscosity test fails, the key step of the proof of Feldman–Kim–Požár, Lemma 3.3, with their Lemma A.1 | `energy_decrease_of_not_super`, `energy_decrease_of_not_sub` |
+| `ViscosityMinimizers` | `OneSidedViscStatement` (upward minimizers are supersolutions, downward minimizers subsolutions, local energy minimizers solutions; Feldman–Kim–Požár, Lemma 3.3; Velichkov, Prop 7.1) and `ObstacleViscStatement` (obstacle minimizers are super/subsolutions; Abedin–Feldman–Stinson, Lemma 6.3, Steps 1–2) | `IsUpwardMinimizer.isViscSuper`, `IsDownwardMinimizer.isViscSub`, `IsLocalEnergyMinimizer.isViscSolution`, `IsObstacleMinimizer.isViscSuper_of_upper`, `IsObstacleMinimizer.isViscSub_of_lower` |
+| `EnergyMinimizerRegularity` | `EnergyMinimizerRegularityStatement`: a local minimizer `u ≥ 0` of `J_Q`, for `Q` continuous with `0 ≤ Q ≤ C`, has an a.e.-equal representative which is a local minimizer, locally Lipschitz and non-negative, with open positivity set on which it is `C^∞` and harmonic (Alt–Caffarelli, §§2–3; Velichkov, Ch. 3 and Prop 7.1; continuity by De Giorgi's method) | `IsLocalEnergyMinimizer.exists_regular_representative` |
+| `LipschitzEstimate` | `LipschitzEstimateStatement`, `LocalLipschitzStatement` (Caffarelli–Salsa, Lemma 11.19; the constant `C = C(d)`) | `lipschitzOnWith_of_isViscSuper`, `locallyLipschitzOn_of_isViscSuper` |
+| `Nondegeneracy` | `SmallestSuperNondegQuantStatement` (Caffarelli–Salsa, Lemma 6.9, `c = q₀/(8d)`), `ExteriorBallSameRadiusStatement` (Abedin–Feldman–Stinson, Lemma B.2, same radius), `NondegEquivStatement` (Lemma B.3 (i)⇔(ii)), `DownwardNondegQuantStatement` (Alt–Caffarelli, Lemma 3.4, `c = q₀/(8d e^{d/2})`), `LargestSubNondeg2DQuantStatement` (Abedin–Feldman–Stinson, Theorem B.1, after Orcan-Ekmekci, `d = 2`, `c = c(q₀, K)`, for `u` `K`-Lipschitz, `C²` and harmonic in `{u > 0}`; the statement asks for `r ≤ R/2` and a sup over the closed ball `B̄_r`, where Theorem B.1 has `0 < r ≤ R` and a sup over `∂B_r`, which is equivalent up to halving `c`) | `IsLocalSmallestSuper.exists_le_of_closedBall_subset`, `exists_le_of_exteriorBall_sameRadius`, `nondegenerate_sup_iff_average`, `IsDownwardMinimizer.exists_le_of_closedBall_subset`, `exists_pos_le_of_isLocalLargestSub` |
+| `FlatnessRegularity` | `FlatGraphStatement`, `FlatClassicalStatement` (De Silva (2011), Theorem 1.1, with `Q` Lipschitz instead of Hölder, and the `IsClassicalNear` conclusion; `γ`, the Hölder constant and the `IsClassicalNear` radius are chosen per solution, whereas De Silva's do not depend on the solution) | `isC1GammaHypersurfaceNear_of_flat`, `isClassicalNear_of_flat` |
+| `FlatChart` | `FlatChartStatement`: at a free-boundary point of a continuous local minimizer `u ≥ 0` of `J_1` (`d ≥ 2`) at which the half-plane solution `(y · e)₊` is a blow-up limit, `u = max(F, 0)` near the point for a `C^∞` function `F` with `∇F ≠ 0`, harmonic where positive, with `|∇F| = 1` on `{F = 0}` (Kinderlehrer–Nirenberg's partial hodograph transform; De Silva (2011) for the `C^{1,γ}` step; Seeley's extension) | `flat_chart` |
+| `ClassicalSolutions` | `ClassicalViscStatement`, `ClassicalInnerVarStatement`, `ClassicalLipschitzBoundStatement` (classical ⇒ viscosity; the inner-variation identity, for `Q` Lipschitz with `Q ≥ c > 0`; the gradient bound of Alt–Caffarelli, Thm 6.3 / Remark 6.4, as cited in Kriventsov–Weiss, Proposition 9.1, with a modulus depending on the Lipschitz bound) | `IsClassicalSolution.isViscSolution`, `IsClassicalSolution.integral_innerVarIntegrand_eq_zero`, `classical_lipschitz_bound` |
+| `FriedlandHayman` | `FriedlandHaymanStatement`: for `d ≥ 2` and nonempty, relatively open, disjoint `Γ₁, Γ₂ ⊆ 𝕊^{d-1}`, `α_d(Γ₁) + α_d(Γ₂) ≥ 2`, with eigenvalues over chordally Lipschitz trial functions (Friedland–Hayman; Beck–Jerison, Theorem 1.1) | `friedlandHayman` |
+| `AcfMonotonicity` | `ACFMonotoneIn d` for every `d ≥ 2`, with no Friedland–Hayman hypothesis: for `u₁, u₂ ≥ 0` `L`-Lipschitz, harmonic in their positivity sets, with `u₁ u₂ ≡ 0` and `u₁(x₀) = u₂(x₀) = 0`, `r ↦ r⁻⁴ I(u₁) I(u₂)` is nondecreasing on `(0, ∞)` (Alt–Caffarelli–Friedman; Salato, Theorem 1.1). The hypotheses are written out rather than bundled as `IsACFPair` | `acfMonotoneIn` |
+| `TwoPhaseClassification` | `TwoPhaseClassificationStatement`: in every dimension, a Lipschitz local minimizer of `∫ \|∇v\|² + 1_{v>0}` on `ℝᵈ` that takes a positive and a negative value is `a (x·e + c)⁺ - b (x·e + c)⁻` with `‖e‖ = 1`, `a, b > 0`, `a² - b² = 1` (after Alt–Caffarelli–Friedman). The conclusion is written out rather than through `twoPlane` | `twoPhaseClassification` |
+| `WeissLocal` | `WeissMonotoneLocalStatement`: Weiss monotonicity in a ball `B_R(x₀) ⊆ U` for a local minimizer of `∫ \|∇v\|² + 1_{v>0}` in an open `U` that is Lipschitz on the ball and vanishes at `x₀`: `W(s) - W(r) ≥ D(r, s) ≥ 0`, the uniform bound on `\|W\|`, and rigidity: `W(r) = W(s)` forces `1`-homogeneity about `x₀` on the annulus (Weiss (1999)) | `weissMonotoneLocal` |
+| `QuantFlatChart` | `QuantFlatChartStatement`: for `d ≥ 2` there are `ε₀, α, C > 0` such that a continuous local minimizer `u ≥ 0` of `J_1` in `B_1` that is `ε`-close to `(x · e)₊` (`ε ≤ ε₀`) is `max(F, 0)` on `B_{1/2}` for a `C^∞` function `F` with `\|∇F\| = 1` on `{F = 0}`, harmonic where positive, and, on `{F ≥ 0} ∩ B_{1/2}`, `∇F · e ≥ 1/2`, `\|∇F\|, \|D²F\| ≤ C` and `D²F` `α`-Hölder with constant `C` | `quantFlatChart` |
+| `QuantFlatChartThree` | `QuantFlatChartThreeStatement`: the same chart on `B_{1/4}`, with `∇F · e ≥ 1/2` and `\|D³F\| ≤ C₀` on `{F ≥ 0} ∩ B_{1/4}` | `quantFlatChartThree` |
+| `PlanarClassification` | `PlanarHomogeneousClassificationStatement` (after Jerison–Kamburov, §5: the case analysis in the proof of Proposition 5.3, which assumes in addition a Lipschitz, non-degenerate solution that is both viscosity and variational) | `classification_homogeneous_planar` |
 
-In `nondegeneracy`, every constant depends only on the data (`d`, `q₀`, and `K` in the planar
+In the `Nondegeneracy` section, every constant depends only on the data (`d`, `q₀`, and `K` in the planar
 case; and `L`, `c` for the equivalence `NondegEquivStatement`), never on the solution.
 
-The statements are spelled out in full in each `Challenge.lean`; they do not refer to the
+The statements are spelled out in full in `Challenge.lean`; they do not refer to the
 `…Statement` definitions.
 
 ## References
@@ -141,24 +141,23 @@ The statements are spelled out in full in each `Challenge.lean`; they do not ref
 
 ## Toolchain
 
-- Lean: `leanprover/lean4:v4.35.0-rc3`
-- Mathlib: `v4.35.0-rc3` (`c55e6e7`)
-- viscosity_solns `v0.4.0`, AleksandrovDifferentiability `v0.4.0` and basic_elliptic_theory
-  `v0.1.0`: pinned through the parent `lake-manifest.json`
-- Comparator: `leanprover/comparator` at `fd5d5bcf14177b187f66d4502071268d877887c3`, with
-  lean4export `66f1fb4bc256072069767fce52d39480e4524869` and landrun
-  `811cfff51ceaf3d9843708aa6d22e9b84ccac8b4`, pinned in `scripts/release-comparator.sh` and
-  recorded in `formalization.yaml`
+- Lean: `leanprover/lean4:v4.36.0`
+- Mathlib: `v4.36.0` (`fc4f59e`)
+- viscosity_solns `v0.5.0`, AleksandrovDifferentiability `v0.5.0` and basic_elliptic_theory
+  `v0.2.1`: pinned through the parent `lake-manifest.json`
+- Comparator: the toolchain's `lake comparator` (recorded as `engine: "lake comparator"` in
+  `formalization.yaml`), so the Lean toolchain pin is also the comparator pin. The release run
+  uses `--paranoid`, which also replays the proofs with every checker shipped in the toolchain.
 
-Every workspace sets `packagesDir = "../../.lake/packages"` in its `lakefile.toml` (and records
-the same folder in its `lake-manifest.json`), so all thirteen share the root workspace's dependency
-checkouts and builds. The manifests lock the same revisions as the root manifest. Each workspace
-defaults to its `Vocabulary` and `Challenge` targets only, so a plain `lake build` never
-elaborates `Solution.lean`. The workspaces set `autoImplicit = false`.
+The workspace sets `packagesDir = "../../.lake/packages"` in its `lakefile.toml` (and records
+the same folder in its `lake-manifest.json`), so it shares the root workspace's dependency
+checkouts and builds. Its manifest locks the same revisions as the root manifest. It defaults to
+its `Vocabulary` and `Challenge` targets only, so a plain `lake build` never elaborates
+`Solution.lean`. It sets `autoImplicit = false`.
 
 ## Acceptance
 
-In a trusted checkout, build the root library first, then the workspaces, then run the local
+In a trusted checkout, build the root library first, then the workspace, then run the local
 checks:
 
 ```sh
@@ -167,35 +166,35 @@ lake build
 ./scripts/fingerprint-challenges.sh
 ```
 
-`scripts/check-challenges.sh` (run by CI) builds `Vocabulary`, `Challenge` and `Solution` in every workspace and
+`scripts/check-challenges.sh` (run by CI) builds `Vocabulary`, `Challenge` and `Solution` in the workspace and
 checks that every solution theorem depends on exactly `propext`, `Classical.choice` and
 `Quot.sound`. It does not compare statements. `scripts/build-challenges.sh --trusted-all` builds
 the same targets without the axiom check.
 
 `scripts/fingerprint-challenges.sh` emulates Comparator's statement and definition-equality
-check. For each workspace, it hashes the types and definition values of the challenge theorems and
+check. It hashes the types and definition values of the challenge theorems and
 of every `EllipticBernoulli` constant they depend on, once in the `Challenge` environment and once
 in the `Solution` environment, and diffs the results. It does not replay proofs or check axioms.
 
 For a Comparator release run, treat `Solution.lean` as potentially adversarial, and review and
-trust each workspace's `Vocabulary.lean`, `Vocabulary/*.lean`, `Challenge.lean`, `lakefile.toml`,
+trust the workspace's `Vocabulary.lean`, `Vocabulary/*.lean`, `Challenge.lean`, `lakefile.toml`,
 `lake-manifest.json`, `lean-toolchain` and `config.json`. The release workflow
-`.github/workflows/release-comparator.yml` (dispatched by hand, and run on `release/**` branches
-and `v*` tags) then:
+`.github/workflows/release-comparator.yml` (dispatched by hand, and run on `release/**` branches) then:
 
 1. validates the challenge inventory against `formalization.yaml`
    (`scripts/check-formalization-manifest.rb --metadata-only`);
-2. installs the pinned Comparator tools (`scripts/release-comparator.sh install`);
+2. prepares the comparator sandbox: bubblewrap, with unprivileged user namespaces allowed
+   (`scripts/release-comparator.sh install`);
 3. builds only the trusted `Vocabulary` and `Challenge` targets outside the sandbox;
-4. runs Comparator in its sandbox on each workspace's `config.json`, without first building
-   `Solution` (`scripts/release-comparator.sh run`), which checks statement and definition
+4. runs `lake comparator --paranoid` in its bubblewrap sandbox on the workspace's `config.json`,
+   without first building `Solution` (`scripts/release-comparator.sh run`), which checks statement and definition
    equality and that each theorem depends only on `propext`, `Classical.choice` and
    `Quot.sound`;
 5. uploads an attestation (`comparator-report/attestation.json` and the logs).
 
-**Status (2026-10-02).**
+**Status (2026-11-24).**
 - Both build-challenges modes are green locally.
-- `fingerprint-challenges.sh` reports every workspace IDENTICAL.
+- `fingerprint-challenges.sh` reports the workspace IDENTICAL (407 constants).
 - `#print axioms` on each solution theorem's library counterpart (`EllipticBernoulli.Comparator`)
   shows only the three permitted axioms.
 - Each release is checked by a Comparator run on the public commit, and its attestation is
